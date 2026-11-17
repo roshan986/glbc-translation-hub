@@ -43,6 +43,7 @@ interface TabletFocusViewProps {
   onNavigateTab: (tab: ActiveTab) => void;
   onApproveConsensus?: (row: number, conclusion: string) => Promise<void>;
   onSubmitFinal?: (row: number, finalText: string) => Promise<void>;
+  onSelectUserRole?: (role: string) => void;
 }
 
 export const TabletFocusView: React.FC<TabletFocusViewProps> = ({
@@ -57,10 +58,14 @@ export const TabletFocusView: React.FC<TabletFocusViewProps> = ({
   bookTotalCount,
   onNextVerse,
   onPrevVerse,
+  onSelectVerseIndex,
   onApproveVerse,
   onAddComment,
+  onOpenWhatsApp,
+  onNavigateTab,
   onApproveConsensus,
-  onSubmitFinal
+  onSubmitFinal,
+  onSelectUserRole
 }) => {
   // Tablet Typography State
   const [fontSize, setFontSize] = useState<number>(18);

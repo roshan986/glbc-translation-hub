@@ -35,41 +35,41 @@ const OFFICIAL_COLOR_RULES = [
     name: 'Yellow Highlight',
     meaning: 'Omitted in Kannada',
     desc: 'The English words that are Omitted in Kannada are highlighted with yellow.',
-    bg: '#fef9c3',
-    border: '#fde047',
-    color: '#854d0e'
+    bg: 'rgba(234, 179, 8, 0.1)',
+    border: 'rgba(234, 179, 8, 0.35)',
+    color: '#eab308'
   },
   {
     name: 'Blue / Turquoise Highlight',
     meaning: 'Added in Kannada',
     desc: 'The added words are highlighted with blue in Kannada verse (another name for it is turquoise).',
-    bg: '#e0f2fe',
-    border: '#7dd3fc',
-    color: '#0369a1'
+    bg: 'rgba(56, 189, 248, 0.1)',
+    border: 'rgba(56, 189, 248, 0.35)',
+    color: '#38bdf8'
   },
   {
     name: 'Pink Highlight',
     meaning: 'Corrected Kannada Words',
     desc: 'The corrected Kannada words are highlighted with pink.',
-    bg: '#fce7f3',
-    border: '#f472b6',
-    color: '#9d174d'
+    bg: 'rgba(244, 114, 182, 0.1)',
+    border: 'rgba(244, 114, 182, 0.35)',
+    color: '#f472b6'
   },
   {
     name: 'Grey Highlight',
     meaning: 'Italicized Words in KJB',
     desc: 'The Italicized words to be highlighted with grey in Kannada & English.',
-    bg: '#f1f5f9',
-    border: '#cbd5e1',
-    color: '#475569'
+    bg: 'rgba(148, 163, 184, 0.1)',
+    border: 'rgba(148, 163, 184, 0.35)',
+    color: '#cbd5e1'
   },
   {
     name: 'Green Highlight',
     meaning: 'Incorrect Kannada Word',
     desc: 'Incorrect Kannada word to be highlighted with green.',
-    bg: '#dcfce7',
-    border: '#86efac',
-    color: '#166534'
+    bg: 'rgba(16, 185, 129, 0.1)',
+    border: 'rgba(16, 185, 129, 0.35)',
+    color: '#10b981'
   }
 ];
 
@@ -91,8 +91,15 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
   // Scroll Lock: Lock background body and main container scroll when drawer is open
   useEffect(() => {
     if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    const originalTouchAction = document.body.style.touchAction;
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
     document.body.classList.add('assistant-drawer-open');
+
     return () => {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.touchAction = originalTouchAction;
       document.body.classList.remove('assistant-drawer-open');
     };
   }, [isOpen]);
@@ -256,24 +263,26 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
 
   return (
     <div
+      className="smart-assistant-backdrop"
       style={{
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
         display: 'flex',
         justifyContent: 'flex-end',
-        backgroundColor: 'rgba(15, 23, 42, 0.45)',
-        backdropFilter: 'blur(3px)',
-        touchAction: 'none'
+        backgroundColor: 'rgba(15, 23, 42, 0.65)',
+        backdropFilter: 'blur(4px)'
       }}
       onClick={onClose}
       onWheel={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
+        if (e.target === e.currentTarget) {
+          e.preventDefault();
+        }
       }}
       onTouchMove={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
+        if (e.target === e.currentTarget) {
+          e.preventDefault();
+        }
       }}
     >
       <div
@@ -282,26 +291,28 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
           width: '100%',
           maxWidth: '500px',
           height: '100%',
-          background: 'var(--theme-card-bg, #ffffff)',
-          color: 'var(--theme-text, #0f172a)',
-          boxShadow: '-4px 0 25px rgba(0, 0, 0, 0.25)',
+          background: 'var(--theme-card-bg, #0f172a)',
+          color: 'var(--theme-text, #f8fafc)',
+          boxShadow: '-4px 0 25px rgba(0, 0, 0, 0.4)',
           display: 'flex',
           flexDirection: 'column',
           animation: 'slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
         }}
         onClick={(e) => e.stopPropagation()}
         onWheel={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
       >
         {/* Header: Smart Assistant / Romans X:Y */}
         <div
           style={{
-            padding: '1.125rem 1.25rem',
-            background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)',
-            color: '#ffffff',
+            padding: '0.85rem 1rem',
+            background: 'var(--theme-box-bg, #142037)',
+            color: 'var(--theme-text)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderBottom: '1px solid #3730a3'
+            borderBottom: '1px solid var(--theme-border, #1e293b)',
+            flexShrink: 0
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
@@ -310,20 +321,20 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                 width: '32px',
                 height: '32px',
                 borderRadius: '8px',
-                backgroundColor: 'rgba(192, 132, 252, 0.2)',
-                border: '1px solid rgba(192, 132, 252, 0.4)',
+                backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                border: '1px solid rgba(56, 189, 248, 0.3)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
               }}
             >
-              <Sparkles size={18} color="#e9d5ff" />
+              <Sparkles size={17} color="#38bdf8" />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, letterSpacing: '-0.01em' }}>
+              <h3 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 800, letterSpacing: '-0.01em', color: 'var(--theme-text)' }}>
                 Smart Assistant
               </h3>
-              <span style={{ fontSize: '0.75rem', color: '#c7d2fe' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--theme-text-muted)' }}>
                 {currentBook} {verse.chapter}:{verse.verseNumber}
               </span>
             </div>
@@ -331,19 +342,20 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
           <button
             onClick={onClose}
             style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#c7d2fe',
+              backgroundColor: 'var(--theme-card-bg, #0f172a)',
+              border: '1px solid var(--theme-border, #334155)',
+              color: 'var(--theme-text)',
               cursor: 'pointer',
-              padding: '0.25rem',
+              padding: '0.35rem',
               borderRadius: '0.375rem',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              transition: 'all 0.15s ease'
             }}
             aria-label="Close assistant"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
@@ -351,30 +363,32 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
         <div
           style={{
             display: 'flex',
-            borderBottom: '1px solid var(--theme-border, #e2e8f0)',
-            background: 'var(--theme-box-bg, #f8fafc)',
-            padding: '0 0.5rem'
+            borderBottom: '1px solid var(--theme-border, #1e293b)',
+            background: 'var(--theme-box-bg, #142037)',
+            padding: '0 0.5rem',
+            flexShrink: 0
           }}
         >
           <button
             onClick={() => setActiveTab('diagnostic')}
             style={{
               flex: 1,
-              padding: '0.75rem 0.5rem',
+              padding: '0.65rem 0.35rem',
               border: 'none',
               background: 'transparent',
-              borderBottom: activeTab === 'diagnostic' ? '2px solid #4f46e5' : '2px solid transparent',
-              color: activeTab === 'diagnostic' ? '#4f46e5' : 'var(--theme-text-muted, #64748b)',
+              borderBottom: activeTab === 'diagnostic' ? '2px solid #38bdf8' : '2px solid transparent',
+              color: activeTab === 'diagnostic' ? '#38bdf8' : 'var(--theme-text-muted)',
               fontWeight: activeTab === 'diagnostic' ? 700 : 500,
               fontSize: '0.75rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '0.35rem'
+              gap: '0.3rem',
+              transition: 'all 0.15s ease'
             }}
           >
-            <Zap size={14} />
+            <Zap size={13} />
             <span>Diagnostic</span>
           </button>
 
@@ -382,21 +396,22 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
             onClick={() => setActiveTab('lexicon')}
             style={{
               flex: 1,
-              padding: '0.75rem 0.5rem',
+              padding: '0.65rem 0.35rem',
               border: 'none',
               background: 'transparent',
-              borderBottom: activeTab === 'lexicon' ? '2px solid #4f46e5' : '2px solid transparent',
-              color: activeTab === 'lexicon' ? '#4f46e5' : 'var(--theme-text-muted, #64748b)',
+              borderBottom: activeTab === 'lexicon' ? '2px solid #38bdf8' : '2px solid transparent',
+              color: activeTab === 'lexicon' ? '#38bdf8' : 'var(--theme-text-muted)',
               fontWeight: activeTab === 'lexicon' ? 700 : 500,
               fontSize: '0.75rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '0.35rem'
+              gap: '0.3rem',
+              transition: 'all 0.15s ease'
             }}
           >
-            <BookOpen size={14} />
+            <BookOpen size={13} />
             <span>Greek &amp; KJV</span>
           </button>
 
@@ -404,63 +419,75 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
             onClick={() => setActiveTab('guidance')}
             style={{
               flex: 1,
-              padding: '0.75rem 0.5rem',
+              padding: '0.65rem 0.35rem',
               border: 'none',
               background: 'transparent',
-              borderBottom: activeTab === 'guidance' ? '2px solid #4f46e5' : '2px solid transparent',
-              color: activeTab === 'guidance' ? '#4f46e5' : 'var(--theme-text-muted, #64748b)',
+              borderBottom: activeTab === 'guidance' ? '2px solid #38bdf8' : '2px solid transparent',
+              color: activeTab === 'guidance' ? '#38bdf8' : 'var(--theme-text-muted)',
               fontWeight: activeTab === 'guidance' ? 700 : 500,
               fontSize: '0.75rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '0.35rem'
+              gap: '0.3rem',
+              transition: 'all 0.15s ease'
             }}
           >
-            <BookmarkCheck size={14} />
-            <span>Kannada Rules</span>
+            <BookmarkCheck size={13} />
+            <span>Rules</span>
           </button>
 
           <button
             onClick={() => setActiveTab('milestones')}
             style={{
               flex: 1,
-              padding: '0.75rem 0.5rem',
+              padding: '0.65rem 0.35rem',
               border: 'none',
               background: 'transparent',
-              borderBottom: activeTab === 'milestones' ? '2px solid #4f46e5' : '2px solid transparent',
-              color: activeTab === 'milestones' ? '#4f46e5' : 'var(--theme-text-muted, #64748b)',
+              borderBottom: activeTab === 'milestones' ? '2px solid #38bdf8' : '2px solid transparent',
+              color: activeTab === 'milestones' ? '#38bdf8' : 'var(--theme-text-muted)',
               fontWeight: activeTab === 'milestones' ? 700 : 500,
               fontSize: '0.75rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '0.35rem'
+              gap: '0.3rem',
+              transition: 'all 0.15s ease'
             }}
           >
-            <Award size={14} />
+            <Award size={13} />
             <span>Progress</span>
           </button>
         </div>
 
         {/* Tab Body */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '1.25rem', scrollbarWidth: 'thin', background: 'var(--theme-canvas-bg)' }}>
+        <div
+          className="smart-assistant-body"
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: '1.25rem',
+            scrollbarWidth: 'thin',
+            background: 'var(--theme-canvas-bg)',
+            WebkitOverflowScrolling: 'touch',
+            touchAction: 'pan-y'
+          }}
+        >
           {/* TAB 1: DIAGNOSTIC & CURRENT VERSE STATUS */}
           {activeTab === 'diagnostic' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
               {/* Primary Diagnostic Banner */}
               <div
                 style={{
-                  padding: '1rem',
-                  borderRadius: '0.625rem',
-                  background: 'var(--theme-card-bg, #ffffff)',
-                  border: '1px solid var(--theme-border, #e2e8f0)',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+                  padding: '0.85rem 1rem',
+                  borderRadius: '0.5rem',
+                  background: 'var(--theme-card-bg, #0f172a)',
+                  border: '1px solid var(--theme-border, #1e293b)'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
                   <span
                     style={{
                       width: '8px',
@@ -471,12 +498,12 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                           ? '#10b981'
                           : diagnostic.statusType === 'amber'
                             ? '#f59e0b'
-                            : '#3b82f6'
+                            : '#38bdf8'
                     }}
                   />
-                  <b style={{ fontSize: '0.875rem', color: 'var(--theme-text, #0f172a)' }}>{diagnostic.title}</b>
+                  <b style={{ fontSize: '0.875rem', color: 'var(--theme-text)' }}>{diagnostic.title}</b>
                 </div>
-                <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--theme-text-muted, #475569)', lineHeight: 1.55 }}>
+                <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--theme-text-muted)', lineHeight: 1.55 }}>
                   {diagnostic.summary}
                 </p>
               </div>
@@ -484,17 +511,17 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
               {/* What Happens Next Card */}
               <div
                 style={{
-                  padding: '1rem',
-                  borderRadius: '0.625rem',
-                  background: 'rgba(59, 130, 246, 0.08)',
-                  border: '1px solid rgba(59, 130, 246, 0.25)'
+                  padding: '0.85rem 1rem',
+                  borderRadius: '0.5rem',
+                  background: 'rgba(56, 189, 248, 0.08)',
+                  border: '1px solid rgba(56, 189, 248, 0.25)'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.25rem' }}>
-                  <ChevronRight size={15} color="#2563eb" />
-                  <b style={{ fontSize: '0.8125rem', color: '#2563eb' }}>WHAT HAPPENS NEXT</b>
+                  <ChevronRight size={14} color="#38bdf8" />
+                  <b style={{ fontSize: '0.75rem', color: '#38bdf8', letterSpacing: '0.04em' }}>WHAT HAPPENS NEXT</b>
                 </div>
-                <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--theme-text, #1e3a8a)', lineHeight: 1.5 }}>
+                <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--theme-text)', lineHeight: 1.5 }}>
                   {diagnostic.nextStep}
                 </p>
               </div>
@@ -502,14 +529,14 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
               {/* Team Discipline Confirmation Status Table */}
               <div
                 style={{
-                  padding: '1rem',
-                  borderRadius: '0.625rem',
-                  background: 'var(--theme-card-bg, #ffffff)',
-                  border: '1px solid var(--theme-border, #e2e8f0)'
+                  padding: '0.85rem 1rem',
+                  borderRadius: '0.5rem',
+                  background: 'var(--theme-card-bg, #0f172a)',
+                  border: '1px solid var(--theme-border, #1e293b)'
                 }}
               >
-                <b style={{ fontSize: '0.8125rem', color: 'var(--theme-text, #0f172a)', display: 'block', marginBottom: '0.75rem' }}>
-                  DISCIPLINE CONFIRMATION STATUS
+                <b style={{ fontSize: '0.75rem', color: 'var(--theme-text-muted)', display: 'block', marginBottom: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Discipline Confirmation Status
                 </b>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   {[
@@ -525,27 +552,28 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '0.35rem',
-                        padding: '0.625rem 0.75rem',
+                        padding: '0.6rem 0.75rem',
                         borderRadius: '0.5rem',
-                        background: row.status.isFullyApproved ? 'rgba(16, 185, 129, 0.12)' : 'var(--theme-box-bg, #fafafa)',
-                        border: `1px solid ${row.status.isFullyApproved ? '#86efac' : 'var(--theme-border, #f1f5f9)'}`
+                        background: row.status.isFullyApproved ? 'rgba(16, 185, 129, 0.12)' : 'var(--theme-box-bg, #142037)',
+                        border: `1px solid ${row.status.isFullyApproved ? 'rgba(16, 185, 129, 0.3)' : 'var(--theme-border, #1e293b)'}`
                       }}
                     >
                       {/* Top line: Role label on left, Status badge on right */}
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--theme-text, #1e293b)' }}>{row.label}</span>
+                        <span style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--theme-text)' }}>{row.label}</span>
                         {row.status.isFullyApproved ? (
                           <span
                             style={{
                               fontSize: '0.6875rem',
                               fontWeight: 700,
                               padding: '0.15rem 0.45rem',
-                              borderRadius: '0.25rem',
-                              backgroundColor: '#dcfce7',
-                              color: '#166534'
+                              borderRadius: '9999px',
+                              backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                              color: '#10b981',
+                              border: '1px solid rgba(16, 185, 129, 0.3)'
                             }}
                           >
-                            ✓ Confirmed
+                            ● Confirmed
                           </span>
                         ) : (
                           <span
@@ -553,12 +581,13 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                               fontSize: '0.6875rem',
                               fontWeight: 700,
                               padding: '0.15rem 0.45rem',
-                              borderRadius: '0.25rem',
-                              backgroundColor: '#fef3c7',
-                              color: '#92400e'
+                              borderRadius: '9999px',
+                              backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                              color: '#38bdf8',
+                              border: '1px solid rgba(56, 189, 248, 0.3)'
                             }}
                           >
-                            ⏳ In Progress
+                            ○ In Progress
                           </span>
                         )}
                       </div>
@@ -573,8 +602,9 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                               fontWeight: 600,
                               padding: '0.15rem 0.45rem',
                               borderRadius: '0.25rem',
-                              backgroundColor: '#dcfce7',
-                              color: '#166534'
+                              backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                              color: '#10b981',
+                              border: '1px solid rgba(16, 185, 129, 0.25)'
                             }}
                           >
                             {m} ✓
@@ -585,14 +615,15 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                             key={m}
                             style={{
                               fontSize: '0.6875rem',
-                              fontWeight: 600,
+                              fontWeight: 500,
                               padding: '0.15rem 0.45rem',
                               borderRadius: '0.25rem',
-                              backgroundColor: '#fef3c7',
-                              color: '#92400e'
+                              backgroundColor: 'var(--theme-card-bg, #0f172a)',
+                              color: 'var(--theme-text-muted)',
+                              border: '1px solid var(--theme-border, #334155)'
                             }}
                           >
-                            {m} ⏳
+                            {m}
                           </span>
                         ))}
                       </div>
@@ -605,7 +636,7 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
 
           {/* TAB 2: GREEK LEXICON & KJV TOOLS */}
           {activeTab === 'lexicon' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
               {/* Reference Version Selector Dropdown */}
               <div
                 style={{
@@ -614,13 +645,13 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                   justifyContent: 'space-between',
                   padding: '0.625rem 0.875rem',
                   borderRadius: '0.5rem',
-                  background: 'var(--theme-card-bg, #f1f5f9)',
-                  border: '1px solid var(--theme-border, #e2e8f0)'
+                  background: 'var(--theme-box-bg, #142037)',
+                  border: '1px solid var(--theme-border, #1e293b)'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <BookOpen size={15} color="#2563eb" />
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--theme-text, #1e293b)' }}>
+                  <BookOpen size={15} color="#38bdf8" />
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--theme-text)' }}>
                     Reference Version:
                   </span>
                 </div>
@@ -630,11 +661,11 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                   style={{
                     padding: '0.35rem 0.65rem',
                     borderRadius: '0.375rem',
-                    border: '1px solid var(--theme-border, #cbd5e1)',
-                    background: 'var(--theme-input-bg, #ffffff)',
+                    border: '1px solid var(--theme-border, #334155)',
+                    background: 'var(--theme-card-bg, #0f172a)',
                     fontSize: '0.8125rem',
                     fontWeight: 600,
-                    color: 'var(--theme-text, #0f172a)',
+                    color: 'var(--theme-text)',
                     cursor: 'pointer'
                   }}
                 >
@@ -646,7 +677,7 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
               <div style={{ position: 'relative' }}>
                 <Search
                   size={15}
-                  color="var(--theme-text-muted, #94a3b8)"
+                  color="var(--theme-text-muted)"
                   style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }}
                 />
                 <input
@@ -658,9 +689,9 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                     width: '100%',
                     padding: '0.5rem 0.75rem 0.5rem 2.25rem',
                     borderRadius: '0.5rem',
-                    border: '1px solid var(--theme-border, #cbd5e1)',
-                    background: 'var(--theme-input-bg, #ffffff)',
-                    color: 'var(--theme-text, #0f172a)',
+                    border: '1px solid var(--theme-border, #334155)',
+                    background: 'var(--theme-card-bg, #0f172a)',
+                    color: 'var(--theme-text)',
                     fontSize: '0.8125rem',
                     outline: 'none',
                     boxSizing: 'border-box'
@@ -671,18 +702,17 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
               {/* Old Kannada Reading Text Card */}
               <div
                 style={{
-                  padding: '1rem',
-                  borderRadius: '0.625rem',
-                  background: 'var(--theme-card-bg, #ffffff)',
-                  border: '1px solid var(--theme-border, #e2e8f0)',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+                  padding: '0.85rem 1rem',
+                  borderRadius: '0.5rem',
+                  background: 'var(--theme-card-bg, #0f172a)',
+                  border: '1px solid var(--theme-border, #1e293b)'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                  <b style={{ fontSize: '0.75rem', color: '#2563eb', letterSpacing: '0.04em' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                  <b style={{ fontSize: '0.75rem', color: '#38bdf8', letterSpacing: '0.04em' }}>
                     OLD KANNADA READING
                   </b>
-                  <span style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted, #64748b)' }}>
+                  <span style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted)' }}>
                     {currentBook} {verse.chapter}:{verse.verseNumber}
                   </span>
                 </div>
@@ -691,7 +721,7 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                     margin: 0,
                     fontSize: '1.05rem',
                     fontFamily: 'var(--font-kannada, "Noto Sans Kannada", sans-serif)',
-                    color: 'var(--theme-text, #0f172a)',
+                    color: 'var(--theme-text)',
                     lineHeight: 1.65
                   }}
                 >
@@ -702,14 +732,13 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
               {/* 1. Drafter's Kannada-English back-translation */}
               <div
                 style={{
-                  padding: '0.875rem',
-                  borderRadius: '0.625rem',
-                  background: 'var(--theme-card-bg, #ffffff)',
-                  border: '1px solid var(--theme-border, #e2e8f0)',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+                  padding: '0.85rem 1rem',
+                  borderRadius: '0.5rem',
+                  background: 'var(--theme-card-bg, #0f172a)',
+                  border: '1px solid var(--theme-border, #1e293b)'
                 }}
               >
-                <span style={{ fontSize: '0.75rem', color: 'var(--theme-text-muted, #64748b)', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--theme-text-muted)', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>
                   1. Drafter's Kannada-English back-translation
                 </span>
                 {filteredWordPairs.length > 0 ? (
@@ -722,29 +751,29 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                           flexDirection: 'column',
                           padding: '0.4rem 0.65rem',
                           borderRadius: '0.375rem',
-                          background: 'var(--theme-box-bg, #f8fafc)',
-                          border: '1px solid var(--theme-border, #e2e8f0)',
+                          background: 'var(--theme-box-bg, #142037)',
+                          border: '1px solid var(--theme-border, #1e293b)',
                           minWidth: '70px'
                         }}
                       >
                         {pair.kannadaHtml ? (
                           <span
                             lang="kn"
-                            style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--theme-text, #0f172a)' }}
+                            style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--theme-text)' }}
                             dangerouslySetInnerHTML={{ __html: pair.kannadaHtml }}
                           />
                         ) : (
-                          <span lang="kn" style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--theme-text, #0f172a)' }}>
+                          <span lang="kn" style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--theme-text)' }}>
                             {pair.kannada}
                           </span>
                         )}
                         {pair.englishHtml ? (
                           <span
-                            style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted, #475569)', fontStyle: 'italic', marginTop: '0.15rem' }}
+                            style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted)', fontStyle: 'italic', marginTop: '0.15rem' }}
                             dangerouslySetInnerHTML={{ __html: pair.englishHtml }}
                           />
                         ) : (
-                          <span style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted, #475569)', fontStyle: 'italic', marginTop: '0.15rem' }}>
+                          <span style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted)', fontStyle: 'italic', marginTop: '0.15rem' }}>
                             {pair.english}
                           </span>
                         )}
@@ -780,9 +809,9 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                       style={{
                         padding: '0.75rem',
                         borderRadius: '0.5rem',
-                        background: 'var(--theme-card-bg, #ffffff)',
-                        border: '1px solid var(--theme-border, #e2e8f0)',
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
+                        background: 'var(--theme-card-bg, #0f172a)',
+                        border: '1px solid var(--theme-border, #1e293b)',
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.2)'
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
@@ -791,7 +820,7 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                             style={{
                               fontSize: '0.9375rem',
                               fontWeight: 700,
-                              color: 'var(--theme-text, #0f172a)'
+                              color: 'var(--theme-text, #f8fafc)'
                             }}
                           >
                             {word.text}
@@ -802,14 +831,14 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                                 fontSize: '1.05rem',
                                 fontWeight: 700,
                                 fontFamily: 'Georgia, serif',
-                                color: '#4f46e5'
+                                color: '#818cf8'
                               }}
                             >
                               {word.lemma}
                             </span>
                           )}
                           {word.translit && (
-                            <span style={{ fontSize: '0.75rem', color: 'var(--theme-text-muted, #64748b)', fontStyle: 'italic' }}>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--theme-text-muted, #94a3b8)', fontStyle: 'italic' }}>
                               ({word.translit})
                             </span>
                           )}
@@ -819,8 +848,8 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                             style={{
                               fontSize: '0.625rem',
                               fontWeight: 700,
-                              color: '#0369a1',
-                              backgroundColor: '#e0f2fe',
+                              color: '#38bdf8',
+                              backgroundColor: 'rgba(56, 189, 248, 0.15)',
                               padding: '0.1rem 0.35rem',
                               borderRadius: '0.25rem'
                             }}
@@ -832,8 +861,8 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                               style={{
                                 fontSize: '0.6875rem',
                                 fontWeight: 700,
-                                color: '#4338ca',
-                                backgroundColor: '#e0e7ff',
+                                color: '#a5b4fc',
+                                backgroundColor: 'rgba(99, 102, 241, 0.15)',
                                 padding: '0.1rem 0.4rem',
                                 borderRadius: '0.25rem'
                               }}
@@ -846,17 +875,17 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
 
                       {/* Definition */}
                       {word.definition ? (
-                        <div style={{ fontSize: '0.75rem', color: 'var(--theme-text, #475569)', lineHeight: 1.45, marginTop: '0.2rem' }}>
-                          <b style={{ color: 'var(--theme-text-muted, #64748b)', fontSize: '0.6875rem' }}>Definition: </b>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--theme-text, #cbd5e1)', lineHeight: 1.45, marginTop: '0.2rem' }}>
+                          <b style={{ color: 'var(--theme-text-muted, #94a3b8)', fontSize: '0.6875rem' }}>Definition: </b>
                           <span>{word.definition}</span>
                         </div>
                       ) : null}
 
                       {/* KJV Gloss / Renderings */}
                       {word.kjvGloss ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: 'var(--theme-text, #0f172a)', marginTop: '0.2rem' }}>
-                          <b style={{ color: 'var(--theme-text-muted, #64748b)', fontSize: '0.6875rem' }}>KJV Renderings: </b>
-                          <span style={{ fontWeight: 600, color: 'var(--theme-text, #1e293b)' }}>{word.kjvGloss}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: 'var(--theme-text, #f8fafc)', marginTop: '0.2rem' }}>
+                          <b style={{ color: 'var(--theme-text-muted, #94a3b8)', fontSize: '0.6875rem' }}>KJV Renderings: </b>
+                          <span style={{ fontWeight: 600, color: 'var(--theme-text, #e2e8f0)' }}>{word.kjvGloss}</span>
                         </div>
                       ) : null}
                     </div>
@@ -873,15 +902,15 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                 style={{
                   padding: '0.75rem 0.875rem',
                   borderRadius: '0.5rem',
-                  backgroundColor: '#f0fdf4',
-                  border: '1px solid #bbf7d0',
+                  backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                  border: '1px solid rgba(16, 185, 129, 0.25)',
                   fontSize: '0.75rem',
-                  color: '#166534',
+                  color: 'var(--theme-text, #e2e8f0)',
                   lineHeight: 1.5,
                   marginTop: '0.25rem'
                 }}
               >
-                <b>3. Translational Guidance:</b> Kannada lexical suggestions and interlinear aids are provided to reduce translational burden; final review and doctrinal rendering rest with the translation committee.
+                <b style={{ color: '#10b981' }}>3. Translational Guidance:</b> Kannada lexical suggestions and interlinear aids are provided to reduce translational burden; final review and doctrinal rendering rest with the translation committee.
               </div>
             </div>
           )}
@@ -903,7 +932,7 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                     <b style={{ fontSize: '0.8125rem', color: rule.color }}>{rule.name}</b>
                     <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: rule.color }}>{rule.meaning}</span>
                   </div>
-                  <p style={{ margin: 0, fontSize: '0.75rem', color: rule.color, lineHeight: 1.45, opacity: 0.95 }}>
+                  <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--theme-text, #cbd5e1)', lineHeight: 1.45 }}>
                     "{rule.desc}"
                   </p>
                 </div>
@@ -919,23 +948,23 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                 style={{
                   padding: '1rem',
                   borderRadius: '0.625rem',
-                  background: 'var(--theme-card-bg, #ffffff)',
-                  border: '1px solid var(--theme-border, #e2e8f0)',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+                  background: 'var(--theme-card-bg, #0f172a)',
+                  border: '1px solid var(--theme-border, #1e293b)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                  <b style={{ fontSize: '0.9375rem', color: 'var(--theme-text, #0f172a)' }}>
+                  <b style={{ fontSize: '0.9375rem', color: 'var(--theme-text, #f8fafc)' }}>
                     {currentBook} Chapter {verse.chapter} Milestone
                   </b>
-                  <span style={{ fontSize: '0.875rem', fontWeight: 800, color: '#4f46e5' }}>{chapterPercent}%</span>
+                  <span style={{ fontSize: '0.875rem', fontWeight: 800, color: '#38bdf8' }}>{chapterPercent}%</span>
                 </div>
                 <div
                   style={{
                     height: '6px',
                     width: '100%',
                     borderRadius: '9999px',
-                    backgroundColor: 'var(--theme-box-bg, #e2e8f0)',
+                    backgroundColor: 'var(--theme-box-bg, #142037)',
                     overflow: 'hidden',
                     marginBottom: '0.5rem'
                   }}
@@ -944,13 +973,13 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                     style={{
                       width: `${chapterPercent}%`,
                       height: '100%',
-                      backgroundColor: '#4f46e5',
+                      backgroundColor: '#38bdf8',
                       borderRadius: '9999px',
                       transition: 'width 0.4s ease'
                     }}
                   />
                 </div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--theme-text-muted, #64748b)' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--theme-text-muted, #94a3b8)' }}>
                   {chapterCompleted} of {chapterTotal} verses finalized and published.
                 </span>
               </div>
@@ -967,30 +996,30 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                   style={{
                     padding: '0.75rem',
                     borderRadius: '0.5rem',
-                    backgroundColor: '#eff6ff',
-                    border: '1px solid #bfdbfe'
+                    backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                    border: '1px solid rgba(56, 189, 248, 0.25)'
                   }}
                 >
-                  <span style={{ fontSize: '0.6875rem', color: '#1d4ed8', fontWeight: 600, display: 'block' }}>
+                  <span style={{ fontSize: '0.6875rem', color: '#38bdf8', fontWeight: 600, display: 'block' }}>
                     AWAITING COMMITTEE
                   </span>
-                  <b style={{ fontSize: '1.25rem', color: '#1e40af' }}>{awaitingCommitteeCount}</b>
-                  <span style={{ fontSize: '0.6875rem', color: '#3b82f6', display: 'block' }}>verses ready</span>
+                  <b style={{ fontSize: '1.25rem', color: '#7dd3fc' }}>{awaitingCommitteeCount}</b>
+                  <span style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted, #94a3b8)', display: 'block' }}>verses ready</span>
                 </div>
 
                 <div
                   style={{
                     padding: '0.75rem',
                     borderRadius: '0.5rem',
-                    backgroundColor: '#fdf2f8',
-                    border: '1px solid #fbcfe8'
+                    backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                    border: '1px solid rgba(236, 72, 153, 0.25)'
                   }}
                 >
-                  <span style={{ fontSize: '0.6875rem', color: '#be185d', fontWeight: 600, display: 'block' }}>
+                  <span style={{ fontSize: '0.6875rem', color: '#f472b6', fontWeight: 600, display: 'block' }}>
                     AWAITING FINAL
                   </span>
-                  <b style={{ fontSize: '1.25rem', color: '#9d174d' }}>{awaitingFinalCount}</b>
-                  <span style={{ fontSize: '0.6875rem', color: '#ec4899', display: 'block' }}>verses ready</span>
+                  <b style={{ fontSize: '1.25rem', color: '#fbcfe8' }}>{awaitingFinalCount}</b>
+                  <span style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted, #94a3b8)', display: 'block' }}>verses ready</span>
                 </div>
               </div>
 
@@ -999,15 +1028,15 @@ export const SmartAssistantDrawer: React.FC<SmartAssistantDrawerProps> = ({
                 style={{
                   padding: '1rem',
                   borderRadius: '0.625rem',
-                  backgroundColor: '#f0fdf4',
-                  border: '1px solid #bbf7d0'
+                  backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                  border: '1px solid rgba(16, 185, 129, 0.25)'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                  <Award size={18} color="#15803d" />
-                  <b style={{ fontSize: '0.8125rem', color: '#166534' }}>TEAM MOMENTUM APPRECIATIONS</b>
+                  <Award size={18} color="#10b981" />
+                  <b style={{ fontSize: '0.8125rem', color: '#10b981' }}>TEAM MOMENTUM APPRECIATIONS</b>
                 </div>
-                <div style={{ fontSize: '0.75rem', color: '#14532d', lineHeight: 1.55 }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--theme-text, #e2e8f0)', lineHeight: 1.55 }}>
                   {dynamicAppreciation}
                 </div>
               </div>

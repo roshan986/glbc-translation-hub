@@ -23,7 +23,7 @@ import {
 import { extractDocxBlocks, groupBlocksIntoVerses, parsePastedText } from '../../services/docxParser';
 import { downloadDrafterTemplate } from '../../services/templateGenerator';
 import { getBookChaptersCount, CANONICAL_BOOKS } from '../../services/kjvService';
-import { getSmartInitials, getRoleAvatarColor } from '../../utils/userUtils';
+import { getSmartInitials, getRoleAvatarColor, getRoleAvatarHex } from '../../utils/userUtils';
 import { showToast } from '../../utils/toast';
 import { calculatePacingStats } from '../../utils/pacingEngine';
 import { ALL_ROLES, type SettingsSubTab } from '../SettingsView';
@@ -698,40 +698,57 @@ export const TabletSettingsView: React.FC<TabletSettingsViewProps> = ({
               >
                 <div>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0, flex: 1 }}>
                       <div style={{
                         width: '2.5rem',
                         height: '2.5rem',
                         borderRadius: '50%',
-                        backgroundColor: getRoleAvatarColor(member.roles[0] || 'Drafter'),
+                        backgroundColor: getRoleAvatarHex(member.roles[0] || 'Drafter'),
                         color: '#ffffff',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontWeight: 800,
-                        fontSize: '0.875rem'
+                        fontSize: '0.875rem',
+                        flexShrink: 0,
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.15)'
                       }}>
                         {getSmartInitials(member.name)}
                       </div>
-                      <div>
-                        <div style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--theme-text)' }}>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: '0.9375rem', fontWeight: 800, color: 'var(--theme-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {member.name}
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--theme-text-muted)' }}>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--theme-text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {member.email || 'No Google Email set'}
                         </div>
                       </div>
                     </div>
 
-                    <span style={{
-                      fontSize: '0.6875rem',
-                      fontWeight: 700,
-                      padding: '0.15rem 0.45rem',
-                      borderRadius: '9999px',
-                      backgroundColor: member.active ? 'rgba(16, 185, 129, 0.15)' : 'rgba(148, 163, 184, 0.2)',
-                      color: member.active ? '#10b981' : '#64748b'
-                    }}>
-                      {member.active ? 'Active' : 'Inactive'}
+                    <span
+                      title={member.active ? 'Active in workflow' : 'Inactive'}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '22px',
+                        height: '22px',
+                        borderRadius: '50%',
+                        backgroundColor: member.active ? 'rgba(16, 185, 129, 0.15)' : 'rgba(148, 163, 184, 0.15)',
+                        color: member.active ? '#10b981' : '#94a3b8',
+                        border: `1px solid ${member.active ? 'rgba(16, 185, 129, 0.35)' : 'rgba(148, 163, 184, 0.3)'}`,
+                        flexShrink: 0
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: '7px',
+                          height: '7px',
+                          borderRadius: '50%',
+                          backgroundColor: member.active ? '#10b981' : '#94a3b8',
+                          boxShadow: member.active ? '0 0 6px rgba(16, 185, 129, 0.7)' : 'none'
+                        }}
+                      />
                     </span>
                   </div>
 

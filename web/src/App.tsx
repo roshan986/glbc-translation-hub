@@ -711,6 +711,9 @@ export const App: React.FC = () => {
                 onNavigateTab={setActiveTab}
                 onApproveConsensus={handleApproveConsensus}
                 onSubmitFinal={(row, finalReading) => handleSubmitFinal(row, finalReading, 'Y')}
+                onSelectUserRole={(newRole) => {
+                  setCurrentUser((u) => u ? { ...u, role: newRole } : null);
+                }}
               />
             ) : isTablet ? (
               <TabletFocusView
@@ -740,6 +743,9 @@ export const App: React.FC = () => {
                 onNavigateTab={setActiveTab}
                 onApproveConsensus={handleApproveConsensus}
                 onSubmitFinal={(row, finalReading) => handleSubmitFinal(row, finalReading, 'Y')}
+                onSelectUserRole={(newRole) => {
+                  setCurrentUser((u) => u ? { ...u, role: newRole } : null);
+                }}
               />
             ) : (
               <FocusModeCard

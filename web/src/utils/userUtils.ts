@@ -42,6 +42,22 @@ export function getRoleAvatarColor(roleDisplay?: string): string {
 }
 
 /**
+ * Maps a role display string or role title to a vibrant, high-contrast hex color.
+ * Safe for inline style `backgroundColor` across all cards and avatars.
+ */
+export function getRoleAvatarHex(roleDisplay?: string): string {
+  const r = (roleDisplay || '').toLowerCase();
+  if (r.includes('theo')) return '#7c3aed';
+  if (r.includes('ortho')) return '#4f46e5';
+  if (r.includes('style') || r.includes('lang')) return '#0d9488';
+  if (r.includes('tech')) return '#0284c7';
+  if (r.includes('comm')) return '#d97706';
+  if (r.includes('final')) return '#e11d48';
+  if (r.includes('draft')) return '#059669';
+  return '#2563eb';
+}
+
+/**
  * Accurately determines if a comment was authored by the currently logged-in user.
  * Compares exact names or honorific-stripped names (e.g. "Pastor Zack" vs "Zack").
  */

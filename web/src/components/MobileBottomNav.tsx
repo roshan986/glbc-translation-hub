@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Eye,
   BarChart3,
@@ -8,8 +8,6 @@ import {
   BookOpen,
   HelpCircle,
   Palette,
-  Sparkles,
-  TrendingUp,
   Users,
   ChevronDown,
   ChevronRight
@@ -56,6 +54,21 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   const [showMenuSheet, setShowMenuSheet] = useState(false);
   const [reviewersExpanded, setReviewersExpanded] = useState(true);
   const [committeeExpanded, setCommitteeExpanded] = useState(true);
+
+  // Prevent background scrolling while Menu Drawer is open
+  useEffect(() => {
+    if (showMenuSheet) {
+      const originalOverflow = document.body.style.overflow;
+      const originalTouchAction = document.body.style.touchAction;
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+        document.body.style.touchAction = originalTouchAction;
+      };
+    }
+  }, [showMenuSheet]);
 
   const themeOptions: { id: BgTheme; label: string; swatch: string }[] = [
     { id: 'default', label: 'Default Slate', swatch: '#f8fafc' },
@@ -104,6 +117,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           {/* 1. Focus Mode Tab */}
           <button
             type="button"
+            className="mobile-nav-btn"
             onClick={() => onTabChange('focus')}
             style={{
               flex: 1,
@@ -114,6 +128,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               gap: '0.2rem',
               background: 'none',
               border: 'none',
+              outline: 'none',
+              WebkitTapHighlightColor: 'transparent',
               cursor: 'pointer',
               color: activeTab === 'focus' ? 'var(--theme-accent, #2563eb)' : 'var(--theme-text-muted, #64748b)',
               position: 'relative'
@@ -142,6 +158,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           {/* 2. Analytics Tab */}
           <button
             type="button"
+            className="mobile-nav-btn"
             onClick={() => onTabChange('analytics')}
             style={{
               flex: 1,
@@ -152,6 +169,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               gap: '0.2rem',
               background: 'none',
               border: 'none',
+              outline: 'none',
+              WebkitTapHighlightColor: 'transparent',
               cursor: 'pointer',
               color: activeTab === 'analytics' ? 'var(--theme-accent, #2563eb)' : 'var(--theme-text-muted, #64748b)'
             }}
@@ -165,6 +184,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           {/* 3. Settings Hub Tab */}
           <button
             type="button"
+            className="mobile-nav-btn"
             onClick={() => onTabChange('settings')}
             style={{
               flex: 1,
@@ -175,6 +195,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               gap: '0.2rem',
               background: 'none',
               border: 'none',
+              outline: 'none',
+              WebkitTapHighlightColor: 'transparent',
               cursor: 'pointer',
               color: activeTab === 'settings' ? 'var(--theme-accent, #2563eb)' : 'var(--theme-text-muted, #64748b)'
             }}
@@ -188,6 +210,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
           {/* 4. Slide-Up More Menu */}
           <button
             type="button"
+            className="mobile-nav-btn"
             onClick={() => setShowMenuSheet(true)}
             style={{
               flex: 1,
@@ -198,6 +221,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
               gap: '0.2rem',
               background: 'none',
               border: 'none',
+              outline: 'none',
+              WebkitTapHighlightColor: 'transparent',
               cursor: 'pointer',
               color: showMenuSheet ? 'var(--theme-accent, #2563eb)' : 'var(--theme-text-muted, #64748b)'
             }}
@@ -208,17 +233,15 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         </div>
       </nav>
 
-      {/* ── Slide-Up Mobile Quick Menu Sheet ── */}
+      {/* ── Slide-In Mobile Sidebar Menu Drawer ── */}
       {showMenuSheet && (
         <div
           style={{
             position: 'fixed',
             inset: 0,
-            zIndex: 9999,
+            zIndex: 10000,
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-end',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backgroundColor: 'rgba(0, 0, 0, 0.65)',
             backdropFilter: 'blur(4px)',
             animation: 'fadeIn 0.15s ease-out'
           }}
@@ -226,32 +249,46 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         >
           <div
             style={{
-              backgroundColor: 'var(--theme-card-bg, #ffffff)',
-              borderTop: '1px solid var(--theme-border, #e2e8f0)',
-              borderRadius: '1.25rem 1.25rem 0 0',
-              padding: '1.25rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) 1.25rem',
-              boxShadow: '0 -8px 30px rgba(0, 0, 0, 0.25)',
-              maxHeight: '80vh',
-              overflowY: 'auto'
+              width: '85vw',
+              maxWidth: '340px',
+              height: '100%',
+              backgroundColor: 'var(--theme-card-bg, #0f172a)',
+              borderRight: '1px solid var(--theme-border, #1e293b)',
+              padding: '1.25rem 1rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) 1rem',
+              boxShadow: '10px 0 30px rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              flexDirection: 'column',
+              overflowY: 'auto',
+              animation: 'slideInLeft 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Grab Handle */}
+            {/* Header */}
             <div
               style={{
-                width: '36px',
-                height: '4px',
-                borderRadius: '2px',
-                backgroundColor: 'var(--theme-border, #cbd5e1)',
-                margin: '0 auto 1rem auto'
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '1rem',
+                paddingBottom: '0.75rem',
+                borderBottom: '1px solid var(--theme-border, #1e293b)',
+                flexShrink: 0
               }}
-            />
-
-            {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.875rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--theme-border, #e2e8f0)' }}>
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '0.375rem', backgroundColor: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
-                  <BookOpen size={16} />
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '0.5rem',
+                    backgroundColor: '#2563eb',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#ffffff'
+                  }}
+                >
+                  <BookOpen size={17} />
                 </div>
                 <div>
                   <h4 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 800, color: 'var(--theme-text)' }}>
@@ -259,7 +296,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                   </h4>
                   {currentUser && (
                     <span style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted)' }}>
-                      {currentUser.name} · <strong style={{ color: '#2563eb' }}>{currentUser.role}</strong>
+                      {currentUser.name} · <strong style={{ color: '#38bdf8' }}>{currentUser.role}</strong>
                     </span>
                   )}
                 </div>
@@ -268,14 +305,20 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 type="button"
                 onClick={() => setShowMenuSheet(false)}
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--theme-text-muted)',
+                  backgroundColor: 'var(--theme-box-bg, #142037)',
+                  border: '1px solid var(--theme-border, #334155)',
+                  color: 'var(--theme-text)',
                   cursor: 'pointer',
-                  padding: '0.25rem'
+                  padding: '0.35rem',
+                  borderRadius: '0.375rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.15s ease'
                 }}
+                aria-label="Close menu drawer"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
@@ -554,58 +597,6 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 
             {/* Quick Actions List */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {onOpenAssistant && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowMenuSheet(false);
-                    onOpenAssistant();
-                  }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.75rem',
-                    padding: '0.65rem 0.75rem',
-                    borderRadius: '0.5rem',
-                    backgroundColor: 'var(--theme-box-bg, #f8fafc)',
-                    border: '1px solid var(--theme-border, #e2e8f0)',
-                    color: 'var(--theme-text)',
-                    fontSize: '0.8125rem',
-                    fontWeight: 600,
-                    cursor: 'pointer'
-                  }}
-                >
-                  <Sparkles size={16} color="#9333ea" />
-                  <span>Open Smart Translation Assistant</span>
-                </button>
-              )}
-
-              {onToggleFloatingProgress && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowMenuSheet(false);
-                    onToggleFloatingProgress();
-                  }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.75rem',
-                    padding: '0.65rem 0.75rem',
-                    borderRadius: '0.5rem',
-                    backgroundColor: 'var(--theme-box-bg, #f8fafc)',
-                    border: '1px solid var(--theme-border, #e2e8f0)',
-                    color: 'var(--theme-text)',
-                    fontSize: '0.8125rem',
-                    fontWeight: 600,
-                    cursor: 'pointer'
-                  }}
-                >
-                  <TrendingUp size={16} color="#059669" />
-                  <span>Toggle Live Book Progress Bar</span>
-                </button>
-              )}
-
               <button
                 type="button"
                 onClick={() => {
@@ -618,8 +609,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                   gap: '0.75rem',
                   padding: '0.65rem 0.75rem',
                   borderRadius: '0.5rem',
-                  backgroundColor: 'var(--theme-box-bg, #f8fafc)',
-                  border: '1px solid var(--theme-border, #e2e8f0)',
+                  backgroundColor: 'var(--theme-box-bg, #142037)',
+                  border: '1px solid var(--theme-border, #334155)',
                   color: 'var(--theme-text)',
                   fontSize: '0.8125rem',
                   fontWeight: 600,

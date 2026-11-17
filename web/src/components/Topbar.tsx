@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, HelpCircle, ChevronDown, Sparkles, Users } from 'lucide-react';
+import { BookOpen, HelpCircle, ChevronDown, Sparkles, Users, Database } from 'lucide-react';
 import type { TeamMember } from '../types';
 import { getBookTotalVerses } from '../services/kjvService';
 import { getSmartInitials, getRoleAvatarColor } from '../utils/userUtils';
@@ -93,18 +93,23 @@ export const Topbar: React.FC<TopbarProps> = ({
             cursor: 'pointer',
             transition: 'all 0.15s ease'
           }}
-          title="Google Sheet Connection Status (Click to configure)"
+          title={isLiveConnected ? 'Live Google Sheet Connected (Click to configure)' : 'Demo Mode (Click to connect Live Sheet)'}
         >
           <span
+            className="live-status-dot"
             style={{
               width: '0.45rem',
               height: '0.45rem',
               borderRadius: '9999px',
               backgroundColor: isLiveConnected ? '#10b981' : '#f59e0b',
-              boxShadow: isLiveConnected ? '0 0 6px rgba(16, 185, 129, 0.6)' : 'none'
+              boxShadow: isLiveConnected ? '0 0 6px rgba(16, 185, 129, 0.6)' : 'none',
+              flexShrink: 0
             }}
           />
-          <span>{isLiveConnected ? 'Live Sheet Connected' : 'Demo Mode (Click to Connect)'}</span>
+          <Database size={13} style={{ flexShrink: 0 }} />
+          <span className="live-status-text">
+            {isLiveConnected ? 'Live Sheet Connected' : 'Demo Mode (Click to Connect)'}
+          </span>
         </button>
       </div>
 
@@ -133,10 +138,10 @@ export const Topbar: React.FC<TopbarProps> = ({
         title="Change Book or Chapter (Click to open picker)"
       >
         <BookOpen size={16} color="#38bdf8" />
-        <span style={{ fontWeight: 700, fontSize: '0.875rem', color: '#ffffff' }}>
+        <span className="book-name-text" style={{ fontWeight: 700, fontSize: '0.875rem', color: '#ffffff' }}>
           {currentBook}
         </span>
-        <span className="book-count" style={{ fontSize: '0.75rem', color: '#94a3b8', backgroundColor: '#0f172a', padding: '0.125rem 0.45rem', borderRadius: '0.25rem' }}>
+        <span className="book-count desktop-only" style={{ fontSize: '0.75rem', color: '#94a3b8', backgroundColor: '#0f172a', padding: '0.125rem 0.45rem', borderRadius: '0.25rem' }}>
           {totalVerses || getBookTotalVerses(currentBook)} verses
         </span>
         <ChevronDown size={14} color="#94a3b8" />
@@ -152,7 +157,7 @@ export const Topbar: React.FC<TopbarProps> = ({
             style={{ marginRight: '0.25rem' }}
           >
             <Sparkles size={13} color="#9333ea" />
-            <span>Smart Assistant</span>
+            <span className="assistant-btn-text">Smart Assistant</span>
           </button>
         )}
 
@@ -171,7 +176,7 @@ export const Topbar: React.FC<TopbarProps> = ({
           <button
             className="profile"
             onClick={() => setShowUserDropdown(!showUserDropdown)}
-            title="Switch Reviewer Persona"
+            title={`Switch Reviewer Persona (${currentUser.name} - ${currentUser.role})`}
           >
             <span className={`avatar ${currentUser.avatarColor || getRoleAvatarColor(currentUser.role)}`}>
               {currentUser.avatar || getSmartInitials(currentUser.name)}
@@ -185,7 +190,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                 )}
               </small>
             </span>
-            <ChevronDown size={14} />
+            <ChevronDown size={14} className="profile-chevron" />
           </button>
 
           {showUserDropdown && (
@@ -202,6 +207,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                 padding: '0.5rem',
                 zIndex: 50,
                 minWidth: '18rem',
+                maxWidth: 'calc(100vw - 1.25rem)',
                 maxHeight: '80vh',
                 overflowY: 'auto',
                 color: 'var(--theme-text)'

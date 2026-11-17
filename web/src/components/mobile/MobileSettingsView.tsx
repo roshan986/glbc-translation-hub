@@ -23,7 +23,7 @@ import {
 import { extractDocxBlocks, groupBlocksIntoVerses, parsePastedText } from '../../services/docxParser';
 import { downloadDrafterTemplate } from '../../services/templateGenerator';
 import { getBookChaptersCount, getBookTotalVerses, CANONICAL_BOOKS } from '../../services/kjvService';
-import { getSmartInitials, getRoleAvatarColor } from '../../utils/userUtils';
+import { getSmartInitials, getRoleAvatarColor, getRoleAvatarHex } from '../../utils/userUtils';
 import { showToast } from '../../utils/toast';
 import { calculatePacingStats } from '../../utils/pacingEngine';
 import { ALL_ROLES, type SettingsSubTab } from '../SettingsView';
@@ -393,36 +393,39 @@ export const MobileSettingsView: React.FC<MobileSettingsViewProps> = ({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', paddingBottom: '5.5rem' }}>
 
-      {/* ── 1. Mobile Topbar Header ── */}
+      {/* ── 1. Mobile Topbar Header (Spacious, Un-congested) ── */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0.625rem 0.875rem',
+        padding: '0.5rem 0.75rem',
         backgroundColor: 'var(--theme-card-bg, #ffffff)',
         borderRadius: '0.625rem',
         border: '1px solid var(--theme-border, #e2e8f0)',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)'
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+        gap: '0.5rem'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0, flex: 1 }}>
           <div style={{
-            width: '2rem',
-            height: '2rem',
+            width: '1.85rem',
+            height: '1.85rem',
             borderRadius: '0.375rem',
-            backgroundColor: '#0284c7',
-            color: '#ffffff',
+            backgroundColor: 'rgba(2, 132, 199, 0.12)',
+            color: '#0284c7',
+            border: '1px solid rgba(2, 132, 199, 0.25)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            flexShrink: 0
           }}>
-            <Sliders size={15} />
+            <Sliders size={14} />
           </div>
-          <div>
-            <h2 style={{ fontSize: '0.9375rem', fontWeight: 800, margin: 0, color: 'var(--theme-text)' }}>
-              Settings &amp; Admin Hub
+          <div style={{ minWidth: 0 }}>
+            <h2 style={{ fontSize: '0.875rem', fontWeight: 800, margin: 0, color: 'var(--theme-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              Settings Hub
             </h2>
-            <div style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted)' }}>
-              {currentBook} · Google Sheets master store
+            <div style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {currentBook} · Master Store
             </div>
           </div>
         </div>
@@ -434,14 +437,16 @@ export const MobileSettingsView: React.FC<MobileSettingsViewProps> = ({
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.3rem',
-            padding: '0.35rem 0.6rem',
+            padding: '0.35rem 0.65rem',
             backgroundColor: '#0284c7',
             color: '#ffffff',
             border: 'none',
             borderRadius: '0.375rem',
             fontSize: '0.75rem',
             fontWeight: 700,
-            cursor: 'pointer'
+            cursor: 'pointer',
+            flexShrink: 0,
+            boxShadow: '0 1px 2px rgba(2, 132, 199, 0.3)'
           }}
         >
           <BookOpen size={13} />
@@ -449,47 +454,49 @@ export const MobileSettingsView: React.FC<MobileSettingsViewProps> = ({
         </button>
       </div>
 
-      {/* ── 2. Top Segmented Subtab Navigation Bar (Horizontal Scroll) ── */}
-      <div className="segmented-pill-bar">
-        <button
-          type="button"
-          className={`segmented-pill ${activeSubTab === 'team' ? 'active' : ''}`}
-          onClick={() => setActiveSubTab('team')}
-        >
-          <Users size={13} />
-          <span>Team ({groupedTeam.length})</span>
-        </button>
-        <button
-          type="button"
-          className={`segmented-pill ${activeSubTab === 'books' ? 'active' : ''}`}
-          onClick={() => setActiveSubTab('books')}
-        >
-          <BookOpen size={13} />
-          <span>Books</span>
-        </button>
-        <button
-          type="button"
-          className={`segmented-pill ${activeSubTab === 'drafter' ? 'active' : ''}`}
-          onClick={() => setActiveSubTab('drafter')}
-        >
-          <FileUp size={13} />
-          <span>Drafter</span>
-        </button>
-        <button
-          type="button"
-          className={`segmented-pill ${activeSubTab === 'connection' ? 'active' : ''}`}
-          onClick={() => setActiveSubTab('connection')}
-        >
-          <Zap size={13} />
-          <span>API</span>
-          <span style={{
-            width: '6px',
-            height: '6px',
-            borderRadius: '50%',
-            backgroundColor: isLiveConnected ? '#10b981' : '#f59e0b',
-            display: 'inline-block'
-          }} />
-        </button>
+      {/* ── 2. Top Segmented Subtab Navigation Bar (Horizontal Scroll with Right Shadow Indicator) ── */}
+      <div className="segmented-pill-container">
+        <div className="segmented-pill-bar">
+          <button
+            type="button"
+            className={`segmented-pill ${activeSubTab === 'team' ? 'active' : ''}`}
+            onClick={() => setActiveSubTab('team')}
+          >
+            <Users size={12} />
+            <span>Team ({groupedTeam.length})</span>
+          </button>
+          <button
+            type="button"
+            className={`segmented-pill ${activeSubTab === 'books' ? 'active' : ''}`}
+            onClick={() => setActiveSubTab('books')}
+          >
+            <BookOpen size={12} />
+            <span>Books</span>
+          </button>
+          <button
+            type="button"
+            className={`segmented-pill ${activeSubTab === 'drafter' ? 'active' : ''}`}
+            onClick={() => setActiveSubTab('drafter')}
+          >
+            <FileUp size={12} />
+            <span>Drafter</span>
+          </button>
+          <button
+            type="button"
+            className={`segmented-pill ${activeSubTab === 'connection' ? 'active' : ''}`}
+            onClick={() => setActiveSubTab('connection')}
+          >
+            <Zap size={12} />
+            <span>API</span>
+            <span style={{
+              width: '6px',
+              height: '6px',
+              borderRadius: '50%',
+              backgroundColor: isLiveConnected ? '#10b981' : '#f59e0b',
+              display: 'inline-block'
+            }} />
+          </button>
+        </div>
       </div>
 
       {/* -------------------------------------------------------------------- */}
@@ -682,40 +689,61 @@ export const MobileSettingsView: React.FC<MobileSettingsViewProps> = ({
                     <div>
                       {/* Avatar + Name + Status */}
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <div style={{
-                            width: '2.25rem',
-                            height: '2.25rem',
-                            borderRadius: '50%',
-                            backgroundColor: getRoleAvatarColor(member.roles[0] || 'Drafter'),
-                            color: '#ffffff',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontWeight: 800,
-                            fontSize: '0.8125rem'
-                          }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0, flex: 1 }}>
+                          <div
+                            style={{
+                              width: '2.35rem',
+                              height: '2.35rem',
+                              borderRadius: '50%',
+                              backgroundColor: getRoleAvatarHex(member.roles[0] || 'Drafter'),
+                              color: '#ffffff',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontWeight: 800,
+                              fontSize: '0.8125rem',
+                              flexShrink: 0,
+                              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.15)',
+                              letterSpacing: '0.02em'
+                            }}
+                          >
                             {getSmartInitials(member.name)}
                           </div>
-                          <div>
-                            <div style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--theme-text)' }}>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--theme-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                               {member.name}
                             </div>
-                            <div style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted)' }}>
+                            <div style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                               {member.email || 'No email set'}
                             </div>
                           </div>
                         </div>
 
-                        <span style={{
-                          fontSize: '0.625rem',
-                          fontWeight: 700,
-                          padding: '0.15rem 0.4rem',
-                          borderRadius: '9999px',
-                          backgroundColor: member.active ? 'rgba(16, 185, 129, 0.15)' : 'rgba(148, 163, 184, 0.2)',
-                          color: member.active ? '#10b981' : '#64748b'
-                        }}>
-                          {member.active ? 'Active' : 'Inactive'}
+                        {/* Status Icon Indicator (No 'Active' Text) */}
+                        <span
+                          title={member.active ? 'Active in translation workflow' : 'Inactive'}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '22px',
+                            height: '22px',
+                            borderRadius: '50%',
+                            backgroundColor: member.active ? 'rgba(16, 185, 129, 0.15)' : 'rgba(148, 163, 184, 0.15)',
+                            color: member.active ? '#10b981' : '#94a3b8',
+                            border: `1px solid ${member.active ? 'rgba(16, 185, 129, 0.35)' : 'rgba(148, 163, 184, 0.3)'}`,
+                            flexShrink: 0
+                          }}
+                        >
+                          <span
+                            style={{
+                              width: '7px',
+                              height: '7px',
+                              borderRadius: '50%',
+                              backgroundColor: member.active ? '#10b981' : '#94a3b8',
+                              boxShadow: member.active ? '0 0 6px rgba(16, 185, 129, 0.7)' : 'none'
+                            }}
+                          />
                         </span>
                       </div>
 

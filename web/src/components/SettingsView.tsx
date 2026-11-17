@@ -20,7 +20,7 @@ import {
 import { extractDocxBlocks, groupBlocksIntoVerses, parsePastedText } from '../services/docxParser';
 import { downloadDrafterTemplate } from '../services/templateGenerator';
 import { getBookChaptersCount } from '../services/kjvService';
-import { getSmartInitials, getRoleAvatarColor } from '../utils/userUtils';
+import { getSmartInitials, getRoleAvatarColor, getRoleAvatarHex } from '../utils/userUtils';
 import { showToast } from '../utils/toast';
 
 export type SettingsSubTab = 'team' | 'books' | 'drafter' | 'connection';
@@ -870,8 +870,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                           justifyContent: 'center',
                           fontWeight: 700,
                           fontSize: '0.75rem',
-                          backgroundColor: getRoleAvatarColor(member.roles[0]),
-                          color: '#ffffff'
+                          backgroundColor: getRoleAvatarHex(member.roles[0]),
+                          color: '#ffffff',
+                          flexShrink: 0,
+                          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12)'
                         }}>
                           {getSmartInitials(member.name)}
                         </span>

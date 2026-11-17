@@ -186,9 +186,19 @@
 }
 
 /* Discussion Popout Modal in Obsidian */
+[data-bg-theme="obsidian"] .chat-popout-card,
 [data-bg-theme="obsidian"] .discussion-popout-card {
   background: #0f172a !important;
   border: 1px solid #1e293b !important;
+}
+
+[data-bg-theme="obsidian"] .chat-popout-header {
+  background: #142037 !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+[data-bg-theme="obsidian"] .chat-popout-stream {
+  background: #020617 !important;
 }
 
 /* Impact Cards in ApprovalImpactModal */
@@ -208,4 +218,16 @@
 [data-bg-theme="obsidian"] .impact-card-decline span,
 [data-bg-theme="obsidian"] .impact-card-decline li {
   color: #fca5a5 !important;
+}
+
+/* Verse Jump Button in Obsidian */
+[data-bg-theme="obsidian"] .btn-verse-jump {
+  background-color: #142037 !important;
+  border-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+[data-bg-theme="obsidian"] .btn-verse-jump:hover {
+  background-color: #1a2842 !important;
+  border-color: #334155 !important;
 }

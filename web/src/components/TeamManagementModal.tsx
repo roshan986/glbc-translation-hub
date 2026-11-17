@@ -14,6 +14,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import type { TeamMember } from '../types';
+import { getSmartInitials, getRoleAvatarHex } from '../utils/userUtils';
 
 export const ALL_ROLES = [
   'Drafter',
@@ -519,10 +520,22 @@ export const TeamManagementModal: React.FC<TeamManagementModalProps> = ({
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flex: 1, minWidth: 0 }}>
                   <span
-                    className={`avatar ${m.avatarColor || 'bg-blue-600'}`}
-                    style={{ width: '2.5rem', height: '2.5rem', fontSize: '0.875rem', flexShrink: 0 }}
+                    style={{
+                      width: '2.5rem',
+                      height: '2.5rem',
+                      borderRadius: '50%',
+                      backgroundColor: getRoleAvatarHex(m.roles[0] || 'Drafter'),
+                      color: '#ffffff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 800,
+                      fontSize: '0.875rem',
+                      flexShrink: 0,
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.15)'
+                    }}
                   >
-                    {m.avatar || m.name.slice(0, 2).toUpperCase()}
+                    {m.avatar || getSmartInitials(m.name)}
                   </span>
 
                   <div style={{ minWidth: 0, flex: 1 }}>

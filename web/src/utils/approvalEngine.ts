@@ -32,9 +32,17 @@ export function computeVerseApprovals(
     
     // Find all active team members assigned to this role (supporting both raw rows and unified persons with roles[])
     const assignedMembers = (team || []).filter((m) => {
-      if (!m || m.active === false) return false;
+      if (!m || m.active === false || m.active === 'No') return false;
       const allRoles = (m.roles && m.roles.length > 0 ? m.roles : [m.role]).filter(Boolean);
-      return allRoles.some((r) => String(r || '').toLowerCase().includes(mapping.roleMatch));
+      return allRoles.some((r) => {
+        const s = String(r || '').toLowerCase();
+        if (rk === 'tech') return s.includes('tech');
+        if (rk === 'style') return s.includes('style') || s.includes('lang');
+        if (rk === 'ortho') return s.includes('ortho');
+        if (rk === 'theo') return s.includes('theo');
+        if (rk === 'comm') return s.includes('comm');
+        return false;
+      });
     });
 
     const uniqueMemberNames = Array.from(new Set(assignedMembers.map((m) => String(m.name || '').trim()).filter(Boolean)));

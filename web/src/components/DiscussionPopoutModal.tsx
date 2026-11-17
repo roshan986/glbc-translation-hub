@@ -114,14 +114,14 @@ export const DiscussionPopoutModal: React.FC<DiscussionPopoutModalProps> = ({
       >
         {/* Modal Header */}
         <div
+          className="chat-popout-header"
           style={{
             padding: '1rem 1.25rem',
             borderBottom: '1px solid var(--theme-border, #e2e8f0)',
             background: 'var(--theme-box-bg, #f8fafc)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: '#f8fafc'
+            justifyContent: 'space-between'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -130,8 +130,9 @@ export const DiscussionPopoutModal: React.FC<DiscussionPopoutModalProps> = ({
                 width: '2.5rem',
                 height: '2.5rem',
                 borderRadius: '0.625rem',
-                backgroundColor: '#ede9fe',
-                color: '#6d28d9',
+                background: 'rgba(99, 102, 241, 0.15)',
+                color: 'var(--theme-accent, #818cf8)',
+                border: '1px solid rgba(99, 102, 241, 0.25)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -151,14 +152,15 @@ export const DiscussionPopoutModal: React.FC<DiscussionPopoutModalProps> = ({
                     fontWeight: 700,
                     padding: '0.15rem 0.5rem',
                     borderRadius: '9999px',
-                    backgroundColor: '#e0e7ff',
-                    color: '#3730a3'
+                    background: 'rgba(56, 189, 248, 0.15)',
+                    color: 'var(--theme-accent, #38bdf8)',
+                    border: '1px solid rgba(56, 189, 248, 0.3)'
                   }}
                 >
                   {verseRef}
                 </span>
               </div>
-              <p style={{ margin: '0.15rem 0 0', fontSize: '0.75rem', color: '#64748b' }}>
+              <p style={{ margin: '0.15rem 0 0', fontSize: '0.75rem', color: 'var(--theme-text-muted, #64748b)' }}>
                 Full-screen deliberation stream. Your notes appear on the right; peer team members on the left.
               </p>
             </div>
@@ -172,7 +174,7 @@ export const DiscussionPopoutModal: React.FC<DiscussionPopoutModalProps> = ({
               borderRadius: '0.375rem',
               border: 'none',
               backgroundColor: 'transparent',
-              color: '#64748b',
+              color: 'var(--theme-text-muted, #64748b)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -188,14 +190,14 @@ export const DiscussionPopoutModal: React.FC<DiscussionPopoutModalProps> = ({
         <div
           style={{
             padding: '0.625rem 1.25rem',
-            borderBottom: '1px solid var(--theme-border)',
-            backgroundColor: 'var(--theme-card-bg)',
+            borderBottom: '1px solid var(--theme-border, #e2e8f0)',
+            background: 'var(--theme-card-bg, #ffffff)',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem'
           }}
         >
-          <Search size={16} color="#94a3b8" />
+          <Search size={16} color="var(--theme-text-muted, #94a3b8)" />
           <input
             type="text"
             placeholder="Search discussion notes by member name or keyword…"
@@ -229,6 +231,7 @@ export const DiscussionPopoutModal: React.FC<DiscussionPopoutModalProps> = ({
 
         {/* Scrollable Chat Stream */}
         <div
+          className="chat-popout-stream"
           style={{
             flex: 1,
             overflowY: 'auto',
@@ -236,7 +239,7 @@ export const DiscussionPopoutModal: React.FC<DiscussionPopoutModalProps> = ({
             display: 'flex',
             flexDirection: 'column',
             gap: '1rem',
-            backgroundColor: '#fcfcfd'
+            background: 'var(--theme-canvas-bg, #fcfcfd)'
           }}
         >
           {filteredComments.length > 0 ? (
@@ -297,15 +300,16 @@ export const DiscussionPopoutModal: React.FC<DiscussionPopoutModalProps> = ({
                       >
                         {isMe ? (
                           <>
-                            <span style={{ fontWeight: 700, color: '#4338ca' }}>
+                            <span style={{ fontWeight: 700, color: 'var(--theme-accent, #6366f1)' }}>
                               You
                             </span>
                             <span
                               style={{
                                 padding: '0.05rem 0.35rem',
                                 borderRadius: '0.25rem',
-                                backgroundColor: '#e0e7ff',
-                                color: '#3730a3',
+                                background: 'rgba(99, 102, 241, 0.15)',
+                                color: 'var(--theme-accent, #818cf8)',
+                                border: '1px solid rgba(99, 102, 241, 0.25)',
                                 fontWeight: 600
                               }}
                             >
@@ -334,8 +338,9 @@ export const DiscussionPopoutModal: React.FC<DiscussionPopoutModalProps> = ({
                             style={{
                               padding: '0.05rem 0.35rem',
                               borderRadius: '0.25rem',
-                              backgroundColor: '#dcfce7',
-                              color: '#166534',
+                              background: 'rgba(16, 185, 129, 0.15)',
+                              color: '#34d399',
+                              border: '1px solid rgba(16, 185, 129, 0.25)',
                               fontWeight: 700,
                               display: 'inline-flex',
                               alignItems: 'center',
@@ -345,7 +350,7 @@ export const DiscussionPopoutModal: React.FC<DiscussionPopoutModalProps> = ({
                             <CheckCircle2 size={10} /> Approved
                           </span>
                         )}
-                        <time style={{ color: '#94a3b8' }}>{cmt.timeAgo}</time>
+                        <time style={{ color: 'var(--theme-text-muted, #94a3b8)' }}>{cmt.timeAgo}</time>
                       </div>
 
                       {/* Chat Message Bubble */}
@@ -373,7 +378,7 @@ export const DiscussionPopoutModal: React.FC<DiscussionPopoutModalProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 padding: '3rem 1rem',
-                color: '#94a3b8',
+                color: 'var(--theme-text-muted, #94a3b8)',
                 textAlign: 'center'
               }}
             >
