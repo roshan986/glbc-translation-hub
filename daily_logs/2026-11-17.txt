@@ -81,4 +81,36 @@ Session: Night Obsidian Theme Overhaul & Visual Weight Reduction (Testing.docx)
 8. QA & COMPILATION VERIFICATION
 --------------------------------------------------------------------------------
 - TypeScript compilation: PASSED (0 errors, 0 warnings).
+
+9. /GRILL-ME ALIGNMENT & MOBILE FOCUS MODE RE-ARCHITECTURE
+--------------------------------------------------------------------------------
+- Conducted exhaustive design interview with User via /grill-me resolving mobile view layout:
+  1) Consolidated Top Header:
+     * Combined Verse status and Role mode into a single sleek row ([Rom 1:1 In Review] + [Pastor Matt (Role)]).
+     * Saved ~45px vertical space, pushing Scripture immediately to the top of the mobile screen.
+  2) Base Reference Dual-Language Switching:
+     * Added 1-tap segmented pill switcher: [ 📜 KJV English ] [ 📖 Old Kannada ].
+     * Resolved missing Old Kannada display when sheet Col C contains Kannada text.
+     * Copy button copies active language text.
+  3) Drafter Proposed Reading Typography Relocation:
+     * Moved font zoomers [ A⁻ 18 A⁺ ] directly onto the Drafter Proposed Reading card header.
+     * Explicitly associates typography scaling with Kannada rendering instead of confusing global layout.
+  4) Drafter Back-Translation & Notes:
+     * Expanded by default.
+     * Displays horizontal swipable word-pair cards with Kannada top / English bottom and tap-to-inspect modal.
+     * Preserved rich text HTML colors for investigation notes underneath.
+  5) Zero-Clutter Deliberation Architecture (Slide-Up Bottom Drawer):
+     * Completely removed the monolithic inline discipline review cards and comment composers from the reading canvas.
+     * Added sticky bottom thumb action dock trigger: [ 💬 Deliberate (N) ] | < Rom 1:1 > | [ ✅ Confirm ].
+     * Tapping [ 💬 Deliberate ] opens a smooth 70vh bottom sheet drawer containing:
+       - Drag handle + Close button.
+       - Persistent 1-line Scripture snippet of Proposed Kannada (never lose biblical context while deliberating!).
+       - 1-tap discipline tabs: [ Tech ] [ Style ] [ Ortho ] [ Theo ] [ Comm ] with status (✓/⏳) and comment counts.
+       - Full threaded comments stream from all team members.
+       - Comment composer and quick confirm button for assigned reviewers.
+- Files Modified:
+  * `web/src/components/mobile/MobileFocusView.tsx`: Complete mobile focus mode re-architecture.
+  * `web/src/styles/responsive/mobile.css`: Added @keyframes slideUp animation.
+- Verification:
+  * TypeScript compilation: PASSED (0 errors, 0 warnings).
 ================================================================================
