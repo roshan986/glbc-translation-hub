@@ -31,13 +31,13 @@ export function computeVerseApprovals(
     const mapping = ROLE_MAPPINGS[rk];
     
     // Find all active team members assigned to this role (supporting both raw rows and unified persons with roles[])
-    const assignedMembers = team.filter((m) => {
-      if (m.active === false) return false;
-      const allRoles = m.roles && m.roles.length > 0 ? m.roles : [m.role];
-      return allRoles.some((r) => r.toLowerCase().includes(mapping.roleMatch));
+    const assignedMembers = (team || []).filter((m) => {
+      if (!m || m.active === false) return false;
+      const allRoles = (m.roles && m.roles.length > 0 ? m.roles : [m.role]).filter(Boolean);
+      return allRoles.some((r) => String(r || '').toLowerCase().includes(mapping.roleMatch));
     });
 
-    const uniqueMemberNames = Array.from(new Set(assignedMembers.map((m) => m.name.trim())));
+    const uniqueMemberNames = Array.from(new Set(assignedMembers.map((m) => String(m.name || '').trim()).filter(Boolean)));
     const totalRequired = uniqueMemberNames.length;
 
     const cellText = reviews[mapping.key] || '';

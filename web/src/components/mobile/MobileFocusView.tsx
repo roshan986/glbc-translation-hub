@@ -79,41 +79,48 @@ export const MobileFocusView: React.FC<MobileFocusViewProps> = ({
 
   // Canonical KJV English verse resolution (instant if oldReading is English, else fetch from kjvService)
   const isOldReadingEnglish = useMemo(() => {
-    return Boolean(verse.oldReading && !/[\u0C80-\u0CFF]/.test(verse.oldReading));
-  }, [verse.oldReading]);
+    return Boolean(verse?.oldReading && !/[\u0C80-\u0CFF]/.test(verse.oldReading));
+  }, [verse?.oldReading]);
 
-  const [kjvText, setKjvText] = useState<string>(() => (isOldReadingEnglish ? (verse.oldReading || '') : ''));
+  const [kjvText, setKjvText] = useState<string>(() => (isOldReadingEnglish ? (verse?.oldReading || '') : ''));
 
   useEffect(() => {
+    if (!verse) return;
     if (isOldReadingEnglish) {
       setKjvText(verse.oldReading || '');
       return;
     }
     let isMounted = true;
-    getKjvVerse(currentBook, verse.chapter, verse.verseNumber).then((text) => {
-      if (isMounted) setKjvText(text);
-    });
+    getKjvVerse(currentBook, verse.chapter, verse.verseNumber)
+      .then((text) => {
+        if (isMounted) setKjvText(text);
+      })
+      .catch((err) => {
+        console.warn('Failed to load KJV verse:', err);
+      });
     return () => {
       isMounted = false;
     };
-  }, [currentBook, verse.chapter, verse.verseNumber, isOldReadingEnglish, verse.oldReading]);
+  }, [currentBook, verse?.chapter, verse?.verseNumber, isOldReadingEnglish, verse?.oldReading]);
 
   // Old Kannada text (if available in oldReading)
   const oldKannadaText = useMemo(() => {
-    if (verse.oldReading && /[\u0C80-\u0CFF]/.test(verse.oldReading)) {
+    if (verse?.oldReading && /[\u0C80-\u0CFF]/.test(verse.oldReading)) {
       return verse.oldReading;
     }
     return '';
-  }, [verse.oldReading]);
+  }, [verse?.oldReading]);
 
   // Approval Engine & Parsed Drafter Notes
   const approvals = useMemo(() => {
+    if (!verse) return {} as any;
     return verse.approvals || computeVerseApprovals(verse.reviews || {}, verse.confirms || {}, team || []);
-  }, [verse.approvals, verse.reviews, verse.confirms, team]);
+  }, [verse?.approvals, verse?.reviews, verse?.confirms, team]);
 
   const parsedCmt = useMemo(() => {
-    return parseDrafterComments(verse.drafterCmtHtml || verse.drafterCmt || '');
-  }, [verse.drafterCmt, verse.drafterCmtHtml]);
+    if (!verse) return { wordPairs: [], notes: [], totalNotesCount: 0 };
+    return parseDrafterComments(verse.drafterCmtHtml || verse.drafterCmt || '') || { wordPairs: [], notes: [], totalNotesCount: 0 };
+  }, [verse?.drafterCmt, verse?.drafterCmtHtml]);
 
   // User Roles & Assignment Checks
   const userRoles = useMemo(() => {
@@ -125,7 +132,7 @@ export const MobileFocusView: React.FC<MobileFocusViewProps> = ({
   // Overall assignment check for current user
   const isAssigned = useMemo(() => {
     if (!currentUser) return false;
-    const allUserRoles = [currentUser.role, ...userRoles].filter(Boolean).map((r) => r.toLowerCase());
+    const allUserRoles = [currentUser.role, ...userRoles].filter(Boolean).map((r) => String(r || '').toLowerCase());
     if (drawerDiscipline === 'comm') return allUserRoles.some((r) => r.includes('comm'));
     return allUserRoles.some((r) => r.includes(drawerDiscipline));
   }, [drawerDiscipline, currentUser, userRoles]);
@@ -136,58 +143,59 @@ export const MobileFocusView: React.FC<MobileFocusViewProps> = ({
       key: 'tech',
       label: 'Technical',
       icon: '🏛️',
-      confirmed: verse.confirms?.tech || approvals.tech?.isFullyApproved,
-      reviewer: approvals.tech?.approvedMembers?.length
+      confirmed: Boolean(verse?.confirms?.tech || approvals?.tech?.isFullyApproved),
+      reviewer: approvals?.tech?.approvedMembers?.length
         ? approvals.tech.approvedMembers.join(', ')
-        : (approvals.tech?.pendingMembers?.length ? `${approvals.tech.pendingMembers.join(', ')} (Pending)` : 'Technical Reviewer')
+        : (approvals?.tech?.pendingMembers?.length ? `${approvals.tech.pendingMembers.join(', ')} (Pending)` : 'Technical Reviewer')
     },
     {
       key: 'style',
       label: 'Style',
       icon: '✒️',
-      confirmed: verse.confirms?.style || approvals.style?.isFullyApproved,
-      reviewer: approvals.style?.approvedMembers?.length
+      confirmed: Boolean(verse?.confirms?.style || approvals?.style?.isFullyApproved),
+      reviewer: approvals?.style?.approvedMembers?.length
         ? approvals.style.approvedMembers.join(', ')
-        : (approvals.style?.pendingMembers?.length ? `${approvals.style.pendingMembers.join(', ')} (Pending)` : 'Style Reviewer')
+        : (approvals?.style?.pendingMembers?.length ? `${approvals.style.pendingMembers.join(', ')} (Pending)` : 'Style Reviewer')
     },
     {
       key: 'ortho',
       label: 'Orthography',
       icon: '📝',
-      confirmed: verse.confirms?.ortho || approvals.ortho?.isFullyApproved,
-      reviewer: approvals.ortho?.approvedMembers?.length
+      confirmed: Boolean(verse?.confirms?.ortho || approvals?.ortho?.isFullyApproved),
+      reviewer: approvals?.ortho?.approvedMembers?.length
         ? approvals.ortho.approvedMembers.join(', ')
-        : (approvals.ortho?.pendingMembers?.length ? `${approvals.ortho.pendingMembers.join(', ')} (Pending)` : 'Orthographic Reviewer')
+        : (approvals?.ortho?.pendingMembers?.length ? `${approvals.ortho.pendingMembers.join(', ')} (Pending)` : 'Orthographic Reviewer')
     },
     {
       key: 'theo',
       label: 'Theology',
       icon: '📖',
-      confirmed: verse.confirms?.theo || approvals.theo?.isFullyApproved,
-      reviewer: approvals.theo?.approvedMembers?.length
+      confirmed: Boolean(verse?.confirms?.theo || approvals?.theo?.isFullyApproved),
+      reviewer: approvals?.theo?.approvedMembers?.length
         ? approvals.theo.approvedMembers.join(', ')
-        : (approvals.theo?.pendingMembers?.length ? `${approvals.theo.pendingMembers.join(', ')} (Pending)` : 'Theological Reviewer')
+        : (approvals?.theo?.pendingMembers?.length ? `${approvals.theo.pendingMembers.join(', ')} (Pending)` : 'Theological Reviewer')
     },
     {
       key: 'comm',
       label: 'Committee',
       icon: '👥',
-      confirmed: verse.confirms?.comm || approvals.comm?.isFullyApproved,
-      reviewer: approvals.comm?.approvedMembers?.length
+      confirmed: Boolean(verse?.confirms?.comm || approvals?.comm?.isFullyApproved),
+      reviewer: approvals?.comm?.approvedMembers?.length
         ? approvals.comm.approvedMembers.join(', ')
-        : (approvals.comm?.pendingMembers?.length ? `${approvals.comm.pendingMembers.join(', ')} (Pending)` : 'Committee')
+        : (approvals?.comm?.pendingMembers?.length ? `${approvals.comm.pendingMembers.join(', ')} (Pending)` : 'Committee')
     }
   ];
 
   // Total comments count across all disciplines
   const totalCommentsCount = useMemo(() => {
-    return (verse.comments || []).length;
-  }, [verse.comments]);
+    return (verse?.comments || []).length;
+  }, [verse?.comments]);
 
   // Comments filtered for the active drawer discipline
   const drawerComments = useMemo(() => {
-    return (verse.comments || []).filter((c) => {
-      const r = (c.authorRole || '').toLowerCase();
+    return (verse?.comments || []).filter((c) => {
+      if (!c) return false;
+      const r = String(c.authorRole || '').toLowerCase();
       if (drawerDiscipline === 'tech') return r.includes('tech');
       if (drawerDiscipline === 'style') return r.includes('style') || r.includes('lang');
       if (drawerDiscipline === 'ortho') return r.includes('ortho');
@@ -195,7 +203,7 @@ export const MobileFocusView: React.FC<MobileFocusViewProps> = ({
       if (drawerDiscipline === 'comm') return r.includes('comm');
       return true;
     });
-  }, [verse.comments, drawerDiscipline]);
+  }, [verse?.comments, drawerDiscipline]);
 
   // Handle Copy Base Reference
   const handleCopyBaseRef = async () => {
@@ -256,7 +264,7 @@ export const MobileFocusView: React.FC<MobileFocusViewProps> = ({
         theo: 'Theological Reviewer'
       };
       if (drawerDiscipline === 'comm' && onApproveConsensus) {
-        await onApproveConsensus(verse.row, verse.reviews.conclusion || verse.proposed);
+        await onApproveConsensus(verse.row, verse.reviews?.conclusion || verse.proposed);
       } else {
         await onApproveVerse(verse.row, roleMapping[drawerDiscipline] || 'Technical Reviewer');
       }
@@ -267,6 +275,14 @@ export const MobileFocusView: React.FC<MobileFocusViewProps> = ({
       setIsSubmitting(false);
     }
   };
+
+  if (!verse) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--theme-text-muted)' }}>
+        No verse selected.
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', paddingBottom: '5rem' }}>
@@ -553,9 +569,9 @@ export const MobileFocusView: React.FC<MobileFocusViewProps> = ({
             <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--theme-text)' }}>
               Drafter Back-Translation &amp; Notes
             </span>
-            {parsedCmt.wordPairs.length > 0 && (
+            {(parsedCmt?.wordPairs || []).length > 0 && (
               <span style={{ fontSize: '0.625rem', padding: '0.1rem 0.35rem', borderRadius: '9999px', backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', fontWeight: 700, border: '1px solid rgba(56, 189, 248, 0.3)' }}>
-                {parsedCmt.wordPairs.length} pairs
+                {(parsedCmt?.wordPairs || []).length} pairs
               </span>
             )}
           </div>
@@ -565,7 +581,7 @@ export const MobileFocusView: React.FC<MobileFocusViewProps> = ({
         {showNotes && (
           <div style={{ padding: '0.75rem 0.875rem', display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
             {/* Word-Pairs Horizontal Snap Track with Preserved Drafter Colors */}
-            {parsedCmt.wordPairs && parsedCmt.wordPairs.length > 0 ? (
+            {(parsedCmt?.wordPairs || []).length > 0 ? (
               <div>
                 <small style={{ fontSize: '0.6875rem', color: 'var(--theme-text-muted)', display: 'block', marginBottom: '0.35rem' }}>
                   Swipe horizontally to inspect aligned Kannada-English pairs (tap for detail):
@@ -580,7 +596,7 @@ export const MobileFocusView: React.FC<MobileFocusViewProps> = ({
                     WebkitOverflowScrolling: 'touch'
                   }}
                 >
-                  {parsedCmt.wordPairs.map((pair, idx) => (
+                  {(parsedCmt?.wordPairs || []).map((pair, idx) => (
                     <div
                       key={idx}
                       onClick={() => setInspectingWordPair({ kannada: pair.kannada, english: pair.english })}
@@ -622,9 +638,9 @@ export const MobileFocusView: React.FC<MobileFocusViewProps> = ({
             ) : null}
 
             {/* Categorized Investigation Notes with HTML styling */}
-            {parsedCmt.notes && parsedCmt.notes.length > 0 ? (
+            {(parsedCmt?.notes || []).length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                {parsedCmt.notes.map((note, idx) => (
+                {(parsedCmt?.notes || []).map((note, idx) => (
                   <div key={idx} style={{ padding: '0.45rem 0.65rem', background: 'var(--theme-box-bg, #142037)', borderRadius: '0.375rem', fontSize: '0.8125rem', color: 'var(--theme-text)', lineHeight: 1.45, border: '1px solid var(--theme-border, #1e293b)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', marginBottom: '0.2rem' }}>
                       <Sparkles size={11} color="#a855f7" />
@@ -641,7 +657,7 @@ export const MobileFocusView: React.FC<MobileFocusViewProps> = ({
             ) : null}
 
             {/* Raw Drafter comments fallback if neither word-pairs nor notes extracted */}
-            {(!parsedCmt.wordPairs || parsedCmt.wordPairs.length === 0) && (!parsedCmt.notes || parsedCmt.notes.length === 0) && (
+            {(!parsedCmt?.wordPairs || parsedCmt.wordPairs.length === 0) && (!parsedCmt?.notes || parsedCmt.notes.length === 0) && (
               <div style={{ fontSize: '0.8125rem', color: 'var(--theme-text-muted)', fontStyle: 'italic', lineHeight: 1.5 }}>
                 {verse.drafterCmtHtml ? (
                   <div dangerouslySetInnerHTML={{ __html: verse.drafterCmtHtml }} />
@@ -863,8 +879,9 @@ export const MobileFocusView: React.FC<MobileFocusViewProps> = ({
             >
               {disciplines.map((d) => {
                 const isActive = drawerDiscipline === d.key;
-                const dComments = (verse.comments || []).filter((c) => {
-                  const r = (c.authorRole || '').toLowerCase();
+                const dComments = (verse?.comments || []).filter((c) => {
+                  if (!c) return false;
+                  const r = String(c.authorRole || '').toLowerCase();
                   if (d.key === 'tech') return r.includes('tech');
                   if (d.key === 'style') return r.includes('style') || r.includes('lang');
                   if (d.key === 'ortho') return r.includes('ortho');

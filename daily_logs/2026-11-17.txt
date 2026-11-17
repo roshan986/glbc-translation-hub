@@ -1,8 +1,66 @@
+10. WHITE SCREEN EMERGENCY DIAGNOSIS & BULLETPROOF REMEDIATION
+--------------------------------------------------------------------------------
+- Incident:
+  * User reported "Mobile view fully white screen now" after mobile layout update.
+- Root Cause Analysis:
+  1) `web/src/utils/approvalEngine.ts`:
+     * Line 37: `allRoles.some((r) => r.toLowerCase().includes(...))` threw `TypeError: Cannot read properties of undefined (reading 'toLowerCase')` when a team member object lacked a defined `role` or string value.
+     * Line 40: `m.name.trim()` lacked null guards.
+  2) `web/src/components/mobile/MobileFocusView.tsx`:
+     * Missing null checks on `verse.reviews?.conclusion`, `parsedCmt?.wordPairs`, and `allUserRoles` role casting.
+     * `getKjvVerse` promise lacked a `.catch()` fallback handler.
+  3) Absence of React Error Boundary:
+     * Unhandled runtime exceptions in React 18/19 caused the root fiber tree to completely unmount, rendering a solid white viewport with zero diagnostics.
+- Remediation Implemented:
+  1) `web/src/utils/approvalEngine.ts`:
+     * Filtered `(team || [])` and `allRoles` with `.filter(Boolean)`.
+     * Coerced all role and name comparisons with `String(r || '').toLowerCase()` and `String(m.name || '').trim()`.
+  2) `web/src/components/mobile/MobileFocusView.tsx`:
+     * Added top-level guard `if (!verse) return ...`
+     * Protected all `approvals?.tech`, `style`, `ortho`, `theo`, `comm` lookups with optional chaining.
+     * Secured `parsedCmt?.wordPairs` and `parsedCmt?.notes` across all renders.
+     * Coerced `currentUser` and `userRoles` strings with `String(...)`.
+     * Added `.catch(...)` to KJV verse retrieval.
+  3) `web/src/components/ErrorBoundary.tsx` & `web/src/main.tsx`:
+     * Created production-grade React `ErrorBoundary` with visual error card, error message display, `[ Reload View ]` and `[ Reset Cache ]` recovery buttons.
+     * Wrapped `<App />` in `main.tsx` preventing any future white-screen blackout.
+- Verification:
+  * Tested `computeVerseApprovals` with `[null, undefined, { name: null, role: null }]`: PASSED (0 crashes).
+  * `tsc --noEmit`: PASSED (0 errors).
 ================================================================================
 GLBC TRANSLATION SYSTEM — DAILY LOG
 Date: 2026-11-17
 Local Time: 11:30 IST
 Session: Night Obsidian Theme Overhaul & Visual Weight Reduction (Testing.docx)
+10. WHITE SCREEN EMERGENCY DIAGNOSIS & BULLETPROOF REMEDIATION
+--------------------------------------------------------------------------------
+- Incident:
+  * User reported "Mobile view fully white screen now" after mobile layout update.
+- Root Cause Analysis:
+  1) `web/src/utils/approvalEngine.ts`:
+     * Line 37: `allRoles.some((r) => r.toLowerCase().includes(...))` threw `TypeError: Cannot read properties of undefined (reading 'toLowerCase')` when a team member object lacked a defined `role` or string value.
+     * Line 40: `m.name.trim()` lacked null guards.
+  2) `web/src/components/mobile/MobileFocusView.tsx`:
+     * Missing null checks on `verse.reviews?.conclusion`, `parsedCmt?.wordPairs`, and `allUserRoles` role casting.
+     * `getKjvVerse` promise lacked a `.catch()` fallback handler.
+  3) Absence of React Error Boundary:
+     * Unhandled runtime exceptions in React 18/19 caused the root fiber tree to completely unmount, rendering a solid white viewport with zero diagnostics.
+- Remediation Implemented:
+  1) `web/src/utils/approvalEngine.ts`:
+     * Filtered `(team || [])` and `allRoles` with `.filter(Boolean)`.
+     * Coerced all role and name comparisons with `String(r || '').toLowerCase()` and `String(m.name || '').trim()`.
+  2) `web/src/components/mobile/MobileFocusView.tsx`:
+     * Added top-level guard `if (!verse) return ...`
+     * Protected all `approvals?.tech`, `style`, `ortho`, `theo`, `comm` lookups with optional chaining.
+     * Secured `parsedCmt?.wordPairs` and `parsedCmt?.notes` across all renders.
+     * Coerced `currentUser` and `userRoles` strings with `String(...)`.
+     * Added `.catch(...)` to KJV verse retrieval.
+  3) `web/src/components/ErrorBoundary.tsx` & `web/src/main.tsx`:
+     * Created production-grade React `ErrorBoundary` with visual error card, error message display, `[ Reload View ]` and `[ Reset Cache ]` recovery buttons.
+     * Wrapped `<App />` in `main.tsx` preventing any future white-screen blackout.
+- Verification:
+  * Tested `computeVerseApprovals` with `[null, undefined, { name: null, role: null }]`: PASSED (0 crashes).
+  * `tsc --noEmit`: PASSED (0 errors).
 ================================================================================
 
 1. USER OBJECTIVE & TESTING.DOCX DIRECTIVE
@@ -113,4 +171,33 @@ Session: Night Obsidian Theme Overhaul & Visual Weight Reduction (Testing.docx)
   * `web/src/styles/responsive/mobile.css`: Added @keyframes slideUp animation.
 - Verification:
   * TypeScript compilation: PASSED (0 errors, 0 warnings).
+10. WHITE SCREEN EMERGENCY DIAGNOSIS & BULLETPROOF REMEDIATION
+--------------------------------------------------------------------------------
+- Incident:
+  * User reported "Mobile view fully white screen now" after mobile layout update.
+- Root Cause Analysis:
+  1) `web/src/utils/approvalEngine.ts`:
+     * Line 37: `allRoles.some((r) => r.toLowerCase().includes(...))` threw `TypeError: Cannot read properties of undefined (reading 'toLowerCase')` when a team member object lacked a defined `role` or string value.
+     * Line 40: `m.name.trim()` lacked null guards.
+  2) `web/src/components/mobile/MobileFocusView.tsx`:
+     * Missing null checks on `verse.reviews?.conclusion`, `parsedCmt?.wordPairs`, and `allUserRoles` role casting.
+     * `getKjvVerse` promise lacked a `.catch()` fallback handler.
+  3) Absence of React Error Boundary:
+     * Unhandled runtime exceptions in React 18/19 caused the root fiber tree to completely unmount, rendering a solid white viewport with zero diagnostics.
+- Remediation Implemented:
+  1) `web/src/utils/approvalEngine.ts`:
+     * Filtered `(team || [])` and `allRoles` with `.filter(Boolean)`.
+     * Coerced all role and name comparisons with `String(r || '').toLowerCase()` and `String(m.name || '').trim()`.
+  2) `web/src/components/mobile/MobileFocusView.tsx`:
+     * Added top-level guard `if (!verse) return ...`
+     * Protected all `approvals?.tech`, `style`, `ortho`, `theo`, `comm` lookups with optional chaining.
+     * Secured `parsedCmt?.wordPairs` and `parsedCmt?.notes` across all renders.
+     * Coerced `currentUser` and `userRoles` strings with `String(...)`.
+     * Added `.catch(...)` to KJV verse retrieval.
+  3) `web/src/components/ErrorBoundary.tsx` & `web/src/main.tsx`:
+     * Created production-grade React `ErrorBoundary` with visual error card, error message display, `[ Reload View ]` and `[ Reset Cache ]` recovery buttons.
+     * Wrapped `<App />` in `main.tsx` preventing any future white-screen blackout.
+- Verification:
+  * Tested `computeVerseApprovals` with `[null, undefined, { name: null, role: null }]`: PASSED (0 crashes).
+  * `tsc --noEmit`: PASSED (0 errors).
 ================================================================================
