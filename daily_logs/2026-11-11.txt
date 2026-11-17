@@ -1,0 +1,98 @@
+================================================================================
+GLBC TRANSLATION SYSTEM - DAILY LOG
+Date: 2026-11-11
+Timezone: IST (UTC+05:30)
+Reference Document: GLBC_Architecture_Upgrade_Plan.xlsx (Phase 1 MVP)
+Master DB: Google Sheets (18 Columns, Native Protections, Rich Text)
+Web App: React 19 + TypeScript + Vite + Tailwind CSS (localhost:5173)
+================================================================================
+
+1. EXECUTIVE SUMMARY
+-------------------
+Today, Phase 1 (MVP) of the modern decoupled web application was implemented,
+tested, and refined against real Google Sheets data. Critical UX blockers that caused
+reviewer fatigue in Google Sheets were eliminated:
+- 1-verse Focus Mode with native Kannada typography and A⁻/A⁺ scaling.
+- Instant 0ms KJV English reference text for all 66 Bible books with zero API keys.
+- Accurate character-level font color rendering (magenta, green, cyan, gold) from Google Sheets.
+- Horizontal interlinear word-pair back-translation and structured investigation note cards.
+- Direct verse jump dropdown and visual Grid (J) navigation.
+- Dynamic chapter selector for all 66 canonical books.
+
+2. ARCHITECTURE PLAN ALIGNMENT (GLBC_Architecture_Upgrade_Plan.xlsx)
+-------------------------------------------------------------------
+- Phase 1 (MVP - In Progress / Ready for Final Sign-Off):
+  [x] Apps Script JSON API Bridge (doGet & doPost endpoints in AppScript/Code.gs).
+  [x] Topbar: Brand, book selector, verse counter, reviewer profile switcher, connection modal.
+  [x] ChapterBar: Dynamic chapter pills and chapter popover grid for all 66 books.
+  [x] Sidebar: Focus mode navigation, review queue count badge, live team presence, book progress.
+  [x] FocusModeCard: Side-by-side comparison (KJV English / Old Kannada KJV vs New Proposed Kannada).
+  [x] Interlinear Back-Translation: Kannada top, English gloss below, delimited by ' | '.
+  [x] Investigation Notes: Categorized badges (Added Words, Omitted in Original, Grammar, Variant).
+  [x] DiscussionThread: Threaded review comments with reviewer bylines writing back to Google Sheets.
+  [x] ActionDock: Keyboard shortcuts (Enter to approve, Space/Right Arrow to skip, E to comment, J for grid).
+  [x] WhatsAppModal: Contextual wa.me alert trigger with pre-filled stage messages.
+
+3. DETAILED WORK COMPLETED TODAY
+--------------------------------
+A. Google Apps Script Backend (AppScript/Code.gs):
+   - Added apiGetVerses(), apiGetBooks(), apiGetConfig(), apiGetAnalytics(), apiSubmitReview(), and apiSubmitFinal().
+   - Updated apiGetVerses() to use range.getRichTextValues() instead of range.getValues(), preserving character-level styling.
+   - Built richTextToHtml() to convert Google Sheets runs into styled HTML spans with exact foreground colors (#FF00FF, #00B050, #00B0F0, #E36C09, bold, italic) and convert newlines to <br/> tags.
+   - Added chapter: chNum and verseNumber: vNum parsing from verse reference strings (e.g. 'Rom 1:1').
+
+B. Local KJV Bible Service (web/src/services/kjvService.ts & web/public/kjv/):
+   - Downloaded and generated 66 standalone JSON files in web/public/kjv/ covering the entire Old Testament (39 books) and New Testament (27 books), plus index.json.
+   - Eliminated third-party API rate limiting and network latency.
+   - Exported CANONICAL_BOOKS array in kjvService.ts with book metadata, slugs, abbreviations, and exact chapter counts.
+   - Added cleanBookName(), getBookMeta(), getBookChaptersCount(), and getKjvVerse() supporting both string and numeric chapter/verse inputs.
+
+C. Frontend Verse Resolution & Navigation (web/src/components/FocusModeCard.tsx):
+   - Fixed KJV English verse lookup by parsing book prefix, chapter, and verse number from verse.verse.
+   - Dual Base Reference toggle: [ 📖 KJV English ] (canonical text) and [ 📜 Old Kannada (KJV) ] (Column C baseline).
+   - Added prominent Verse Selector Dropdown: "Verse [ 1 (Rom 1:1) ▾ ] of 32".
+   - Added Verse Grid Popover (shortcut J) showing all verses in the chapter color-coded by review status.
+
+D. Back-Translation & Drafter Parser (web/src/utils/drafterParser.ts):
+   - Implemented preprocessLines() to join wrapped Kannada lines ending with '|' across line breaks.
+   - Parsed paired Kannada-English lines into horizontal interlinear word-pair tiles.
+   - Parsed drafter investigation notes into styled cards with specific badges.
+   - Preserved HTML color spans so colors display on words in both proposed reading and drafter notes.
+
+E. Dynamic Chapter Bar (web/src/components/ChapterBar.tsx & web/src/App.tsx):
+   - Replaced hardcoded 16 chapters with dynamic totalChapters={getBookChaptersCount(currentBook)}.
+   - Added horizontal scrolling and an "ALL CHAPTERS" grid popover.
+   - Connected live total verses count to Topbar.
+
+4. ISSUES RESOLVED TODAY (FROM TESTING/TESTING.DOCX)
+---------------------------------------------------
+- Issue 1: KJV English verses were not appearing on frontend.
+  Fix: Parsed chapter and verse numbers in Code.gs and added robust fallback parsing in FocusModeCard.tsx.
+- Issue 2: kjvService.ts did not mention all 66 books.
+  Fix: Added complete CANONICAL_BOOKS array (all 39 OT + 27 NT books) and full abbreviation dictionary.
+- Issue 3: No option to jump directly to a verse in Focus Mode.
+  Fix: Added toolbar verse dropdown and Grid (J) popup modal with status colors.
+- Issue 4: Back-translation displayed as a raw unformatted paragraph.
+  Fix: Built drafterParser.ts with line-wrapping intelligence, rendering interlinear tiles and note cards.
+- Issue 5: Character-level colors from Google Sheet not showing in web app.
+  Fix: Upgraded Apps Script to use getRichTextValues() and richTextToHtml() to emit colored HTML spans, rendered with dangerouslySetInnerHTML.
+
+5. VERIFICATION & BUILD STATUS
+------------------------------
+- Command: npm run build --prefix web
+- Result: Success (tsc -b && vite build completed in 1.60s with 0 errors).
+- Dev Server: Running on http://localhost:5173.
+
+6. PRIORITIES FOR TOMORROW MORNING
+----------------------------------
+1. Refer to GLBC_Architecture_Upgrade_Plan.xlsx for Phase 2 milestones.
+2. Verify user has deployed the latest AppScript/Code.gs to Google Apps Script (Deploy -> Manage deployments -> New version).
+3. Confirm Phase 1 user testing feedback on live Google Sheet data.
+4. Begin Phase 2 implementation:
+   - Configure vite-plugin-pwa for mobile "Add to Home Screen" and offline service worker caching.
+   - Add URL deep-linking (?book=Romans&chapter=1&verse=Rom+1:2).
+   - Implement Coordinator Auto-Sync Protections trigger via API endpoint.
+
+================================================================================
+END OF DAILY LOG - 2026-11-11
+================================================================================

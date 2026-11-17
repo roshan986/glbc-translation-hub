@@ -1,0 +1,60 @@
+/**
+ * GLBC Translation System — Default Slate Theme
+ * Luminous, Clean SaaS Interface (Linear / Stripe inspired slate palette)
+ */
+
+:root,
+[data-bg-theme="default"] {
+  --color-theme-bar-bg: rgba(0, 0, 0, 0.03);
+
+  /* Multi-Theme Gradient System: Default Slate */
+  --theme-canvas-bg: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  --theme-sidebar-bg: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  --theme-card-bg: #ffffff;
+  --theme-card-bg-elevated: #ffffff;
+  --theme-box-bg: #f8fafc;
+  --theme-border: #e2e8f0;
+  --theme-border-subtle: #f1f5f9;
+  --theme-text: #0f172a;
+  --theme-text-muted: #64748b;
+  --theme-input-bg: #ffffff;
+  --theme-card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+
+  --color-surface: #ffffff;
+  --color-sidebar-bg: #ffffff;
+  --color-bg: #f8fafc;
+  --color-border: #e2e8f0;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+
+  /* Code / preview block tokens */
+  --theme-code-bg:     #0f172a;
+  --theme-code-text:   #f8fafc;
+  --theme-code-border: #1e293b;
+}
+
+/* Nav Item Selected */
+[data-bg-theme="default"] .nav-item.selected,
+:root:not([data-bg-theme]) .nav-item.selected {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+  color: #1d4ed8 !important;
+}
+
+/* Inline Guidance Cards */
+[data-bg-theme="default"] .inline-guidance-card.discipline,
+:root:not([data-bg-theme]) .inline-guidance-card.discipline {
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+}
+
+[data-bg-theme="default"] .inline-guidance-card.committee,
+:root:not([data-bg-theme]) .inline-guidance-card.committee {
+  background: #faf5ff;
+  border: 1px solid #f3e8ff;
+}
+
+[data-bg-theme="default"] .inline-guidance-card.final,
+:root:not([data-bg-theme]) .inline-guidance-card.final {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+}

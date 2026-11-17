@@ -1,0 +1,82 @@
+/**
+ * GLBC Translation System — Cool Mist Theme
+ * Nordic Studio Slate & Crisp Atmospheric Blue-Grey Palette
+ */
+
+[data-bg-theme="mist"] {
+  --color-theme-bar-bg: rgba(0, 0, 0, 0.03);
+
+  /* Multi-Theme Gradient System: Cool Mist */
+  --theme-canvas-bg: linear-gradient(180deg, #f1f5f9 0%, #e8eef5 100%);
+  --theme-sidebar-bg: linear-gradient(180deg, #f8fafc 0%, #eef3f8 100%);
+  --theme-card-bg: #ffffff;
+  --theme-card-bg-elevated: #ffffff;
+  --theme-box-bg: #edf3f8;
+  --theme-border: #cbd5e1;
+  --theme-border-subtle: #e2eaf2;
+  --theme-text: #0b192c;
+  --theme-text-muted: #4b627a;
+  --theme-input-bg: #ffffff;
+  --theme-card-shadow: 0 1px 3px 0 rgba(11, 25, 44, 0.04), 0 1px 2px -1px rgba(11, 25, 44, 0.04);
+
+  --color-surface: #ffffff;
+  --color-sidebar-bg: #f8fafc;
+  --color-bg: #f1f5f9;
+  --color-border: #cbd5e1;
+  --color-text: #0b192c;
+  --color-text-muted: #4b627a;
+
+  /* Code / preview block tokens */
+  --theme-code-bg:     #0b192c;
+  --theme-code-text:   #edf3f8;
+  --theme-code-border: #1e3454;
+}
+
+/* Chat Bubbles in Mist */
+[data-bg-theme="mist"] .chat-bubble-box.me {
+  background: #e6f0fa !important;
+  border-color: #bcd4ec !important;
+  color: #0b192c !important;
+}
+
+[data-bg-theme="mist"] .chat-bubble-box.other {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0b192c !important;
+}
+
+/* Inline Guidance Cards in Mist */
+[data-bg-theme="mist"] .inline-guidance-card {
+  background: #f0f6fb !important;
+  border: 1px solid #cfe0ef !important;
+}
+
+[data-bg-theme="mist"] .inline-guidance-card b,
+[data-bg-theme="mist"] .inline-guidance-card h4 {
+  color: #0c274a !important;
+}
+
+[data-bg-theme="mist"] .inline-guidance-card p,
+[data-bg-theme="mist"] .inline-guidance-card span {
+  color: #1e3a5f !important;
+}
+
+[data-bg-theme="mist"] .inline-guidance-card svg {
+  color: #0284c7 !important;
+}
+
+/* Sidebar Nav Items in Mist */
+[data-bg-theme="mist"] .nav-item.selected {
+  background: linear-gradient(135deg, #d3e1ef 0%, #c0d3e7 100%) !important;
+  color: #072a4e !important;
+  border-left: 3px solid #0284c7;
+}
+
+[data-bg-theme="mist"] .nav-item {
+  color: #475e75 !important;
+}
+
+[data-bg-theme="mist"] .nav-item:hover {
+  background: rgba(2, 132, 199, 0.08) !important;
+  color: #0c192c !important;
+}

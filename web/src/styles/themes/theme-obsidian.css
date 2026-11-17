@@ -1,0 +1,211 @@
+/**
+ * GLBC Translation System — Night Obsidian Theme
+ * Modern Midnight Slate Dark Mode (Inspired by Linear / Tailwind Slate / Deep Midnight Navy)
+ * Optimized for extended reading, low eye-strain, and crisp component elevation.
+ */
+
+[data-bg-theme="obsidian"] {
+  color-scheme: dark;
+  --color-theme-bar-bg: rgba(255, 255, 255, 0.05);
+
+  /* Multi-Theme Gradient System: Night Obsidian */
+  /* Deep midnight slate base (#020617) — zero muddy black void gradient */
+  --theme-canvas-bg: #020617;
+  --theme-sidebar-bg: #121b2e;
+  --theme-card-bg: #0f172a;
+  --theme-card-bg-elevated: #142037;
+  --theme-box-bg: #142037;
+  --theme-border: #1e293b;
+  --theme-border-subtle: #172438;
+  --theme-text: #f8fafc;
+  --theme-text-muted: #94a3b8;
+  --theme-input-bg: #0b1220;
+  --theme-card-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.45), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+
+  --color-surface: #0f172a;
+  --color-sidebar-bg: #121b2e;
+  --color-bg: #020617;
+  --color-border: #1e293b;
+  --color-text: #f8fafc;
+  --color-text-muted: #94a3b8;
+
+  /* Code / preview block tokens — crisp dark slate with readable text */
+  --theme-code-bg:     #0b1220;
+  --theme-code-text:   #cbd5e1;
+  --theme-code-border: #1e293b;
+}
+
+/* Topbar & Subbar in Obsidian */
+[data-bg-theme="obsidian"] .topbar {
+  background-color: #121b2e !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+[data-bg-theme="obsidian"] .subbar {
+  background: #121b2e !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+/* Chat Bubbles in Obsidian */
+[data-bg-theme="obsidian"] .chat-bubble-box.me {
+  background: #1a2d54 !important;
+  border-color: #2b4578 !important;
+  color: #f8fafc !important;
+}
+
+[data-bg-theme="obsidian"] .chat-bubble-box.other {
+  background: #142037 !important;
+  border-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+/* Inline Guidance Cards in Obsidian */
+[data-bg-theme="obsidian"] .inline-guidance-card {
+  background: linear-gradient(180deg, #121b2e 0%, #0e1626 100%) !important;
+  border: 1px solid #1e3a5f !important;
+}
+
+[data-bg-theme="obsidian"] .inline-guidance-card b,
+[data-bg-theme="obsidian"] .inline-guidance-card h4 {
+  color: #93c5fd !important;
+}
+
+[data-bg-theme="obsidian"] .inline-guidance-card p,
+[data-bg-theme="obsidian"] .inline-guidance-card span {
+  color: #cbd5e1 !important;
+}
+
+[data-bg-theme="obsidian"] .inline-guidance-card svg {
+  color: #60a5fa !important;
+}
+
+/* Sidebar Nav Items in Obsidian */
+[data-bg-theme="obsidian"] .nav-item.selected {
+  background: #1a2842 !important;
+  color: #38bdf8 !important;
+  border-left: 3px solid #38bdf8;
+}
+
+[data-bg-theme="obsidian"] .nav-item {
+  color: #94a3b8 !important;
+}
+
+[data-bg-theme="obsidian"] .nav-item:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #f1f5f9 !important;
+}
+
+[data-bg-theme="obsidian"] .person-card,
+[data-bg-theme="obsidian"] .member-item,
+[data-bg-theme="obsidian"] .team-person {
+  color: #cbd5e1 !important;
+}
+
+[data-bg-theme="obsidian"] .person-card:hover,
+[data-bg-theme="obsidian"] .member-item:hover,
+[data-bg-theme="obsidian"] .team-person:hover,
+[data-bg-theme="obsidian"] .team-accordion-header:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Active Role Tabs in Obsidian */
+[data-bg-theme="obsidian"] .focus-role-tab.active {
+  background-color: rgba(59, 130, 246, 0.18) !important;
+  border-color: #3b82f6 !important;
+  color: #93c5fd !important;
+}
+
+[data-bg-theme="obsidian"] .focus-role-tab.active.committee {
+  background-color: rgba(168, 85, 247, 0.18) !important;
+  border-color: #a855f7 !important;
+  color: #d8b4fe !important;
+}
+
+[data-bg-theme="obsidian"] .focus-role-tab.active.final {
+  background-color: rgba(244, 63, 94, 0.18) !important;
+  border-color: #f43f5e !important;
+  color: #fda4af !important;
+}
+
+[data-bg-theme="obsidian"] .focus-role-tab.active.drafter {
+  background-color: rgba(16, 185, 129, 0.18) !important;
+  border-color: #10b981 !important;
+  color: #6ee7b7 !important;
+}
+
+/* Role Badges in Obsidian */
+[data-bg-theme="obsidian"] .role-tab-badge.confirmed {
+  background-color: rgba(16, 185, 129, 0.16) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+[data-bg-theme="obsidian"] .role-tab-badge.pending {
+  background-color: rgba(245, 158, 11, 0.16) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+}
+
+/* WhatsApp Banner in Obsidian */
+[data-bg-theme="obsidian"] .whatsapp-link {
+  background: linear-gradient(135deg, #091f14 0%, #06150e 100%) !important;
+  border: 1px solid #166534 !important;
+  color: #86efac !important;
+}
+
+[data-bg-theme="obsidian"] .whatsapp-link b,
+[data-bg-theme="obsidian"] .whatsapp-link span {
+  color: #86efac !important;
+}
+
+/* Date Picker Calendar Indicator in Obsidian */
+[data-bg-theme="obsidian"] input[type="date"] {
+  color-scheme: dark !important;
+}
+
+[data-bg-theme="obsidian"] input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+[data-bg-theme="obsidian"] input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Modals & Popovers in Obsidian */
+[data-bg-theme="obsidian"] .app-modal-card {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.6) !important;
+}
+
+[data-bg-theme="obsidian"] .countdown-popover-card {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Discussion Popout Modal in Obsidian */
+[data-bg-theme="obsidian"] .discussion-popout-card {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+}
+
+/* Impact Cards in ApprovalImpactModal */
+[data-bg-theme="obsidian"] .impact-card-confirm {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+}
+[data-bg-theme="obsidian"] .impact-card-confirm span,
+[data-bg-theme="obsidian"] .impact-card-confirm li {
+  color: #86efac !important;
+}
+
+[data-bg-theme="obsidian"] .impact-card-decline {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+[data-bg-theme="obsidian"] .impact-card-decline span,
+[data-bg-theme="obsidian"] .impact-card-decline li {
+  color: #fca5a5 !important;
+}

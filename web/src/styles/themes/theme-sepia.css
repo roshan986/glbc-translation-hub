@@ -1,0 +1,107 @@
+/**
+ * GLBC Translation System — Warm Sepia Theme
+ * Archival Linen & Warm Parchment (Apple Books / Kindle Inspired)
+ */
+
+[data-bg-theme="sepia"] {
+  --color-theme-bar-bg: rgba(60, 40, 20, 0.05);
+
+  /* Multi-Theme Gradient System: Warm Sepia */
+  --theme-canvas-bg: linear-gradient(180deg, #faf6ee 0%, #f3eee2 100%);
+  --theme-sidebar-bg: linear-gradient(180deg, #f7f2e7 0%, #ede6d7 100%);
+  --theme-card-bg: #fffdfa;
+  --theme-card-bg-elevated: #fffdfa;
+  --theme-box-bg: #f5efe4;
+  --theme-border: #dfd5c2;
+  --theme-border-subtle: #ede5d5;
+  --theme-text: #1e140a;
+  --theme-text-muted: #68513b;
+  --theme-input-bg: #fffdfa;
+  --theme-card-shadow: 0 1px 3px 0 rgba(40, 25, 10, 0.04), 0 1px 2px -1px rgba(40, 25, 10, 0.04);
+
+  --color-surface: #fffdfa;
+  --color-sidebar-bg: #f7f2e7;
+  --color-bg: #faf6ee;
+  --color-border: #dfd5c2;
+  --color-text: #1e140a;
+  --color-text-muted: #68513b;
+
+  /* Code / preview block tokens */
+  --theme-code-bg:     #1e140a;
+  --theme-code-text:   #f5efe4;
+  --theme-code-border: #3a2a18;
+}
+
+/* Chat Bubbles in Sepia */
+[data-bg-theme="sepia"] .chat-bubble-box.me {
+  background: #f5eee3 !important;
+  border-color: #dfd5c2 !important;
+  color: #1e140a !important;
+}
+
+[data-bg-theme="sepia"] .chat-bubble-box.other {
+  background: #fffdfa !important;
+  border-color: #dfd5c2 !important;
+  color: #1e140a !important;
+}
+
+/* Inline Guidance Cards in Sepia */
+[data-bg-theme="sepia"] .inline-guidance-card {
+  background: #fbf5ea !important;
+  border: 1px solid #ebd9c0 !important;
+}
+
+[data-bg-theme="sepia"] .inline-guidance-card b,
+[data-bg-theme="sepia"] .inline-guidance-card h4 {
+  color: #3b220c !important;
+}
+
+[data-bg-theme="sepia"] .inline-guidance-card p,
+[data-bg-theme="sepia"] .inline-guidance-card span {
+  color: #5c3e21 !important;
+}
+
+[data-bg-theme="sepia"] .inline-guidance-card svg {
+  color: #8c531b !important;
+}
+
+/* Sidebar Nav Items in Sepia */
+[data-bg-theme="sepia"] .nav-item.selected {
+  background: linear-gradient(135deg, #e7d5be 0%, #dac2a6 100%) !important;
+  color: #3d230d !important;
+  border-left: 3px solid #854d0e;
+}
+
+[data-bg-theme="sepia"] .nav-item {
+  color: #5d4632 !important;
+}
+
+[data-bg-theme="sepia"] .nav-item:hover {
+  background: rgba(133, 77, 14, 0.08) !important;
+  color: #281b10 !important;
+}
+
+/* Active Role Tabs in Sepia */
+[data-bg-theme="sepia"] .focus-role-tab.active {
+  background-color: #ede3d3 !important;
+  border-color: #8c531b !important;
+  color: #3b220c !important;
+}
+
+/* Role Badges in Sepia */
+[data-bg-theme="sepia"] .role-tab-badge.confirmed {
+  background-color: #e5ede3 !important;
+  color: #274e27 !important;
+}
+
+[data-bg-theme="sepia"] .role-tab-badge.pending {
+  background-color: #f5edd7 !important;
+  color: #6d4e16 !important;
+}
+
+/* WhatsApp Banner in Sepia */
+[data-bg-theme="sepia"] .whatsapp-link {
+  background: linear-gradient(135deg, #f0f7ef, #e4efe3) !important;
+  border: 1px solid #bed6bd !important;
+  color: #1b381b !important;
+}

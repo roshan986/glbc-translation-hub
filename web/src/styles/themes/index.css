@@ -1,0 +1,10 @@
+/**
+ * GLBC Translation System — Modular Theme System Manifest
+ * Imports universal theme engine base and individual plug-and-play theme palettes.
+ */
+
+@import './theme-base.css';
+@import './theme-default.css';
+@import './theme-sepia.css';
+@import './theme-mist.css';
+@import './theme-obsidian.css';

@@ -1,0 +1,84 @@
+================================================================================
+GLBC TRANSLATION SYSTEM — DAILY LOG
+Date: 2026-11-17
+Local Time: 11:30 IST
+Session: Night Obsidian Theme Overhaul & Visual Weight Reduction (Testing.docx)
+================================================================================
+
+1. USER OBJECTIVE & TESTING.DOCX DIRECTIVE
+--------------------------------------------------------------------------------
+- User Instruction:
+  * "first update the night mode as per the request - I think this has to more with background color - 'C:\Development\Other Projects\GLBC\Testing\testing.docx' - then we can take up other works"
+- User Observation from Testing/testing.docx:
+  * "I want update in night mode obsidian theme, I feel ours is too heavy but this below dashboard (someone else’s) is very good feeling in night mode and feels easy to view."
+  * Reference screenshots provided in Word document: image1.png and image2.png.
+
+2. PALETTE FORENSICS & REFERENCE SAMPLING
+--------------------------------------------------------------------------------
+- Extracted and sampled exact pixel values from reference screenshots:
+  * Canvas Base Background: #020617 (Tailwind Slate-950, deep midnight navy)
+  * Sidebar & Topbar Surfaces: #121B2E (Clean slate-navy framing with #1E293B border)
+  * Card Surfaces: #0F172A (Tailwind Slate-900, elevated clean surface)
+  * Sub-boxes & Nested Cards: #142037 / #1A2842
+  * Active Navigation Pill: #1A2842 background with #38BDF8 / #60A5FA sky blue text
+  * Primary Typography: #F8FAFC (Slate-50) for headings, numbers, and Kannada Scripture
+  * Secondary / Muted Typography: #94A3B8 (Slate-400) for meta labels and base reading
+  * Border Tokens: #1E293B (Tailwind Slate-800, 1px crisp separation)
+
+3. ROOT-CAUSE DIAGNOSIS: WHY OUR OLD OBSIDIAN WAS "TOO HEAVY"
+--------------------------------------------------------------------------------
+1) Oppressive Black Void Gradients:
+   * The previous `--theme-canvas-bg` used `linear-gradient(180deg, #090d16 0%, #05080f 50%, #020306 100%)`.
+   * The bottom stop `#020306` created a harsh, pitch-black OLED void.
+   * Every card and container also darkened vertically (`#151e30` -> `#101726`), creating a gloomy, heavy sensation as users scrolled.
+2) Missing Surface Separation:
+   * With cards at `#101726` on a `#090d16` canvas, the contrast difference was under 3%. Cards blended into the background, losing structure and causing eye strain during translation sessions.
+3) Inconsistent Topbar / Subbar / Hover States:
+   * Topbar and subbar had hardcoded colors that did not harmonize with the dark midnight slate theme. Hovering on accordion headers flashed stark white `#f1f5f9`.
+
+4. ARCHITECTURAL REMEDIATION & PALETTE ALIGNMENT
+--------------------------------------------------------------------------------
+- Refactored `web/src/styles/themes/theme-obsidian.css`:
+  * Base Canvas: #020617 (solid, uniform deep midnight slate, zero harsh void gradients).
+  * Sidebar & Structural Frames: #121B2E with crisp #1E293B border.
+  * Card Surfaces: #0F172A with subtle #1E293B border and 0 4px 14px shadow, creating an airy 12-15% luminance elevation over the canvas.
+  * Sub-boxes & Containers: #142037 for word-pair chips, investigation notes, and comment composers.
+  * Topbar & Subbar: Synchronized to #121B2E with #1E293B bottom border.
+  * Sidebar Navigation: Active items use #1A2842 with #38BDF8 border & text; hover uses rgba(255, 255, 255, 0.05).
+  * Chat Bubbles: .me uses #1A2D54 with #2B4578 border; .other uses #142037 with #1E293B border.
+  * Inline Guidance: Clean #121B2E card with #1E3A5F border and #93C5FD headings.
+  * Impact Cards: Replaced blinding white blocks in `ApprovalImpactModal.tsx` with semantic `.impact-card-confirm` (translucent emerald) and `.impact-card-decline` (translucent rose).
+- Theme Swatches Synchronized:
+  * `web/src/components/Sidebar.tsx`: Updated swatch to `linear-gradient(135deg, #121b2e, #020617)`.
+  * `web/src/components/MobileBottomNav.tsx`: Updated swatch to `#020617`.
+
+5. FILES MODIFIED
+--------------------------------------------------------------------------------
+- `web/src/styles/themes/theme-obsidian.css`: Complete overhaul of Night Obsidian design tokens & component rules.
+- `web/src/components/ApprovalImpactModal.tsx`: Added semantic `.impact-card-confirm` and `.impact-card-decline` classes.
+- `web/src/components/Sidebar.tsx`: Updated Night Obsidian swatch gradient.
+- `web/src/components/MobileBottomNav.tsx`: Updated Night Obsidian swatch color.
+
+6. QA & COMPILATION VERIFICATION
+--------------------------------------------------------------------------------
+- TypeScript compilation (`node web/node_modules/typescript/bin/tsc --project web/tsconfig.json --noEmit`):
+  * Result: PASSED (0 errors, 0 warnings).
+
+7. MOBILE TESTING & VERCEL DEPLOYMENT READINESS
+--------------------------------------------------------------------------------
+- User Inquiry:
+  * "Let's update the app to vercel so I can test the features in mobile app - other wise is there a way to check in phone without launching into vercel? if going to vercel then check our excel how launching is planned."
+- Reviewed Architectural Master Plan (GLBC_Architecture_Upgrade_Plan_updated.xlsx):
+  * Sheet 1 (Row 30): $0/mo cost model with Vercel Free Tier hosting + Google Sheets Apps Script API.
+  * Sheet 7 (Row 18): Hosting & Deployment via Vercel with automated CI/CD from GitHub repo.
+  * Sheet 4 (Rows 26-27): PWA offline caching and WhatsApp alert deep-linking.
+- Configured Vite Local Network Access (web/vite.config.ts):
+  * Added `server: { host: true, port: 5173 }`.
+  * Machine IPv4: 192.168.1.34. Allows immediate, real-time testing on physical phone via `http://192.168.1.34:5173` without deployment.
+- Configured Vercel Deployment Manifests:
+  * Created `web/vercel.json` and root `vercel.json` with SPA wildcard rewrites (`/(.*) -> /index.html`) to ensure client-side routing never throws 404 on direct verse URLs.
+
+8. QA & COMPILATION VERIFICATION
+--------------------------------------------------------------------------------
+- TypeScript compilation: PASSED (0 errors, 0 warnings).
+================================================================================

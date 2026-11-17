@@ -1,0 +1,178 @@
+/**
+ * GLBC Translation System — Universal Theme Engine (Base)
+ * Decouples all cards, panels, inputs, and typography from explicit colors,
+ * binding them cleanly to semantic theme design tokens.
+ */
+
+/* Universal Card Surfaces across all workspaces */
+.reading-card,
+.notes-card,
+.discussion-card,
+.discipline-card,
+.review-toolbar,
+.focus-role-tabs-bar,
+.final-editor-card,
+.editorial-guidelines-card,
+.chamber-card,
+.audit-card,
+.chamber-header,
+.portal-header,
+.chamber-verse-nav,
+.reviewer-matrix,
+.committee-conclusion-card,
+.portal-card,
+.analytics-kpi-card,
+.analytics-card,
+.settings-card,
+.smart-assistant-drawer,
+.smart-assistant-card,
+.app-modal-card,
+.countdown-popover-card,
+.action-dock,
+.team-person:hover,
+.nav-item:hover {
+  background: var(--theme-card-bg) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+  box-shadow: var(--theme-card-shadow, 0 1px 3px rgba(0, 0, 0, 0.04)) !important;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Sub-Boxes, Notes, Pills & Nested Elements inside Cards */
+.word-pair-item,
+.investigation-note,
+.deliberation-hub-header,
+.btn-verse-jump,
+.size-control,
+.next-verse,
+.matrix-card,
+.chamber-filter-pill.active,
+.smart-assistant-box,
+.stat-pill,
+.countdown-velocity-box,
+.chat-action-btn,
+.focus-role-tab {
+  background: var(--theme-box-bg) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Minimalist Integrated Comment Composer */
+.comment-composer {
+  background: var(--theme-box-bg) !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 0.75rem !important;
+  padding: 0.875rem !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+
+.comment-composer textarea {
+  width: 100% !important;
+  border: 1px solid var(--theme-border) !important;
+  border-radius: 0.5rem !important;
+  padding: 0.625rem 0.75rem !important;
+  background: var(--theme-input-bg) !important;
+  color: var(--theme-text) !important;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  resize: vertical;
+  min-height: 3.75rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.comment-composer textarea::placeholder {
+  color: var(--theme-text-muted) !important;
+  opacity: 0.65;
+}
+
+.comment-composer textarea:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.18) !important;
+}
+
+/* Form Inputs, Textareas and Dropdowns */
+.conclusion-textarea,
+.final-reading-textarea,
+.settings-input {
+  background: var(--theme-input-bg) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+/* Reading Typography Overrides for Active Theme */
+.english-reading,
+.kjv-text,
+.kannada-reading,
+.proposed-kannada,
+.drafter-notes-body,
+.reference-reading p,
+.word-pair-kannada,
+.section-heading-copy b,
+.reading-card h3,
+.reading-card h4,
+.discipline-card h3,
+.discipline-card h4,
+.final-editor-card h3,
+.final-editor-card h4,
+.editorial-guidelines-card h4,
+.settings-card h3,
+.settings-card h4,
+.analytics-card h3,
+.analytics-card h4,
+.smart-assistant-card h3,
+.smart-assistant-card h4,
+.verse-title h2,
+.chamber-title,
+.portal-title,
+.role-title,
+.section-heading {
+  color: var(--theme-text) !important;
+}
+
+.word-pair-english,
+.section-heading-copy small,
+.interlinear-heading {
+  color: var(--theme-text-muted) !important;
+}
+
+/* Ensure rich-text highlight spans keep their original colored styles */
+.word-pair-kannada span[style*="color"],
+.word-pairs span[style*="color"],
+.kannada-reading span[style*="color"],
+.investigation-note p span[style*="color"] {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: inline !important;
+}
+
+.note-count {
+  background: var(--theme-box-bg) !important;
+  color: var(--theme-text-muted) !important;
+  border: 1px solid var(--theme-border) !important;
+}
+
+/* Base Chat Bubble Engine */
+.chat-bubble-box {
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.chat-bubble-box.me {
+  border-radius: 0.75rem 0.75rem 0.15rem 0.75rem;
+  background: #eef2ff !important;
+  border: 1px solid #c7d2fe !important;
+  color: #1e1b4b !important;
+}
+
+.chat-bubble-box.other {
+  border-radius: 0.75rem 0.75rem 0.75rem 0.15rem;
+  background: var(--theme-card-bg) !important;
+  border: 1px solid var(--theme-border) !important;
+  color: var(--theme-text) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}

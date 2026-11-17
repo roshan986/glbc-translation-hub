@@ -1,0 +1,389 @@
+/**
+ * GLBC Translation System — Modular Responsive Engine: Mobile View
+ * Viewport range: <= 640px (iPhone, Android smartphones, compact foldables)
+ * Focus: Native thumb bottom navigation, zero-vertical-scroll card compaction,
+ * horizontal touch-momentum snap rails, and slide-up bottom sheet Smart Assistant.
+ */
+
+/* ── Global Baseline Visibility Helpers (Desktop / Tablet Defaults) ── */
+.mobile-only {
+  display: none !important;
+}
+
+.mobile-only-block {
+  display: none !important;
+}
+
+.desktop-only {
+  display: block;
+}
+
+table.desktop-only {
+  display: table !important;
+}
+
+@media (max-width: 640px) {
+  /* ── Responsive Visibility Switches ── */
+  .mobile-only {
+    display: flex !important;
+  }
+
+  .mobile-only-block {
+    display: block !important;
+  }
+
+  .desktop-only {
+    display: none !important;
+  }
+
+  /* ── 1. App Shell & Root Viewport ── */
+  html, body, #root, .app-shell {
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  .workspace {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 3.25rem);
+    padding-bottom: calc(3.75rem + env(safe-area-inset-bottom, 0px));
+    overflow: hidden;
+  }
+
+  /* Hide Desktop Sidebar on Mobile */
+  .sidebar {
+    display: none !important;
+  }
+
+  /* Main Viewport smooth scrolling */
+  .main-viewport {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0.625rem 0.75rem 2rem 0.75rem !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── 2. Slim Compact Mobile Topbar ── */
+  .topbar {
+    height: 3.25rem !important;
+    padding: 0.4rem 0.75rem !important;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-center,
+  .topbar-right .topbar-user-badge,
+  .topbar-right .btn-help,
+  .topbar-right .topbar-divider {
+    display: none !important;
+  }
+
+  .topbar-left {
+    gap: 0.4rem;
+  }
+
+  .topbar-logo {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .book-selector-btn {
+    padding: 0.35rem 0.6rem !important;
+    font-size: 0.8125rem !important;
+  }
+
+  .btn-assistant-trigger {
+    padding: 0.35rem 0.55rem !important;
+  }
+
+  .btn-assistant-trigger span {
+    display: none;
+  }
+
+  /* ── 3. Aggressive Vertical Scroll Reduction in Focus Mode ── */
+  .focus-mode-card {
+    padding: 0.75rem !important;
+    border-radius: 0.625rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .review-toolbar {
+    padding: 0.5rem 0.625rem !important;
+    gap: 0.35rem !important;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-center-countdown {
+    width: 100%;
+    order: 3;
+    margin-top: 0.25rem;
+  }
+
+  .countdown-capsule-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Base Reading Comparison Grid: Single Compact Column */
+  .comparison-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.625rem !important;
+  }
+
+  .reference-card,
+  .proposed-card,
+  .drafter-comments-card {
+    padding: 0.75rem 0.875rem !important;
+    border-radius: 0.5rem !important;
+  }
+
+  /* Auto-cap height of back-translation word-pairs and notes */
+  .back-translation-table-container,
+  .investigation-notes-container {
+    max-height: 180px !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── 4. 4 Discipline Review Cards on Mobile ── */
+  .matrix-cards-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.625rem !important;
+  }
+
+  .discipline-review-card {
+    padding: 0.75rem 0.875rem !important;
+    border-radius: 0.5rem !important;
+  }
+
+  .discipline-review-card .comments-thread-container {
+    max-height: 160px !important;
+    overflow-y: auto;
+  }
+
+  /* ── 5. Sticky Bottom Thumb Action Dock ── */
+  .action-dock {
+    position: sticky !important;
+    bottom: 0.25rem !important;
+    z-index: 35 !important;
+    padding: 0.625rem 0.875rem !important;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 0.625rem !important;
+    backdrop-filter: blur(10px);
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 0.5rem !important;
+  }
+
+  .action-dock .action-buttons {
+    width: 100%;
+    display: flex;
+    gap: 0.4rem;
+    justify-content: space-between;
+  }
+
+  .action-dock button {
+    flex: 1;
+    padding: 0.5rem 0.6rem !important;
+    font-size: 0.75rem !important;
+    justify-content: center;
+  }
+
+  /* ── 6. Smart Assistant: Native Slide-Up Bottom Sheet ── */
+  .smart-assistant-backdrop {
+    align-items: flex-end !important;
+    justify-content: center !important;
+  }
+
+  .smart-assistant-drawer {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 72vh !important;
+    max-height: 80vh !important;
+    border-radius: 1.25rem 1.25rem 0 0 !important;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.3) !important;
+    animation: slideUpBottomSheet 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  @keyframes slideUpBottomSheet {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  /* ── 7. Coordinator Analytics Mobile Horizontal Snap Rail ── */
+  .analytics-kpi-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.625rem !important;
+    padding: 0.25rem 0.25rem 0.75rem 0.25rem !important;
+    margin-bottom: 0.5rem !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .analytics-kpi-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .analytics-kpi-grid .analytics-card {
+    flex: 0 0 170px !important;
+    min-width: 170px !important;
+    scroll-snap-align: start !important;
+    cursor: pointer !important;
+    padding: 0.75rem 0.875rem !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  }
+
+  .analytics-kpi-grid .analytics-card:active {
+    transform: scale(0.97) !important;
+  }
+
+  .analytics-kpi-value {
+    font-size: 1.25rem !important;
+  }
+
+  .analytics-funnel-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.625rem !important;
+  }
+
+  /* Bottleneck Horizontal Snap Rail on Mobile */
+  .analytics-bottleneck-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.625rem !important;
+    padding: 0.25rem 0.25rem 0.75rem 0.25rem !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .analytics-bottleneck-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .analytics-bottleneck-grid .analytics-bottleneck-card {
+    flex: 0 0 210px !important;
+    min-width: 210px !important;
+    scroll-snap-align: start !important;
+    cursor: pointer !important;
+  }
+
+  /* ── 8. Mobile Segmented Pills & Horizontal Tracks ── */
+  .segmented-pill-bar {
+    display: flex !important;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem;
+    background: var(--theme-box-bg, #f1f5f9);
+    border: 1px solid var(--theme-border, #e2e8f0);
+    border-radius: 9999px;
+    margin-bottom: 0.75rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .segmented-pill-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .segmented-pill {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 9999px;
+    border: none;
+    background: transparent;
+    color: var(--theme-text-muted, #64748b);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+
+  .segmented-pill.active {
+    background: var(--theme-card-bg, #ffffff);
+    color: var(--theme-accent, #2563eb);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-weight: 700;
+  }
+
+  /* Mobile Team Cards Rail */
+  .mobile-team-cards-rail {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.75rem !important;
+    padding: 0.25rem 0.25rem 0.75rem 0.25rem !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .mobile-team-cards-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-team-card {
+    flex: 0 0 240px !important;
+    min-width: 240px !important;
+    scroll-snap-align: start !important;
+    background: var(--theme-card-bg, #ffffff);
+    border: 1px solid var(--theme-border, #e2e8f0);
+    border-radius: 0.625rem;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justifyContent: space-between;
+    gap: 0.75rem;
+  }
+
+  /* ── 9. Settings Hub Mobile Tabs ── */
+  .settings-subnav {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.25rem;
+  }
+
+  .settings-subnav-btn {
+    padding: 0.4rem 0.75rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* ── 10. Native Bottom Navigation Bar ── */
+  .mobile-bottom-nav {
+    display: flex !important;
+  }
+
+  /* Hide old redundant top-of-page mobile-tabs bar */
+  .mobile-tabs {
+    display: none !important;
+  }
+}
