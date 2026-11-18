@@ -123,15 +123,30 @@ export interface BookAnalytics {
   };
 }
 
+export interface RichTextRunPayload {
+  text: string;
+  color?: string | null;
+  bold?: boolean;
+  italic?: boolean;
+}
+
+export interface RichTextSectionPayload {
+  text: string;
+  runs: RichTextRunPayload[];
+}
+
 export interface ParsedImportVerse {
   verse: string;
   chapter: number;
   verseNumber: number;
   oldReading: string;
+  oldReadingSection?: RichTextSectionPayload;
   proposed: string;
   proposedHtml?: string;
+  proposedSection?: RichTextSectionPayload;
   drafterCmt: string;
   drafterCmtHtml?: string;
+  drafterCmtSection?: RichTextSectionPayload;
   wordPairs?: WordPair[];
   notes?: InvestigationNote[];
   status: 'ready' | 'conflict' | 'unmatched';

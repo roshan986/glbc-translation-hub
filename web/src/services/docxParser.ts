@@ -1,5 +1,5 @@
 import JSZip from 'jszip';
-import type { ParsedImportVerse, WordPair, InvestigationNote, VerseItem } from '../types';
+import type { ParsedImportVerse, WordPair, InvestigationNote, VerseItem, RichTextRunPayload, RichTextSectionPayload } from '../types';
 
 /**
  * Standard Word XML highlight color map
@@ -34,6 +34,7 @@ interface ParsedBlock {
   html: string;
   runs?: TextRun[];
   tableRows?: string[][];
+  tableRuns?: TextRun[][][];
 }
 
 /**
@@ -151,6 +152,7 @@ function parseParagraph(pEl: Element): ParsedBlock {
 
 function parseTable(tblEl: Element): ParsedBlock {
   const tableRows: string[][] = [];
+  const tableRuns: TextRun[][][] = [];
   let tableText = '';
   let tableHtml = '<div class="parsed-import-table"><table style="border-collapse: collapse; width: 100%; margin: 6px 0;">';
 
@@ -158,6 +160,7 @@ function parseTable(tblEl: Element): ParsedBlock {
   for (let r = 0; r < trEls.length; r++) {
     const trEl = trEls[r];
     const rowCells: string[] = [];
+    const rowRuns: TextRun[][] = [];
     tableHtml += '<tr>';
 
     const tcEls = trEl.getElementsByTagName('w:tc');
@@ -165,13 +168,26 @@ function parseTable(tblEl: Element): ParsedBlock {
       const tcEl = tcEls[c];
       const pEls = tcEl.getElementsByTagName('w:p');
       let cellText = '';
+      let cellHtml = '';
+      const cellRuns: TextRun[] = [];
+
       for (let p = 0; p < pEls.length; p++) {
-        cellText += pEls[p].textContent || '';
+        const parsedP = parseParagraph(pEls[p]);
+        if (cellText && parsedP.text) {
+          cellText += ' ';
+          cellHtml += ' ';
+        }
+        cellText += parsedP.text;
+        cellHtml += parsedP.html;
+        if (parsedP.runs) cellRuns.push(...parsedP.runs);
       }
+
       rowCells.push(cellText.trim());
-      tableHtml += `<td style="border: 1px solid #cbd5e1; padding: 4px 8px; font-size: 0.8125rem;">${escapeHtml(cellText.trim())}</td>`;
+      rowRuns.push(cellRuns);
+      tableHtml += `<td style="border: 1px solid #cbd5e1; padding: 4px 8px; font-size: 0.8125rem;">${cellHtml || escapeHtml(cellText.trim())}</td>`;
     }
     tableRows.push(rowCells);
+    tableRuns.push(rowRuns);
     tableText += rowCells.join(' | ') + '\n';
     tableHtml += '</tr>';
   }
@@ -181,7 +197,8 @@ function parseTable(tblEl: Element): ParsedBlock {
     type: 'table',
     text: tableText.trim(),
     html: tableHtml,
-    tableRows
+    tableRows,
+    tableRuns
   };
 }
 
@@ -251,36 +268,91 @@ export function groupBlocksIntoVerses(
   // Parse each group into Old Reading, Proposed Reading, and Drafter Comments
   for (const group of rawGroups) {
     let oldReading = '';
+    const oldReadingRuns: RichTextRunPayload[] = [];
     let proposed = '';
     let proposedHtml = '';
+    const proposedRuns: RichTextRunPayload[] = [];
     let drafterCmt = '';
     let drafterCmtHtml = '';
+    const drafterCmtRuns: RichTextRunPayload[] = [];
     const wordPairs: WordPair[] = [];
     const notes: InvestigationNote[] = [];
 
     let currentSection: 'old' | 'proposed' | 'comment' = 'proposed';
+
+    const addParagraphRuns = (targetRuns: RichTextRunPayload[], b: ParsedBlock, skipChars = 0) => {
+      if (b.runs && b.runs.length > 0) {
+        let charsSkipped = 0;
+        for (const r of b.runs) {
+          if (charsSkipped + r.text.length <= skipChars) {
+            charsSkipped += r.text.length;
+            continue;
+          } else if (charsSkipped < skipChars) {
+            const needed = r.text.substring(skipChars - charsSkipped);
+            charsSkipped = skipChars;
+            if (needed) {
+              targetRuns.push({
+                text: needed,
+                color: r.color || null,
+                bold: r.isBold || false,
+                italic: r.isItalic || false
+              });
+            }
+          } else {
+            targetRuns.push({
+              text: r.text,
+              color: r.color || null,
+              bold: r.isBold || false,
+              italic: r.isItalic || false
+            });
+          }
+        }
+      } else if (b.text) {
+        const needed = b.text.substring(skipChars).trim();
+        if (needed) {
+          targetRuns.push({ text: needed, color: null, bold: false, italic: false });
+        }
+      }
+    };
 
     for (const b of group.blocks) {
       const lower = b.text.toLowerCase().trim();
 
       if (lower.includes('old reading') || lower.includes('kjv:')) {
         currentSection = 'old';
-        const cleaned = b.text.replace(/old reading\s*(?:\(kjv\))?\s*:?/i, '').trim();
-        if (cleaned) oldReading += (oldReading ? ' ' : '') + cleaned;
+        const match = b.text.match(/^(?:old reading\s*(?:\(kjv\))?\s*:?|kjv\s*:?)\s*/i);
+        const skipLen = match ? match[0].length : 0;
+        const cleaned = b.text.substring(skipLen).trim();
+        if (cleaned) {
+          if (oldReadingRuns.length > 0) {
+            oldReadingRuns.push({ text: ' ', color: null, bold: false, italic: false });
+          }
+          addParagraphRuns(oldReadingRuns, b, skipLen);
+        }
         continue;
       } else if (lower.includes('proposed reading') || lower.includes('proposed:')) {
         currentSection = 'proposed';
-        const cleaned = b.text.replace(/proposed reading\s*:?/i, '').trim();
+        const match = b.text.match(/^(?:proposed reading\s*:?|proposed\s*:?)\s*/i);
+        const skipLen = match ? match[0].length : 0;
+        const cleaned = b.text.substring(skipLen).trim();
         if (cleaned) {
-          proposed += (proposed ? '\n' : '') + cleaned;
+          if (proposedRuns.length > 0) {
+            proposedRuns.push({ text: '\n', color: null, bold: false, italic: false });
+          }
+          addParagraphRuns(proposedRuns, b, skipLen);
           proposedHtml += (proposedHtml ? '<br/>' : '') + b.html;
         }
         continue;
       } else if (lower.includes('drafter comments') || lower.includes('comments:') || lower.includes('investigation') || lower.includes('back-translation')) {
         currentSection = 'comment';
-        const cleaned = b.text.replace(/(?:drafter comments|investigations?)\s*:?/i, '').trim();
+        const match = b.text.match(/^(?:drafter comments\s*:?|comments\s*:?|investigations?\s*:?|back-translation\s*:?)\s*/i);
+        const skipLen = match ? match[0].length : 0;
+        const cleaned = b.text.substring(skipLen).trim();
         if (cleaned) {
-          drafterCmt += (drafterCmt ? '\n\n' : '') + cleaned;
+          if (drafterCmtRuns.length > 0) {
+            drafterCmtRuns.push({ text: '\n\n', color: null, bold: false, italic: false });
+          }
+          addParagraphRuns(drafterCmtRuns, b, skipLen);
           drafterCmtHtml += (drafterCmtHtml ? '<br/><br/>' : '') + b.html;
         }
         continue;
@@ -299,18 +371,55 @@ export function groupBlocksIntoVerses(
             }
           }
         }
-        drafterCmt += (drafterCmt ? '\n\n' : '') + b.text;
+        if (drafterCmtRuns.length > 0) {
+          drafterCmtRuns.push({ text: '\n\n', color: null, bold: false, italic: false });
+        }
         drafterCmtHtml += (drafterCmtHtml ? '<br/>' : '') + b.html;
+
+        // Add table runs with ' | ' delimiters exactly matching Google Sheets menu
+        if (b.tableRuns && b.tableRuns.length > 0) {
+          for (let r = 0; r < b.tableRuns.length; r++) {
+            const rowRun = b.tableRuns[r];
+            for (let c = 0; c < rowRun.length; c++) {
+              const cellRuns = rowRun[c];
+              for (const cr of cellRuns) {
+                drafterCmtRuns.push({
+                  text: cr.text,
+                  color: cr.color || null,
+                  bold: cr.isBold || false,
+                  italic: cr.isItalic || false
+                });
+              }
+              if (c < rowRun.length - 1) {
+                drafterCmtRuns.push({ text: ' | ', color: null, bold: false, italic: false });
+              }
+            }
+            if (r < b.tableRuns.length - 1) {
+              drafterCmtRuns.push({ text: '\n', color: null, bold: false, italic: false });
+            }
+          }
+        } else {
+          drafterCmtRuns.push({ text: b.text, color: null, bold: false, italic: false });
+        }
       } else {
         // Regular paragraph in current section
         if (currentSection === 'old') {
-          oldReading += (oldReading ? ' ' : '') + b.text.trim();
+          if (oldReadingRuns.length > 0) {
+            oldReadingRuns.push({ text: ' ', color: null, bold: false, italic: false });
+          }
+          addParagraphRuns(oldReadingRuns, b);
         } else if (currentSection === 'proposed') {
-          proposed += (proposed ? '\n' : '') + b.text.trim();
+          if (proposedRuns.length > 0) {
+            proposedRuns.push({ text: '\n', color: null, bold: false, italic: false });
+          }
           proposedHtml += (proposedHtml ? '<br/>' : '') + b.html;
+          addParagraphRuns(proposedRuns, b);
         } else {
-          drafterCmt += (drafterCmt ? '\n\n' : '') + b.text.trim();
+          if (drafterCmtRuns.length > 0) {
+            drafterCmtRuns.push({ text: '\n\n', color: null, bold: false, italic: false });
+          }
           drafterCmtHtml += (drafterCmtHtml ? '<br/><br/>' : '') + b.html;
+          addParagraphRuns(drafterCmtRuns, b);
         }
       }
     }
@@ -338,21 +447,41 @@ export function groupBlocksIntoVerses(
       }
     }
 
+    const proposedText = proposedRuns.map((r) => r.text).join('').trim();
+    const drafterCmtText = drafterCmtRuns.map((r) => r.text).join('').trim();
+    const oldReadingText = oldReadingRuns.map((r) => r.text).join('').trim();
+
+    const proposedSection: RichTextSectionPayload = {
+      text: proposedText,
+      runs: proposedRuns
+    };
+    const drafterCmtSection: RichTextSectionPayload = {
+      text: drafterCmtText,
+      runs: drafterCmtRuns
+    };
+    const oldReadingSection: RichTextSectionPayload = {
+      text: oldReadingText,
+      runs: oldReadingRuns
+    };
+
     verseResults.push({
       verse: matchedSheetVerse ? matchedSheetVerse.verse : group.rawRef,
       chapter: group.chapter,
       verseNumber: group.verseNumber,
-      oldReading: oldReading || (matchedSheetVerse ? matchedSheetVerse.oldReading : ''),
-      proposed: proposed.trim(),
+      oldReading: oldReadingText || (matchedSheetVerse ? matchedSheetVerse.oldReading : ''),
+      oldReadingSection,
+      proposed: proposedText,
       proposedHtml: proposedHtml || undefined,
-      drafterCmt: drafterCmt.trim(),
+      proposedSection,
+      drafterCmt: drafterCmtText,
       drafterCmtHtml: drafterCmtHtml || undefined,
+      drafterCmtSection,
       wordPairs: wordPairs.length > 0 ? wordPairs : undefined,
       notes: notes.length > 0 ? notes : undefined,
       status,
       existingRow,
       existingProposed,
-      selectedForImport: status === 'ready'
+      selectedForImport: status === 'ready' || status === 'unmatched'
     });
   }
 

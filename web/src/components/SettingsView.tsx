@@ -1483,8 +1483,19 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                         />
                         <span>{pv.verse}</span>
                       </label>
-                      <span style={{ fontSize: '0.6875rem', padding: '0.1rem 0.4rem', borderRadius: '4px', backgroundColor: pv.existingRow ? '#dcfce7' : '#fee2e2', color: pv.existingRow ? '#166534' : '#991b1b', fontWeight: 600 }}>
-                        {pv.existingRow ? `Matches Row ${pv.existingRow}` : 'Row not found'}
+                      <span style={{
+                        fontSize: '0.6875rem',
+                        padding: '0.15rem 0.5rem',
+                        borderRadius: '4px',
+                        backgroundColor: pv.status === 'conflict' ? '#fef3c7' : pv.existingRow ? '#dcfce7' : '#e0f2fe',
+                        color: pv.status === 'conflict' ? '#92400e' : pv.existingRow ? '#166534' : '#0369a1',
+                        fontWeight: 700
+                      }}>
+                        {pv.status === 'conflict'
+                          ? `⚠️ Row ${pv.existingRow} (has existing draft)`
+                          : pv.existingRow
+                          ? `✅ Matches Row ${pv.existingRow}`
+                          : '✨ New row will be created in Sheets'}
                       </span>
                     </div>
 

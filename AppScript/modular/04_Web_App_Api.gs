@@ -504,6 +504,7 @@ function apiImportVerses(data) {
 
   var lastRow = sheet.getLastRow();
   var importedCount = 0;
+  var newRowsCreated = 0;
   var rowMap = {};
 
   // Map existing verses in sheet by reference for quick row resolution
@@ -518,26 +519,71 @@ function apiImportVerses(data) {
     }
   }
 
+  // Common Y/N validation rule for confirmation dropdowns
+  var ynRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(["Y", "N"], true)
+    .setAllowInvalid(false)
+    .build();
+
   for (var v = 0; v < verses.length; v++) {
     var item = verses[v];
     var targetRow = item.row;
-    if (!targetRow && item.verse) {
-      var cleanRef = String(item.verse).trim().toLowerCase().replace(/\s+/g, '');
+    var cleanRef = item.verse ? String(item.verse).trim().toLowerCase().replace(/\s+/g, '') : "";
+
+    if (!targetRow && cleanRef) {
       targetRow = rowMap[cleanRef];
     }
-    if (!targetRow) continue;
 
-    if (item.oldReading) {
+    // Auto-create new row at bottom of sheet if verse not found
+    if (!targetRow) {
+      lastRow = sheet.getLastRow();
+      targetRow = Math.max(DATA_START_ROW, lastRow + 1);
+
+      // Populate Verse Ref in Col B
+      if (item.verse) {
+        sheet.getRange(targetRow, COL.VERSE).setValue(item.verse);
+      }
+
+      // Add Y/N dropdown validations to all 7 confirmation columns
+      sheet.getRange(targetRow, COL.DRAFTER_CONFIRM).setDataValidation(ynRule);
+      sheet.getRange(targetRow, COL.TECH_CONFIRM).setDataValidation(ynRule);
+      sheet.getRange(targetRow, COL.STYLE_CONFIRM).setDataValidation(ynRule);
+      sheet.getRange(targetRow, COL.ORTHO_CONFIRM).setDataValidation(ynRule);
+      sheet.getRange(targetRow, COL.THEO_CONFIRM).setDataValidation(ynRule);
+      sheet.getRange(targetRow, COL.COMM_CONFIRM).setDataValidation(ynRule);
+      sheet.getRange(targetRow, COL.FINAL_CONFIRM).setDataValidation(ynRule);
+
+      newRowsCreated++;
+      if (cleanRef) {
+        rowMap[cleanRef] = targetRow;
+      }
+    }
+
+    // Write Old Reading (Col C) - RichText or plain value
+    if (item.oldReadingSection && item.oldReadingSection.text) {
+      writeRichTextToCell(sheet, targetRow, COL.OLD_READING, item.oldReadingSection);
+    } else if (item.oldReading) {
       sheet.getRange(targetRow, COL.OLD_READING).setValue(item.oldReading);
     }
-    if (item.proposed) {
+
+    // Write Proposed Reading (Col D) - RichText or plain value
+    if (item.proposedSection && item.proposedSection.text) {
+      writeRichTextToCell(sheet, targetRow, COL.PROPOSED, item.proposedSection);
+    } else if (item.proposed) {
       sheet.getRange(targetRow, COL.PROPOSED).setValue(item.proposed);
     }
-    if (item.drafterCmt) {
+
+    // Write Drafter Comments (Col E) - RichText (tables, colored highlights) or plain value
+    if (item.drafterCmtSection && item.drafterCmtSection.text) {
+      writeRichTextToCell(sheet, targetRow, COL.DRAFTER_CMT, item.drafterCmtSection);
+    } else if (item.drafterCmt) {
       sheet.getRange(targetRow, COL.DRAFTER_CMT).setValue(item.drafterCmt);
     }
+
+    // Auto-confirm Drafter status (Col F) = "Y"
     sheet.getRange(targetRow, COL.DRAFTER_CONFIRM).setValue("Y");
 
+    // Recalculate status and recolor Col A
     updateRowStatus(sheet, targetRow);
     importedCount++;
   }
@@ -546,7 +592,8 @@ function apiImportVerses(data) {
     success: true,
     book: bookName,
     importedCount: importedCount,
-    message: "Successfully imported " + importedCount + " verse(s) into " + bookName + "."
+    newRowsCreated: newRowsCreated,
+    message: "Successfully imported " + importedCount + " verse(s) into " + bookName + (newRowsCreated > 0 ? " (" + newRowsCreated + " new rows created)." : ".")
   };
 }
 

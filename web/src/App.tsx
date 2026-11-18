@@ -559,6 +559,45 @@ export const App: React.FC = () => {
             confirms: { ...updated[idx].confirms, drafter: true },
             status: updated[idx].status === 'Not Started' ? 'Awaiting Review' : updated[idx].status
           };
+        } else {
+          // If the verse belongs to the active chapter, add it to the state list
+          const chapNum = iv.chapter || currentChapter;
+          if (chapNum === currentChapter) {
+            const maxRow = updated.length > 0 ? Math.max(...updated.map((u) => u.row)) : 1;
+            updated.push({
+              row: iv.existingRow || maxRow + 1,
+              verse: iv.verse,
+              chapter: currentChapter,
+              verseNumber: iv.verseNumber || updated.length + 1,
+              status: 'Awaiting Review',
+              oldReading: iv.oldReading || '',
+              proposed: iv.proposed,
+              proposedHtml: iv.proposedHtml,
+              drafterCmt: iv.drafterCmt,
+              drafterCmtHtml: iv.drafterCmtHtml,
+              wordPairs: iv.wordPairs,
+              version: '1.0',
+              lastEdited: 'Just now',
+              confirms: {
+                drafter: true,
+                tech: false,
+                style: false,
+                ortho: false,
+                theo: false,
+                comm: false,
+                final: false
+              },
+              reviews: {
+                tech: '',
+                style: '',
+                ortho: '',
+                theo: '',
+                conclusion: '',
+                final: ''
+              },
+              comments: []
+            });
+          }
         }
       }
       return updated;
@@ -570,10 +609,15 @@ export const App: React.FC = () => {
         row: iv.existingRow,
         verse: iv.verse,
         oldReading: iv.oldReading,
+        oldReadingSection: iv.oldReadingSection,
         proposed: iv.proposed,
-        drafterCmt: iv.drafterCmt
+        proposedSection: iv.proposedSection,
+        drafterCmt: iv.drafterCmt,
+        drafterCmtSection: iv.drafterCmtSection
       }))
     });
+
+    fetchAnalytics(currentBook).then(setAnalytics).catch(() => {});
   };
 
   const currentVerse = verses[currentVerseIndex] || verses[0];

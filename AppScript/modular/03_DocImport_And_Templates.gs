@@ -464,43 +464,57 @@ function appendRichFromTextElement(textEl, section, startOffset) {
 }
 
 /**
- * Writes a rich text section object into a Google Sheet cell.
+ * Writes a rich text section object into a Google Sheet cell with index-boundary safety.
  */
 function writeRichTextToCell(sheet, row, col, section) {
   if (!section || !section.text) return;
 
+  var textLen = section.text.length;
   var rtv = SpreadsheetApp.newRichTextValue().setText(section.text);
   var pos = 0;
 
-  for (var ri = 0; ri < section.runs.length; ri++) {
-    var run = section.runs[ri];
-    if (!run.text) continue;
-    var start = pos;
-    var end   = pos + run.text.length;
+  if (Array.isArray(section.runs)) {
+    for (var ri = 0; ri < section.runs.length; ri++) {
+      var run = section.runs[ri];
+      if (!run.text) continue;
+      var start = pos;
+      var end = pos + run.text.length;
 
-    var styleBuilder = SpreadsheetApp.newTextStyle();
-    var hasStyle = false;
+      if (start >= textLen) break;
+      if (end > textLen) end = textLen;
 
-    if (run.color) {
-      styleBuilder.setForegroundColor(run.color);
-      hasStyle = true;
-    }
-    if (run.bold) {
-      styleBuilder.setBold(true);
-      hasStyle = true;
-    }
-    if (run.italic) {
-      styleBuilder.setItalic(true);
-      hasStyle = true;
-    }
+      var styleBuilder = SpreadsheetApp.newTextStyle();
+      var hasStyle = false;
 
-    if (hasStyle) {
-      rtv.setTextStyle(start, end, styleBuilder.build());
+      if (run.color) {
+        styleBuilder.setForegroundColor(run.color);
+        hasStyle = true;
+      }
+      if (run.bold) {
+        styleBuilder.setBold(true);
+        hasStyle = true;
+      }
+      if (run.italic) {
+        styleBuilder.setItalic(true);
+        hasStyle = true;
+      }
+
+      if (hasStyle && start < end) {
+        try {
+          rtv.setTextStyle(start, end, styleBuilder.build());
+        } catch (styleErr) {
+          // Graceful fallback for index boundary
+        }
+      }
+      pos = end;
     }
-    pos = end;
   }
 
-  sheet.getRange(row, col).setRichTextValue(rtv.build());
+  try {
+    sheet.getRange(row, col).setRichTextValue(rtv.build());
+  } catch (err) {
+    sheet.getRange(row, col).setValue(section.text);
+  }
 }
 
 // ----------------------------------------------------------------

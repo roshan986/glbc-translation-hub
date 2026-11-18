@@ -1,4 +1,4 @@
-import type { VerseItem, TeamMember, BookAnalytics, ReviewerRole } from '../types';
+import type { VerseItem, TeamMember, BookAnalytics, ReviewerRole, RichTextSectionPayload } from '../types';
 import { SAMPLE_VERSES, SAMPLE_TEAM, SAMPLE_ANALYTICS } from '../data/sampleData';
 import { parseAllReviewsToComments } from '../utils/commentSync';
 import { computeVerseApprovals } from '../utils/approvalEngine';
@@ -409,16 +409,21 @@ export async function importVersesApi(payload: {
     row?: number;
     verse: string;
     oldReading?: string;
+    oldReadingSection?: RichTextSectionPayload;
     proposed: string;
+    proposedSection?: RichTextSectionPayload;
     drafterCmt?: string;
+    drafterCmtSection?: RichTextSectionPayload;
   }>;
-}): Promise<{ success: boolean; importedCount?: number; message?: string; error?: string }> {
+}): Promise<{ success: boolean; importedCount?: number; newRowsCreated?: number; message?: string; error?: string }> {
   const endpoint = getAppsScriptUrl();
   if (!isLiveApiConfigured()) {
     clearVerseCache(payload.book);
+    const newRows = payload.verses.filter((v) => !v.row).length;
     return {
       success: true,
       importedCount: payload.verses.length,
+      newRowsCreated: newRows,
       message: `Demo Mode: Successfully simulated import of ${payload.verses.length} verse(s).`
     };
   }
