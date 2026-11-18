@@ -7,9 +7,59 @@ export interface ParsedDrafterContent {
 }
 
 // Clean trailing empty breaks, whitespace, and empty spans from imported sheet text
+export const cleanDarkColorsFromHtml = (html?: string): string => {
+  if (!html) return '';
+  return html.replace(/<span([^>]*?)style=(["'])(.*?)\2([^>]*?)>/gi, (match, before, quote, styleStr, after) => {
+    const styles = styleStr.split(';').map((s) => s.trim()).filter(Boolean);
+    const filteredStyles = styles.filter((s) => {
+      const parts = s.split(':');
+      if (parts[0].trim().toLowerCase() === 'color') {
+        const val = parts.slice(1).join(':').trim();
+        const c = val.toLowerCase();
+        if (
+          c === '#000' ||
+          c === '#000000' ||
+          c === 'black' ||
+          c === '#292f33' ||
+          c === '#111827' ||
+          c === '#1f2937' ||
+          c === '#333333' ||
+          c === '#374151' ||
+          c === '#434343' ||
+          c === '#4b5563' ||
+          c === '#555555' ||
+          c === '#666666'
+        ) {
+          return false;
+        }
+        const hexMatch = c.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+        if (hexMatch) {
+          let hex = hexMatch[1];
+          if (hex.length === 3) hex = hex.split('').map((x) => x + x).join('');
+          const r = parseInt(hex.substring(0, 2), 16);
+          const g = parseInt(hex.substring(2, 4), 16);
+          const b = parseInt(hex.substring(4, 6), 16);
+          const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+          const isNeutral = Math.abs(r - g) < 25 && Math.abs(g - b) < 25;
+          if (lum < 0.35 && isNeutral) return false;
+        }
+      }
+      return true;
+    });
+
+    if (filteredStyles.length === 0) {
+      const restAttrs = (before + ' ' + after).trim();
+      return restAttrs ? `<span ${restAttrs}>` : '<span>';
+    }
+    const newStyle = filteredStyles.join('; ');
+    return `<span${before}style=${quote}${newStyle}${quote}${after}>`;
+  });
+};
+
 export const trimReadingHtml = (html?: string): string => {
   if (!html) return '';
-  return html
+  const cleaned = cleanDarkColorsFromHtml(html);
+  return cleaned
     .replace(/(?:<br\s*\/?>|\s|&nbsp;|<span[^>]*>\s*<\/span>)+$/gi, '')
     .replace(/^(?:<br\s*\/?>|\s|&nbsp;)+/gi, '')
     .trim();
@@ -82,16 +132,16 @@ export function parseDrafterComments(rawContent: string): ParsedDrafterContent {
 
     // Identify if this line is an investigation note rather than a back-translation pair
     const isNote =
-      /were added|was omitted|omitted|added words|note|grammar|variant|reason|because|register|sandhi|manuscript/i.test(
+      /were added|was added|added word|added words|was omitted|were omitted|omitted|note|grammar|variant|reason|because|register|sandhi|manuscript/i.test(
         textOnly
       );
 
     if (isNote) {
       const lower = textOnly.toLowerCase();
-      let type: InvestigationNote['type'] = 'grammar';
-      let title = 'Drafter Additional Comment';
+      let type: InvestigationNote['type'] = 'lexical';
+      let title = 'Drafter Comment';
 
-      if (lower.includes('variant') || lower.includes('manuscript') || lower.includes('kjv')) {
+      if (lower.includes('variant') || lower.includes('manuscript')) {
         type = 'variant';
         title = 'Textual Variant Note';
       } else if (lower.includes('grammar') || lower.includes('register') || lower.includes('sandhi')) {
@@ -99,14 +149,14 @@ export function parseDrafterComments(rawContent: string): ParsedDrafterContent {
         title = 'Grammar & Syntax Note';
       } else {
         type = 'lexical';
-        title = 'Drafter Additional Comment';
+        title = 'Drafter Comment';
       }
 
       notes.push({
         type,
         title,
         text: textOnly,
-        html: line
+        html: trimReadingHtml(line)
       });
       i++;
     } else if (
@@ -114,7 +164,7 @@ export function parseDrafterComments(rawContent: string): ParsedDrafterContent {
       nextLine &&
       nextIsEnglish &&
       !isNote &&
-      !/were added|was omitted/i.test(nextTextOnly)
+      !/were added|was added|was omitted|were omitted/i.test(nextTextOnly)
     ) {
       // It's a Kannada (top) / English (bottom) back-translation pair!
       const kannadaParts = line.split('|').map((s) => s.trim()).filter(Boolean);
@@ -127,8 +177,8 @@ export function parseDrafterComments(rawContent: string): ParsedDrafterContent {
           wordPairs.push({
             kannada: kText,
             english: eText,
-            kannadaHtml: kannadaParts[p],
-            englishHtml: englishParts[p]
+            kannadaHtml: trimReadingHtml(kannadaParts[p]),
+            englishHtml: trimReadingHtml(englishParts[p])
           });
         }
       } else {
@@ -137,18 +187,18 @@ export function parseDrafterComments(rawContent: string): ParsedDrafterContent {
         wordPairs.push({
           kannada: kText,
           english: eText,
-          kannadaHtml: line,
-          englishHtml: nextLine
+          kannadaHtml: trimReadingHtml(line),
+          englishHtml: trimReadingHtml(nextLine)
         });
       }
       i += 2;
     } else {
       // Standalone comment or general note
       notes.push({
-        type: 'grammar',
-        title: 'Drafter Observation',
+        type: 'lexical',
+        title: 'Drafter Comment',
         text: textOnly,
-        html: line
+        html: trimReadingHtml(line)
       });
       i++;
     }

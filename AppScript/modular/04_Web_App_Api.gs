@@ -274,7 +274,8 @@ function richTextToHtml(richTextValue) {
     var isUnderline = style.isUnderline();
 
     var styles = [];
-    if (color && color.toLowerCase() !== "#000000" && color.toLowerCase() !== "#000") {
+    var darkBodyColors = ["#000000", "#000", "#292f33", "#111827", "#1f2937", "#333333", "#434343", "#555555"];
+    if (color && !darkBodyColors.includes(color.toLowerCase())) {
       styles.push("color:" + color);
     }
     if (isBold) styles.push("font-weight:700");

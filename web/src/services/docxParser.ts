@@ -105,7 +105,9 @@ function parseParagraph(pEl: Element): ParsedBlock {
       const colorEl = rPr.getElementsByTagName('w:color')[0];
       if (colorEl) {
         const val = colorEl.getAttribute('w:val');
-        if (val && val !== 'auto' && val !== '000000') {
+        const vLower = (val || '').toLowerCase();
+        const isDarkBodyColor = ['auto', '000000', '292f33', '111827', '1f2937', '333333', '434343', '555555'].includes(vLower);
+        if (val && !isDarkBodyColor) {
           color = val.startsWith('#') ? val : `#${val}`;
         }
       }

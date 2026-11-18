@@ -231,3 +231,31 @@
   background-color: #1a2842 !important;
   border-color: #334155 !important;
 }
+
+/* Rich text contrast remediation: neutralize dark body colors on Obsidian midnight slate */
+[data-bg-theme="obsidian"] .investigation-note span[style*="292f33" i],
+[data-bg-theme="obsidian"] .investigation-note span[style*="292F33"],
+[data-bg-theme="obsidian"] .investigation-note span[style*="#000000"],
+[data-bg-theme="obsidian"] .investigation-note span[style*="#000"],
+[data-bg-theme="obsidian"] .investigation-note span[style*="#111827"],
+[data-bg-theme="obsidian"] .investigation-note span[style*="#1f2937"],
+[data-bg-theme="obsidian"] .investigation-note span[style*="#333333"],
+[data-bg-theme="obsidian"] .investigation-note span[style*="#434343"],
+[data-bg-theme="obsidian"] .investigation-note span[style*="#555555"],
+[data-bg-theme="obsidian"] .investigation-note span[style*="rgb(41, 47, 51)"],
+[data-bg-theme="obsidian"] .kannada-reading span[style*="292f33" i],
+[data-bg-theme="obsidian"] .kannada-reading span[style*="292F33"],
+[data-bg-theme="obsidian"] .kannada-reading span[style*="#000000"],
+[data-bg-theme="obsidian"] .kannada-reading span[style*="#000"],
+[data-bg-theme="obsidian"] .kannada-reading span[style*="#111827"],
+[data-bg-theme="obsidian"] .kannada-reading span[style*="#1f2937"],
+[data-bg-theme="obsidian"] .kannada-reading span[style*="#333333"],
+[data-bg-theme="obsidian"] .kannada-reading span[style*="#434343"],
+[data-bg-theme="obsidian"] .word-pair-kannada span[style*="292f33" i],
+[data-bg-theme="obsidian"] .word-pair-kannada span[style*="292F33"],
+[data-bg-theme="obsidian"] .word-pairs span[style*="292f33" i],
+[data-bg-theme="obsidian"] .word-pairs span[style*="292F33"],
+[data-bg-theme="obsidian"] .notes-body span[style*="292f33" i],
+[data-bg-theme="obsidian"] .notes-body span[style*="292F33"] {
+  color: var(--theme-text, #f8fafc) !important;
+}
