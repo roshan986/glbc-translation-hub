@@ -3,21 +3,24 @@ import type { ParsedImportVerse, WordPair, InvestigationNote, VerseItem, RichTex
 
 /**
  * Standard Word XML highlight color map
+ * Pure 1:1 conversion matching Microsoft Word / Google Docs authentic highlighter RGB values
  */
 const HIGHLIGHT_COLOR_MAP: Record<string, string> = {
-  yellow: '#eab308',
-  green: '#16a34a',
-  cyan: '#06b6d4',
-  magenta: '#d946ef',
-  blue: '#2563eb',
-  red: '#dc2626',
-  darkBlue: '#1d4ed8',
-  darkCyan: '#0e7490',
-  darkGreen: '#15803d',
-  darkMagenta: '#a21caf',
-  darkRed: '#b91c1c',
-  darkYellow: '#a16207',
-  lightGray: '#94a3b8'
+  yellow: '#ffff00',
+  green: '#00ff00',
+  cyan: '#00ffff',
+  magenta: '#ff00ff',
+  blue: '#00b0f0',
+  red: '#ff0000',
+  darkBlue: '#00008b',
+  darkCyan: '#008b8b',
+  darkGreen: '#006400',
+  darkMagenta: '#8b008b',
+  darkRed: '#8b0000',
+  darkYellow: '#808000',
+  darkGray: '#808080',
+  lightGray: '#c0c0c0',
+  black: '#000000'
 };
 
 interface TextRun {
@@ -120,7 +123,7 @@ function parseParagraph(pEl: Element): ParsedBlock {
           highlight = HIGHLIGHT_COLOR_MAP[hVal];
           // Highlight colors map to bold colored text as per Google Sheets rules
           isBold = true;
-          if (!color) color = highlight;
+          color = highlight;
         }
       }
     }
@@ -278,7 +281,22 @@ export function groupBlocksIntoVerses(
     const wordPairs: WordPair[] = [];
     const notes: InvestigationNote[] = [];
 
-    let currentSection: 'old' | 'proposed' | 'comment' = 'proposed';
+    const hasAnySectionHeader = group.blocks.some((b) => {
+      const l = b.text.toLowerCase();
+      return (
+        l.includes('old reading') ||
+        l.includes('kjv:') ||
+        l.includes('proposed reading') ||
+        l.includes('proposed:') ||
+        l.includes('drafter comments') ||
+        l.includes('comments:') ||
+        l.includes('investigation') ||
+        l.includes('back-translation')
+      );
+    });
+
+    // If section headers exist in the doc, start as null so pre-section reference text (English verse) is ignored
+    let currentSection: 'old' | 'proposed' | 'comment' | null = hasAnySectionHeader ? null : 'proposed';
 
     const addParagraphRuns = (targetRuns: RichTextRunPayload[], b: ParsedBlock, skipChars = 0) => {
       if (b.runs && b.runs.length > 0) {
@@ -414,7 +432,7 @@ export function groupBlocksIntoVerses(
           }
           proposedHtml += (proposedHtml ? '<br/>' : '') + b.html;
           addParagraphRuns(proposedRuns, b);
-        } else {
+        } else if (currentSection === 'comment') {
           if (drafterCmtRuns.length > 0) {
             drafterCmtRuns.push({ text: '\n\n', color: null, bold: false, italic: false });
           }
