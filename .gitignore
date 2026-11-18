@@ -1,3 +1,15 @@
+# Ignore all files in the root directory, but keep all directories
+/*
+!/*/
+!.gitignore
+
+# Ignored Folders
+docs/
+daily_logs/
+Testing/
+testing/
+scripts/
+
 # Dependencies
 node_modules/
 web/node_modules/
