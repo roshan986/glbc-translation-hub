@@ -18,6 +18,18 @@ export interface TeamMember {
   roles?: string[]; // All assigned roles for this person across multiple Config sheet rows
 }
 
+export interface AuthUser {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  idToken?: string;
+  isSuperAdmin: boolean;
+  matchedMember: TeamMember | null;
+  activeRole: string;
+  availableRoles: string[];
+}
+
 export interface VerseConfirms {
   drafter: boolean;
   tech: boolean;
@@ -156,3 +168,40 @@ export interface ParsedImportVerse {
 }
 
 export type BgTheme = 'default' | 'sepia' | 'mist' | 'obsidian';
+
+// ================================================================
+//  RBAC & SECURITY CONSOLE DATA MODELS (Tasks 6.3 & 6.5)
+// ================================================================
+
+export type AccessLevel = 'edit' | 'read' | 'none';
+
+export type GovernedModule =
+  | 'focus'        // Focus Mode Reviewing (4 Disciplines + Drafter)
+  | 'committee'    // Committee Chamber Deliberation
+  | 'final'        // Final Editor Sign-off
+  | 'analytics'    // Coordinator Analytics & WhatsApp Alerts
+  | 'settings'     // Settings Hub & Sheet Setup Tools
+  | 'admin';       // Security Console & App Governance (delegated by Super Admin)
+
+export type MemberPermissions = Record<GovernedModule, AccessLevel>;
+
+export const DEFAULT_MEMBER_PERMISSIONS: MemberPermissions = {
+  focus: 'edit',
+  committee: 'edit',
+  final: 'edit',
+  analytics: 'edit',
+  settings: 'edit',
+  admin: 'none'
+};
+
+export type TeamPermissionsMap = Record<string, MemberPermissions>;
+
+export interface PermissionsApiResponse {
+  success: boolean;
+  permissions?: TeamPermissionsMap;
+  updatedAt?: string | null;
+  updatedBy?: string | null;
+  message?: string;
+  error?: string;
+}
+

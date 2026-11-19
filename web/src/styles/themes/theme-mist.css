@@ -1,82 +1,365 @@
 /**
- * GLBC Translation System — Cool Mist Theme
- * Nordic Studio Slate & Crisp Atmospheric Blue-Grey Palette
+ * GLBC Translation System — Blue Topaz Theme (Official Layered Obsidian Edition)
+ * Source: Official Obsidian Community Theme "Blue Topaz" by WhyI (PKM-er)
+ * https://github.com/PKM-er/Blue-Topaz_Obsidian-css
+ * https://community.obsidian.md/themes/blue-topaz
+ * 
+ * Signature Aesthetics (as shown in Obsidian Community Showcase):
+ * - Canvas: Deep midnight sapphire-charcoal (#181c28) — zero glare, comfortable deep viewing
+ * - Sidebar: Deep slate-navy (#202636) with distinct rail contrast (#1a202c)
+ * - Card Surfaces: Elevated sapphire-charcoal (#1f2637) with subtle crystalline borders (#2e3a52)
+ * - Typography: Crisp luminous silver-slate (#d2d9e8) — gentle on eyes during long sessions
+ * - Muted Text: Soft dusty steel (#8ca0ba)
+ * - "Mixture of Layers in Colors" (Iconic Blue Topaz Signature):
+ *   * H1 ("Demo Note"): Warm Coral Rose (#e06c75)
+ *   * H2 ("md syntax"): Vivid Topaz Azure (#4da6ff)
+ *   * H3: Soft Jade Mint (#56b6c2)
+ *   * H4: Warm Golden Amber (#e5c07b)
+ *   * Callout / Guidance Cards: Deep cobalt sapphire container (#15243e) with bright azure text (#60a5fa)
+ *   * Tags & Badges: Layered capsule pills (#283144) with light blue-gray text (#9db2ce)
+ *   * 4-Discipline Reviewer Layers:
+ *       - Technical: Azure Topaz (rgba(77, 166, 255, 0.08) / #4da6ff)
+ *       - Style & Language: Coral Rose (rgba(224, 108, 117, 0.08) / #e06c75)
+ *       - Orthographic: Amber Gold (rgba(229, 192, 123, 0.08) / #e5c07b)
+ *       - Theological: Emerald Mint (rgba(86, 182, 194, 0.08) / #56b6c2)
+ *       - Committee: Royal Amethyst (rgba(198, 120, 221, 0.08) / #c678dd)
+ *   * Code Blocks: Deep obsidian-navy (#121620) with electric cyan/mint text (#7dd3fc)
  */
 
 [data-bg-theme="mist"] {
-  --color-theme-bar-bg: rgba(0, 0, 0, 0.03);
+  color-scheme: dark;
+  --color-theme-bar-bg: rgba(77, 166, 255, 0.06);
 
-  /* Multi-Theme Gradient System: Cool Mist */
-  --theme-canvas-bg: linear-gradient(180deg, #f1f5f9 0%, #e8eef5 100%);
-  --theme-sidebar-bg: linear-gradient(180deg, #f8fafc 0%, #eef3f8 100%);
-  --theme-card-bg: #ffffff;
-  --theme-card-bg-elevated: #ffffff;
-  --theme-box-bg: #edf3f8;
-  --theme-border: #cbd5e1;
-  --theme-border-subtle: #e2eaf2;
-  --theme-text: #0b192c;
-  --theme-text-muted: #4b627a;
-  --theme-input-bg: #ffffff;
-  --theme-card-shadow: 0 1px 3px 0 rgba(11, 25, 44, 0.04), 0 1px 2px -1px rgba(11, 25, 44, 0.04);
+  /* Multi-Theme Gradient System: Blue Topaz Multi-Layered */
+  --theme-canvas-bg: #181c28;
+  --theme-sidebar-bg: #202636;
+  --theme-card-bg: #1f2637;
+  --theme-card-bg-elevated: #242c3f;
+  --theme-box-bg: #192030;
+  --theme-border: #2e3a52;
+  --theme-border-subtle: #252f44;
+  --theme-text: #d2d9e8;
+  --theme-text-muted: #8ca0ba;
+  --theme-input-bg: #161a25;
+  --theme-card-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.6), 0 2px 6px -1px rgba(0, 0, 0, 0.4);
 
-  --color-surface: #ffffff;
-  --color-sidebar-bg: #f8fafc;
-  --color-bg: #f1f5f9;
-  --color-border: #cbd5e1;
-  --color-text: #0b192c;
-  --color-text-muted: #4b627a;
+  --color-surface: #1f2637;
+  --color-sidebar-bg: #202636;
+  --color-bg: #181c28;
+  --color-border: #2e3a52;
+  --color-text: #d2d9e8;
+  --color-text-muted: #8ca0ba;
 
-  /* Code / preview block tokens */
-  --theme-code-bg:     #0b192c;
-  --theme-code-text:   #edf3f8;
-  --theme-code-border: #1e3454;
+  /* Code & Concordance Tokens: Deep Midnight & Ice Cyan */
+  --theme-code-bg:     #121620;
+  --theme-code-text:   #7dd3fc;
+  --theme-code-border: #263147;
+
+  /* Interactive Accent: Signature Blue Topaz Azure */
+  --interactive-accent: #4da6ff;
+  --interactive-accent-hover: #70b7ff;
+  --theme-accent: #4da6ff;
 }
 
-/* Chat Bubbles in Mist */
+[data-bg-theme="mist"],
+[data-bg-theme="mist"] body,
+[data-bg-theme="mist"] #root {
+  color: #d2d9e8;
+  background-color: #181c28;
+}
+
+/* Topbar & Subbar in Blue Topaz */
+[data-bg-theme="mist"] .topbar {
+  background-color: #141824 !important;
+  border-bottom: 1px solid #232d42 !important;
+}
+
+[data-bg-theme="mist"] .subbar {
+  background: #181d2a !important;
+  border-bottom: 1px solid #232d42 !important;
+}
+
+/* Iconic Blue Topaz Headings Hierarchy */
+[data-bg-theme="mist"] h1,
+[data-bg-theme="mist"] .page-heading h1 {
+  color: #e06c75 !important; /* Blue Topaz Signature Coral Rose (Demo Note) */
+}
+
+[data-bg-theme="mist"] h2,
+[data-bg-theme="mist"] .verse-title h2 {
+  color: #4da6ff !important; /* Blue Topaz Signature Azure Cyan (md syntax) */
+}
+
+[data-bg-theme="mist"] h3 {
+  color: #56b6c2 !important; /* Soft Jade Mint */
+}
+
+[data-bg-theme="mist"] h4 {
+  color: #e5c07b !important; /* Warm Amber */
+}
+
+/* Chat & Deliberation Bubbles in Blue Topaz */
 [data-bg-theme="mist"] .chat-bubble-box.me {
-  background: #e6f0fa !important;
-  border-color: #bcd4ec !important;
-  color: #0b192c !important;
+  background: rgba(77, 166, 255, 0.14) !important;
+  border: 1px solid rgba(77, 166, 255, 0.35) !important;
+  color: #e2edff !important;
 }
 
 [data-bg-theme="mist"] .chat-bubble-box.other {
-  background: #ffffff !important;
-  border-color: #cbd5e1 !important;
-  color: #0b192c !important;
+  background: #242c3f !important;
+  border: 1px solid #2e3a52 !important;
+  color: #d2d9e8 !important;
 }
 
-/* Inline Guidance Cards in Mist */
+[data-bg-theme="mist"] .comment-byline b {
+  color: #4da6ff !important;
+}
+
+[data-bg-theme="mist"] .comment-content p {
+  color: #d2d9e8 !important;
+}
+
+[data-bg-theme="mist"] .chat-bubble-box.me .comment-byline b {
+  color: #70b7ff !important;
+}
+
+[data-bg-theme="mist"] .chat-bubble-box.me .comment-content p {
+  color: #f0f6ff !important;
+}
+
+/* Blue Topaz Signature Cobalt Callout / Guidance Cards */
 [data-bg-theme="mist"] .inline-guidance-card {
-  background: #f0f6fb !important;
-  border: 1px solid #cfe0ef !important;
+  background: linear-gradient(135deg, #15243e 0%, #111d33 100%) !important;
+  border: 1px solid #2b4c7e !important;
+  box-shadow: 0 4px 12px rgba(13, 24, 46, 0.5) !important;
 }
 
 [data-bg-theme="mist"] .inline-guidance-card b,
 [data-bg-theme="mist"] .inline-guidance-card h4 {
-  color: #0c274a !important;
+  color: #60a5fa !important;
 }
 
 [data-bg-theme="mist"] .inline-guidance-card p,
 [data-bg-theme="mist"] .inline-guidance-card span {
-  color: #1e3a5f !important;
+  color: #c4d5ed !important;
 }
 
 [data-bg-theme="mist"] .inline-guidance-card svg {
-  color: #0284c7 !important;
+  color: #4da6ff !important;
 }
 
-/* Sidebar Nav Items in Mist */
+/* Sidebar Nav Items in Blue Topaz */
 [data-bg-theme="mist"] .nav-item.selected {
-  background: linear-gradient(135deg, #d3e1ef 0%, #c0d3e7 100%) !important;
-  color: #072a4e !important;
-  border-left: 3px solid #0284c7;
+  background: rgba(77, 166, 255, 0.12) !important;
+  color: #4da6ff !important;
+  border-left: 3px solid #4da6ff;
 }
 
 [data-bg-theme="mist"] .nav-item {
-  color: #475e75 !important;
+  color: #8ca0ba !important;
 }
 
 [data-bg-theme="mist"] .nav-item:hover {
-  background: rgba(2, 132, 199, 0.08) !important;
-  color: #0c192c !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #d2d9e8 !important;
+}
+
+[data-bg-theme="mist"] .person-card,
+[data-bg-theme="mist"] .member-item,
+[data-bg-theme="mist"] .team-person {
+  color: #d2d9e8 !important;
+}
+
+[data-bg-theme="mist"] .person-card:hover,
+[data-bg-theme="mist"] .member-item:hover,
+[data-bg-theme="mist"] .team-person:hover,
+[data-bg-theme="mist"] .team-accordion-header:hover {
+  background: rgba(77, 166, 255, 0.06) !important;
+}
+
+/* Active Role Tabs in Blue Topaz */
+[data-bg-theme="mist"] .focus-role-tab.active {
+  background-color: rgba(77, 166, 255, 0.15) !important;
+  border-color: #4da6ff !important;
+  color: #4da6ff !important;
+}
+
+[data-bg-theme="mist"] .focus-role-tab.active.committee {
+  background-color: rgba(198, 120, 221, 0.15) !important;
+  border-color: #c678dd !important;
+  color: #d898ea !important;
+}
+
+[data-bg-theme="mist"] .focus-role-tab.active.final {
+  background-color: rgba(86, 182, 194, 0.15) !important;
+  border-color: #56b6c2 !important;
+  color: #79cad4 !important;
+}
+
+[data-bg-theme="mist"] .focus-role-tab.active.drafter {
+  background-color: rgba(77, 166, 255, 0.15) !important;
+  border-color: #4da6ff !important;
+  color: #70b7ff !important;
+}
+
+/* Role Badges in Blue Topaz */
+[data-bg-theme="mist"] .role-tab-badge.confirmed {
+  background-color: rgba(86, 182, 194, 0.15) !important;
+  color: #56b6c2 !important;
+  border: 1px solid rgba(86, 182, 194, 0.3) !important;
+}
+
+[data-bg-theme="mist"] .role-tab-badge.pending {
+  background-color: rgba(229, 192, 123, 0.15) !important;
+  color: #e5c07b !important;
+  border: 1px solid rgba(229, 192, 123, 0.3) !important;
+}
+
+/* Tag Capsules in Blue Topaz (Modeled after #bluetopaz #demo in screenshot) */
+[data-bg-theme="mist"] .tag,
+[data-bg-theme="mist"] .status-pill,
+[data-bg-theme="mist"] .role-tag-clean {
+  background-color: #283144 !important;
+  border: 1px solid #38455f !important;
+  color: #9db2ce !important;
+}
+
+/* WhatsApp Banner in Blue Topaz */
+[data-bg-theme="mist"] .whatsapp-link {
+  background: linear-gradient(135deg, #0e2017 0%, #07150e 100%) !important;
+  border: 1px solid #165b32 !important;
+  color: #4ade80 !important;
+}
+
+[data-bg-theme="mist"] .whatsapp-link b,
+[data-bg-theme="mist"] .whatsapp-link span {
+  color: #4ade80 !important;
+}
+
+/* Inputs, Textareas & Dropdowns in Blue Topaz */
+[data-bg-theme="mist"] input,
+[data-bg-theme="mist"] textarea,
+[data-bg-theme="mist"] select {
+  background-color: #161a25 !important;
+  color: #d2d9e8 !important;
+  border-color: #2e3a52 !important;
+}
+
+[data-bg-theme="mist"] select option {
+  background-color: #1f2637 !important;
+  color: #d2d9e8 !important;
+}
+
+[data-bg-theme="mist"] input:focus,
+[data-bg-theme="mist"] textarea:focus,
+[data-bg-theme="mist"] select:focus {
+  border-color: #4da6ff !important;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(77, 166, 255, 0.25) !important;
+}
+
+[data-bg-theme="mist"] input::placeholder,
+[data-bg-theme="mist"] textarea::placeholder {
+  color: #697891 !important;
+  opacity: 0.75;
+}
+
+/* Modals & Popovers in Blue Topaz */
+[data-bg-theme="mist"] .app-modal-card {
+  background: #1f2637 !important;
+  border: 1px solid #2e3a52 !important;
+  box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.7) !important;
+}
+
+[data-bg-theme="mist"] .countdown-popover-card {
+  background: #1f2637 !important;
+  border: 1px solid #2e3a52 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
+}
+
+[data-bg-theme="mist"] .chat-popout-card,
+[data-bg-theme="mist"] .discussion-popout-card {
+  background: #1f2637 !important;
+  border: 1px solid #2e3a52 !important;
+}
+
+[data-bg-theme="mist"] .chat-popout-header {
+  background: #242c3f !important;
+  border-bottom: 1px solid #2e3a52 !important;
+}
+
+[data-bg-theme="mist"] .chat-popout-stream {
+  background: #161a25 !important;
+}
+
+/* Impact Cards in ApprovalImpactModal */
+[data-bg-theme="mist"] .impact-card-confirm {
+  background-color: rgba(86, 182, 194, 0.1) !important;
+  border-color: rgba(86, 182, 194, 0.3) !important;
+}
+[data-bg-theme="mist"] .impact-card-confirm span,
+[data-bg-theme="mist"] .impact-card-confirm li {
+  color: #56b6c2 !important;
+}
+
+[data-bg-theme="mist"] .impact-card-decline {
+  background-color: rgba(224, 108, 117, 0.1) !important;
+  border-color: rgba(224, 108, 117, 0.3) !important;
+}
+[data-bg-theme="mist"] .impact-card-decline span,
+[data-bg-theme="mist"] .impact-card-decline li {
+  color: #e06c75 !important;
+}
+
+/* Verse Jump Button in Blue Topaz */
+[data-bg-theme="mist"] .btn-verse-jump {
+  background-color: #242c3f !important;
+  border-color: #2e3a52 !important;
+  color: #d2d9e8 !important;
+}
+
+[data-bg-theme="mist"] .btn-verse-jump:hover {
+  background-color: #2c364c !important;
+  border-color: #4da6ff !important;
+  color: #4da6ff !important;
+}
+
+/* Tables imported from Word */
+[data-bg-theme="mist"] .parsed-import-table table,
+[data-bg-theme="mist"] .parsed-import-table td,
+[data-bg-theme="mist"] .parsed-import-table th {
+  border-color: #2e3a52 !important;
+  color: #d2d9e8 !important;
+}
+
+/* Committee matrix and editorial checklist */
+[data-bg-theme="mist"] .role-title {
+  color: #4da6ff !important;
+}
+
+[data-bg-theme="mist"] .matrix-content p,
+[data-bg-theme="mist"] .checklist-label {
+  color: #d2d9e8 !important;
+}
+
+/* Contrast Remediation for Blue Topaz: Neutralize hardcoded dark inline styles */
+[data-bg-theme="mist"] span[style*="292f33" i],
+[data-bg-theme="mist"] span[style*="292F33"],
+[data-bg-theme="mist"] span[style*="#000000"],
+[data-bg-theme="mist"] span[style*="#000;"],
+[data-bg-theme="mist"] span[style*="#000\""],
+[data-bg-theme="mist"] span[style*="#000'"],
+[data-bg-theme="mist"] span[style*="#111827"],
+[data-bg-theme="mist"] span[style*="#1f2937"],
+[data-bg-theme="mist"] span[style*="#333333"],
+[data-bg-theme="mist"] span[style*="#434343"],
+[data-bg-theme="mist"] span[style*="#555555"],
+[data-bg-theme="mist"] span[style*="rgb(0, 0, 0)"],
+[data-bg-theme="mist"] span[style*="rgb(0,0,0)"],
+[data-bg-theme="mist"] span[style*="rgb(41, 47, 51)"],
+[data-bg-theme="mist"] span[style*="rgb(15, 23, 42)"],
+[data-bg-theme="mist"] span[style*="rgb(30, 41, 59)"],
+[data-bg-theme="mist"] span[style*="color: black"],
+[data-bg-theme="mist"] span[style*="color:black"] {
+  color: var(--theme-text, #d2d9e8) !important;
 }

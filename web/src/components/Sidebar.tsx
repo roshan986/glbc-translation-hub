@@ -9,12 +9,14 @@ import {
   Sliders,
   Palette,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Shield
 } from 'lucide-react';
 import type { TeamMember, BgTheme } from '../types';
 import { getSmartInitials, getRoleAvatarColor } from '../utils/userUtils';
+import { useAuth } from '../contexts/AuthContext';
 
-export type ActiveTab = 'focus' | 'committee' | 'final' | 'drafter' | 'analytics' | 'settings';
+export type ActiveTab = 'focus' | 'committee' | 'final' | 'drafter' | 'analytics' | 'settings' | 'security';
 
 interface SidebarProps {
   activeTab: ActiveTab;
@@ -37,10 +39,10 @@ interface SidebarProps {
 }
 
 const THEME_OPTIONS: { id: BgTheme; label: string; swatchBg: string; swatchBorder: string }[] = [
-  { id: 'default', label: 'Default Slate', swatchBg: 'linear-gradient(135deg, #ffffff, #e2e8f0)', swatchBorder: '#cbd5e1' },
-  { id: 'sepia', label: 'Warm Sepia', swatchBg: 'linear-gradient(135deg, #f6eee3, #dfccb7)', swatchBorder: '#d0bea9' },
-  { id: 'mist', label: 'Cool Mist', swatchBg: 'linear-gradient(135deg, #edf2f7, #becddc)', swatchBorder: '#becddc' },
-  { id: 'obsidian', label: 'Night Obsidian', swatchBg: 'linear-gradient(135deg, #121b2e, #020617)', swatchBorder: '#3b82f6' }
+  { id: 'default', label: 'Obsidian Tela', swatchBg: 'linear-gradient(135deg, #0d0e11 0%, #16171c 50%, #0091ff 100%)', swatchBorder: '#0091ff' },
+  { id: 'sepia', label: 'Obsidian Wasp', swatchBg: 'linear-gradient(135deg, #f8c537, #d4922a)', swatchBorder: '#b87a1d' },
+  { id: 'mist', label: 'Blue Topaz', swatchBg: 'linear-gradient(135deg, #181c28 0%, #202636 50%, #4da6ff 100%)', swatchBorder: '#4da6ff' },
+  { id: 'obsidian', label: 'Obsidian Nebula', swatchBg: 'linear-gradient(135deg, #0b1018, #070b12)', swatchBorder: '#38bdf8' }
 ];
 
 interface GroupedMember {
@@ -76,6 +78,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed = false,
   onToggleCollapse
 }) => {
+  const { hasAdminAccess, canView } = useAuth();
   const percent = totalVerses > 0 ? Math.round((completedVerses / totalVerses) * 100) : 0;
 
   // Deduplicate and group members by unique person with combined roles
@@ -307,37 +310,77 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </div>
 
-        {!isCollapsed && <div className="side-section-label">WORKSPACE</div>}
+        {canView('focus') && (
+          <>
+            {!isCollapsed && <div className="side-section-label">WORKSPACE</div>}
+            <button
+              className={`nav-item ${activeTab === 'focus' ? 'selected' : ''}`}
+              onClick={() => onTabChange('focus')}
+              title="Unified verse workspace for Reviewers, Committee & Final Editor (F)"
+            >
+              <Eye size={18} />
+              {!isCollapsed && <span>Focus mode</span>}
+              {!isCollapsed && <span className="nav-shortcut">F</span>}
+            </button>
+          </>
+        )}
 
-        <button
-          className={`nav-item ${activeTab === 'focus' ? 'selected' : ''}`}
-          onClick={() => onTabChange('focus')}
-          title="Unified verse workspace for Reviewers, Committee & Final Editor (F)"
-        >
-          <Eye size={18} />
-          {!isCollapsed && <span>Focus mode</span>}
-          {!isCollapsed && <span className="nav-shortcut">F</span>}
-        </button>
+        {(canView('analytics') || canView('settings') || hasAdminAccess) && (
+          <>
+            {!isCollapsed && <div className="side-section-label" style={{ marginTop: '0.75rem' }}>MANAGEMENT</div>}
 
-        {!isCollapsed && <div className="side-section-label" style={{ marginTop: '0.75rem' }}>MANAGEMENT</div>}
+            {canView('analytics') && (
+              <button
+                className={`nav-item ${activeTab === 'analytics' ? 'selected' : ''}`}
+                onClick={() => onTabChange('analytics')}
+                title="Stage funnels, burn-down velocity, and WhatsApp nudges"
+              >
+                <BarChart3 size={18} />
+                {!isCollapsed && <span>Coordinator analytics</span>}
+              </button>
+            )}
 
-        <button
-          className={`nav-item ${activeTab === 'analytics' ? 'selected' : ''}`}
-          onClick={() => onTabChange('analytics')}
-          title="Stage funnels, burn-down velocity, and WhatsApp nudges"
-        >
-          <BarChart3 size={18} />
-          {!isCollapsed && <span>Coordinator analytics</span>}
-        </button>
+            {canView('settings') && (
+              <button
+                className={`nav-item ${activeTab === 'settings' ? 'selected' : ''}`}
+                onClick={() => onTabChange('settings')}
+                title="Consolidated team directory, Google Sheets controls, drafter intake, and reports"
+              >
+                <Sliders size={18} />
+                {!isCollapsed && <span>Settings</span>}
+              </button>
+            )}
 
-        <button
-          className={`nav-item ${activeTab === 'settings' ? 'selected' : ''}`}
-          onClick={() => onTabChange('settings')}
-          title="Consolidated team directory, Google Sheets controls, drafter intake, and reports"
-        >
-          <Sliders size={18} />
-          {!isCollapsed && <span>Settings</span>}
-        </button>
+            {hasAdminAccess && (
+              <button
+                className={`nav-item ${activeTab === 'security' ? 'selected' : ''}`}
+                onClick={() => onTabChange('security')}
+                title="Granular RBAC matrix, permission toggles, and security governance"
+                style={{
+                  borderLeft: activeTab === 'security' ? '3px solid #7c3aed' : undefined
+                }}
+              >
+                <Shield size={18} color={activeTab === 'security' ? '#7c3aed' : undefined} />
+                {!isCollapsed && <span>Security & Permissions</span>}
+                {!isCollapsed && (
+                  <span
+                    style={{
+                      fontSize: '0.5625rem',
+                      fontWeight: 800,
+                      backgroundColor: '#7c3aed',
+                      color: '#ffffff',
+                      padding: '1px 5px',
+                      borderRadius: '4px',
+                      marginLeft: 'auto'
+                    }}
+                  >
+                    ADMIN
+                  </span>
+                )}
+              </button>
+            )}
+          </>
+        )}
 
         <div className="side-separator"></div>
 
@@ -539,7 +582,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         alignItems: 'center',
                         justifyContent: 'center',
                         padding: 0,
-                        boxShadow: isSelected ? '0 0 0 2px #3b82f6' : '0 1px 2px rgba(0,0,0,0.06)',
+                        boxShadow: isSelected ? `0 0 0 2px ${opt.id === 'sepia' ? '#f8c537' : opt.id === 'obsidian' ? '#38bdf8' : opt.id === 'mist' ? '#4da6ff' : '#0091ff'}` : '0 1px 2px rgba(0,0,0,0.06)',
                         transform: isSelected ? 'scale(1.15)' : 'scale(1)',
                         transition: 'all 0.15s ease'
                       }}
@@ -550,7 +593,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             width: '5px',
                             height: '5px',
                             borderRadius: '9999px',
-                            backgroundColor: opt.id === 'obsidian' ? '#ffffff' : '#1e293b'
+                            backgroundColor: opt.id === 'obsidian' ? '#38bdf8' : opt.id === 'sepia' ? '#191919' : opt.id === 'mist' ? '#4da6ff' : '#0091ff'
                           }}
                         />
                       )}

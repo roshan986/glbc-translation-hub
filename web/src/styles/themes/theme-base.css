@@ -103,7 +103,7 @@
   color: var(--theme-text) !important;
 }
 
-/* Reading Typography Overrides for Active Theme */
+/* Reading & Universal Typography Overrides for Active Theme */
 .english-reading,
 .kjv-text,
 .kannada-reading,
@@ -129,13 +129,38 @@
 .chamber-title,
 .portal-title,
 .role-title,
-.section-heading {
+.section-heading,
+.page-heading h1,
+.page-heading h2,
+.comment-byline b,
+.comment-content p,
+.matrix-content p,
+.checklist-label,
+.final-reading-textarea,
+.conclusion-textarea,
+.btn-verse-jump,
+.chamber-nav-btn,
+.kjv-preview,
+.kannada-preview,
+.drop-main,
+.feature-item,
+.all-discipline-cards-container b,
+.parsed-import-table,
+.parsed-import-table td,
+.parsed-import-table th {
   color: var(--theme-text) !important;
 }
 
 .word-pair-english,
 .section-heading-copy small,
-.interlinear-heading {
+.interlinear-heading,
+.comment-byline span,
+.comment-byline time,
+.page-heading p,
+.comments-preview,
+.chat-action-btn,
+.keycap,
+.control-group label {
   color: var(--theme-text-muted) !important;
 }
 

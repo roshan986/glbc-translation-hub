@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, HelpCircle, ChevronDown, Sparkles, Users, Database } from 'lucide-react';
+import { BookOpen, HelpCircle, ChevronDown, Sparkles, Users, Database, LogOut, Shield } from 'lucide-react';
 import type { TeamMember } from '../types';
 import { getBookTotalVerses } from '../services/kjvService';
 import { getSmartInitials, getRoleAvatarColor } from '../utils/userUtils';
@@ -19,6 +19,10 @@ interface TopbarProps {
   onOpenTeamModal?: () => void;
   onOpenSettings?: (subtab?: 'team' | 'books' | 'drafter' | 'connection') => void;
   totalVerses?: number;
+  isSuperAdmin?: boolean;
+  onSignOut?: () => void;
+  availableRoles?: string[];
+  onChangeRole?: (role: string) => void;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
@@ -35,7 +39,11 @@ export const Topbar: React.FC<TopbarProps> = ({
   onOpenConnection,
   onOpenTeamModal,
   onOpenSettings: _onOpenSettings,
-  totalVerses
+  totalVerses,
+  isSuperAdmin = false,
+  onSignOut,
+  availableRoles,
+  onChangeRole
 }) => {
   const [showUserDropdown, setShowUserDropdown] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -176,21 +184,48 @@ export const Topbar: React.FC<TopbarProps> = ({
           <button
             className="profile"
             onClick={() => setShowUserDropdown(!showUserDropdown)}
-            title={`Switch Reviewer Persona (${currentUser.name} - ${currentUser.role})`}
+            title={`Account: ${currentUser.name} (${currentUser.role})`}
           >
             <span className={`avatar ${currentUser.avatarColor || getRoleAvatarColor(currentUser.role)}`}>
-              {currentUser.avatar || getSmartInitials(currentUser.name)}
+              {currentUser.avatar && currentUser.avatar.startsWith('http') ? (
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.name}
+                  style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                />
+              ) : (
+                currentUser.avatar || getSmartInitials(currentUser.name)
+              )}
             </span>
             <span className="profile-copy">
-              <b>{currentUser.name}</b>
-              <small>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <b style={{ color: '#f8fafc' }}>{currentUser.name}</b>
+                {isSuperAdmin && (
+                  <span
+                    style={{
+                      fontSize: '0.625rem',
+                      fontWeight: 700,
+                      color: '#f59e0b',
+                      backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                      border: '1px solid rgba(245, 158, 11, 0.3)',
+                      padding: '0.05rem 0.35rem',
+                      borderRadius: '0.25rem',
+                      lineHeight: 1.2
+                    }}
+                    title="Super Admin Mode Unlocked"
+                  >
+                    ADMIN
+                  </span>
+                )}
+              </span>
+              <small style={{ color: '#94a3b8' }}>
                 {currentUser.role}
-                {currentUser.roles && currentUser.roles.length > 1 && (
-                  <span style={{ marginLeft: '0.25rem', opacity: 0.8 }}>({currentUser.roles.length} roles)</span>
+                {availableRoles && availableRoles.length > 1 && (
+                  <span style={{ marginLeft: '0.25rem', opacity: 0.8 }}>({availableRoles.length} roles)</span>
                 )}
               </small>
             </span>
-            <ChevronDown size={14} className="profile-chevron" />
+            <ChevronDown size={14} className="profile-chevron" style={{ color: '#94a3b8' }} />
           </button>
 
           {showUserDropdown && (
@@ -202,9 +237,9 @@ export const Topbar: React.FC<TopbarProps> = ({
                 right: 0,
                 backgroundColor: 'var(--theme-card-bg)',
                 border: '1px solid var(--theme-border)',
-                borderRadius: '0.5rem',
-                boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.25)',
-                padding: '0.5rem',
+                borderRadius: '0.625rem',
+                boxShadow: '0 12px 30px -5px rgba(0, 0, 0, 0.35)',
+                padding: '0.75rem',
                 zIndex: 50,
                 minWidth: '18rem',
                 maxWidth: 'calc(100vw - 1.25rem)',
@@ -213,81 +248,88 @@ export const Topbar: React.FC<TopbarProps> = ({
                 color: 'var(--theme-text)'
               }}
             >
-              <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--theme-text-muted)', padding: '0.25rem 0.5rem', letterSpacing: '0.05em' }}>
-                SWITCH ACTIVE TEAM MEMBER
-              </div>
-              {team.map((member) => {
-                const isSelectedPerson = member.email ? member.email === currentUser.email : member.name === currentUser.name;
-                const assignedRoles = member.roles && member.roles.length > 0 ? member.roles : [member.role];
-
-                return (
-                  <div
-                    key={member.email || member.name}
-                    style={{
-                      borderRadius: '0.375rem',
-                      background: isSelectedPerson ? 'var(--theme-box-bg)' : 'transparent',
-                      border: isSelectedPerson ? '1px solid var(--theme-border)' : '1px solid transparent',
-                      padding: '0.4rem',
-                      marginBottom: '0.3rem'
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => {
-                        onSelectUser(member);
-                        setShowUserDropdown(false);
-                      }}
-                    >
-                      <span className={`avatar small ${member.avatarColor || getRoleAvatarColor(assignedRoles[0] || member.role)}`}>
-                        {member.avatar || getSmartInitials(member.name)}
-                      </span>
-                      <div style={{ flex: 1 }}>
-                        <b style={{ fontSize: '0.8125rem', color: 'var(--theme-text)' }}>{member.name}</b>
-                      </div>
-                    </div>
-
-                    {/* Role Badges: If person has multiple roles, click directly to act as that role */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', marginTop: '0.35rem', paddingLeft: '2rem' }}>
-                      {assignedRoles.map((r) => {
-                        const isCurrentActive = isSelectedPerson && currentUser.role === r;
-                        return (
-                          <button
-                            key={r}
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onSelectUser({ ...member, role: r });
-                              setShowUserDropdown(false);
-                            }}
-                            style={{
-                              fontSize: '0.6875rem',
-                              fontWeight: 600,
-                              padding: '0.15rem 0.5rem',
-                              borderRadius: '0.25rem',
-                              border: isCurrentActive ? '1px solid #3b82f6' : '1px solid var(--theme-border)',
-                              backgroundColor: isCurrentActive ? 'rgba(59, 130, 246, 0.18)' : 'var(--theme-card-bg)',
-                              color: isCurrentActive ? '#3b82f6' : 'var(--theme-text-muted)',
-                              cursor: 'pointer',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.25rem'
-                            }}
-                            title={`Act as ${r}`}
-                          >
-                            {isCurrentActive && <span style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: '#3b82f6' }}></span>}
-                            {r}
-                          </button>
-                        );
-                      })}
-                    </div>
+              {/* User Account Info Header */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.625rem',
+                  paddingBottom: '0.75rem',
+                  marginBottom: '0.625rem',
+                  borderBottom: '1px solid var(--theme-border)'
+                }}
+              >
+                <span className={`avatar ${currentUser.avatarColor || getRoleAvatarColor(currentUser.role)}`}>
+                  {currentUser.avatar && currentUser.avatar.startsWith('http') ? (
+                    <img
+                      src={currentUser.avatar}
+                      alt={currentUser.name}
+                      style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    currentUser.avatar || getSmartInitials(currentUser.name)
+                  )}
+                </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                    <b style={{ fontSize: '0.875rem', color: 'var(--theme-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {currentUser.name}
+                    </b>
+                    {isSuperAdmin && (
+                      <Shield size={14} style={{ color: '#f59e0b', flexShrink: 0 }} />
+                    )}
                   </div>
-                );
-              })}
+                  {currentUser.email && (
+                    <p style={{ fontSize: '0.75rem', color: 'var(--theme-text-muted)', margin: '0.125rem 0 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {currentUser.email}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Role Switcher */}
+              <div style={{ marginBottom: '0.75rem' }}>
+                <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--theme-text-muted)', marginBottom: '0.375rem', letterSpacing: '0.05em' }}>
+                  {isSuperAdmin ? 'SUPER ADMIN: SWITCH ACTIVE ROLE' : 'SWITCH ACTIVE ROLE'}
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                  {(availableRoles && availableRoles.length > 0 ? availableRoles : [currentUser.role]).map((r) => {
+                    const isCurrentActive = currentUser.role === r;
+                    return (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => {
+                          if (onChangeRole) {
+                            onChangeRole(r);
+                          } else {
+                            onSelectUser({ ...currentUser, role: r });
+                          }
+                          setShowUserDropdown(false);
+                        }}
+                        style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: '0.375rem',
+                          border: isCurrentActive ? '1px solid #3b82f6' : '1px solid var(--theme-border)',
+                          backgroundColor: isCurrentActive ? 'rgba(59, 130, 246, 0.18)' : 'var(--theme-box-bg)',
+                          color: isCurrentActive ? '#3b82f6' : 'var(--theme-text-muted)',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.25rem'
+                        }}
+                      >
+                        {isCurrentActive && <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#3b82f6' }}></span>}
+                        {r}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Manage Team & Roles (Admin or Modal Hook) */}
               {onOpenTeamModal && (
                 <div style={{ borderTop: '1px solid var(--theme-border)', paddingTop: '0.5rem', marginTop: '0.5rem' }}>
                   <button
@@ -302,7 +344,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '0.4rem',
-                      padding: '0.45rem',
+                      padding: '0.5rem',
                       borderRadius: '0.375rem',
                       border: '1px solid var(--theme-border)',
                       backgroundColor: 'var(--theme-box-bg)',
@@ -312,8 +354,39 @@ export const Topbar: React.FC<TopbarProps> = ({
                       cursor: 'pointer'
                     }}
                   >
-                    <Users size={13} />
+                    <Users size={14} />
                     <span>Manage Team &amp; Roles</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Sign Out Action */}
+              {onSignOut && (
+                <div style={{ borderTop: '1px solid var(--theme-border)', paddingTop: '0.5rem', marginTop: '0.5rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowUserDropdown(false);
+                      onSignOut();
+                    }}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.4rem',
+                      padding: '0.5rem',
+                      borderRadius: '0.375rem',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      color: '#f87171',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <LogOut size={14} />
+                    <span>Sign Out</span>
                   </button>
                 </div>
               )}

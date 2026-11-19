@@ -1,4 +1,12 @@
-import type { VerseItem, TeamMember, BookAnalytics, ReviewerRole, RichTextSectionPayload } from '../types';
+import type {
+  VerseItem,
+  TeamMember,
+  BookAnalytics,
+  ReviewerRole,
+  RichTextSectionPayload,
+  TeamPermissionsMap,
+  PermissionsApiResponse
+} from '../types';
 import { SAMPLE_VERSES, SAMPLE_TEAM, SAMPLE_ANALYTICS } from '../data/sampleData';
 import { parseAllReviewsToComments } from '../utils/commentSync';
 import { computeVerseApprovals } from '../utils/approvalEngine';
@@ -107,6 +115,16 @@ export const isLiveApiConfigured = (): boolean => {
   const url = getAppsScriptUrl();
   return typeof url === 'string' && url.startsWith('https://script.google.com');
 };
+
+let currentIdToken: string | null = null;
+
+export function setApiAuthToken(token: string | null): void {
+  currentIdToken = token;
+}
+
+export function getApiAuthToken(): string | null {
+  return currentIdToken;
+}
 
 export async function testConnection(testUrl?: string): Promise<{ success: boolean; books?: string[]; error?: string }> {
   const targetUrl = (testUrl || getAppsScriptUrl()).trim();
@@ -360,6 +378,7 @@ export async function submitReview(payload: {
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({
         action: 'submitReview',
+        idToken: currentIdToken || undefined,
         ...payload
       }),
       redirect: 'follow'
@@ -392,6 +411,7 @@ export async function submitFinal(payload: {
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({
         action: 'submitFinal',
+        idToken: currentIdToken || undefined,
         ...payload
       }),
       redirect: 'follow'
@@ -434,6 +454,7 @@ export async function importVersesApi(payload: {
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({
         action: 'importVerses',
+        idToken: currentIdToken || undefined,
         ...payload
       }),
       redirect: 'follow'
@@ -619,7 +640,7 @@ export async function saveMemberApi(member: {
     const res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'saveMember', ...member }),
+      body: JSON.stringify({ action: 'saveMember', idToken: currentIdToken || undefined, ...member }),
       redirect: 'follow'
     });
     const data = await res.json();
@@ -676,6 +697,7 @@ export interface InitialBundle {
   team: TeamMember[];
   verses: VerseItem[];
   analytics: BookAnalytics | null;
+  permissions?: TeamPermissionsMap;
 }
 
 export function getCachedInitialBundle(book = 'Romans', chapter = 1): InitialBundle | null {
@@ -735,7 +757,8 @@ export async function fetchInitialBundle(book = 'Romans', chapter = 1): Promise<
         books: cachedActiveBooks,
         team: unifiedTeam,
         verses: normalizedVerses,
-        analytics: data.analytics || null
+        analytics: data.analytics || null,
+        permissions: data.permissions || undefined
       };
 
       const memKey = `${book.toLowerCase()}:${chapter}`;
@@ -799,4 +822,82 @@ export function generateWeeklySummaryText(book: string, analytics: BookAnalytics
 ━━━━━━━━━━━━━━━━━━━━━━
 🌐 *Review directly on the Web App:*
 ${typeof window !== 'undefined' ? window.location.origin : 'https://glbc-hub.vercel.app'}?book=${encodeURIComponent(book)}`;
+}
+
+// ================================================================
+//  RBAC & SECURITY CONSOLE APIS (Tasks 6.3 & 6.5)
+// ================================================================
+
+let cachedPermissions: TeamPermissionsMap = {};
+
+export async function fetchPermissionsApi(): Promise<PermissionsApiResponse> {
+  const endpoint = getAppsScriptUrl();
+  if (!isLiveApiConfigured()) {
+    try {
+      const stored = localStorage.getItem('glbc_rbac_permissions');
+      if (stored) {
+        cachedPermissions = JSON.parse(stored);
+      }
+    } catch (e) {}
+    return { success: true, permissions: cachedPermissions };
+  }
+
+  try {
+    const res = await fetch(`${endpoint}?action=getPermissions`, { redirect: 'follow' });
+    const data: PermissionsApiResponse = await res.json();
+    if (data.success && data.permissions) {
+      cachedPermissions = data.permissions;
+      try {
+        localStorage.setItem('glbc_rbac_permissions', JSON.stringify(data.permissions));
+      } catch (e) {}
+    }
+    return data;
+  } catch (err) {
+    console.warn('fetchPermissionsApi error, fallback to local:', err);
+    try {
+      const stored = localStorage.getItem('glbc_rbac_permissions');
+      if (stored) cachedPermissions = JSON.parse(stored);
+    } catch (e) {}
+    return { success: true, permissions: cachedPermissions };
+  }
+}
+
+export async function savePermissionsApi(
+  permissions: TeamPermissionsMap,
+  userEmail?: string
+): Promise<PermissionsApiResponse> {
+  cachedPermissions = { ...permissions };
+  try {
+    localStorage.setItem('glbc_rbac_permissions', JSON.stringify(permissions));
+  } catch (e) {}
+
+  const endpoint = getAppsScriptUrl();
+  if (!isLiveApiConfigured()) {
+    return {
+      success: true,
+      permissions,
+      message: 'Demo Mode: Permissions saved locally.',
+      updatedAt: new Date().toISOString(),
+      updatedBy: userEmail || 'demo-admin'
+    };
+  }
+
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'savePermissions',
+        idToken: currentIdToken || undefined,
+        userEmail: userEmail || undefined,
+        permissions
+      }),
+      redirect: 'follow'
+    });
+    const data: PermissionsApiResponse = await res.json();
+    return data;
+  } catch (err) {
+    console.error('savePermissionsApi error:', err);
+    return { success: false, error: String(err) };
+  }
 }

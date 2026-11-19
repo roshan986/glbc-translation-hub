@@ -34,6 +34,9 @@ function doGet(e) {
       case "syncProtections":
         response = apiSyncProtections();
         break;
+      case "getPermissions":
+        response = apiGetPermissions();
+        break;
       default:
         response = { success: false, error: "Unknown action: " + action };
     }
@@ -62,6 +65,17 @@ function doPost(e) {
 
     var action = data.action || (e && e.parameter && e.parameter.action);
 
+    // Backend Hardening: Verify Firebase ID Token for write actions
+    var claimedEmail = data.userEmail || data.email;
+    var authResult = verifyCallerToken(data.idToken, claimedEmail);
+    if (!authResult.valid) {
+      return formatApiResponse({ success: false, error: "Unauthorized: " + authResult.error }, null);
+    }
+    if (authResult.verified) {
+      data._verifiedEmail = authResult.email;
+      data._isSuperAdmin = authResult.isSuperAdmin;
+    }
+
     switch (action) {
       case "submitReview":
         response = apiSubmitReview(data);
@@ -81,6 +95,9 @@ function doPost(e) {
       case "syncProtections":
         response = apiSyncProtections();
         break;
+      case "savePermissions":
+        response = apiSavePermissions(data);
+        break;
       default:
         response = { success: false, error: "Unknown POST action: " + action };
     }
@@ -89,6 +106,52 @@ function doPost(e) {
   }
 
   return formatApiResponse(response, null);
+}
+
+/**
+ * Verifies Firebase / Google OAuth ID Token via Google's public tokeninfo endpoint.
+ * Provides defense-in-depth security: verifies the caller is actually who they claim to be.
+ * If REQUIRE_AUTH script property is "false" or unset, allows unverified requests during migration.
+ */
+function verifyCallerToken(idToken, claimedEmail) {
+  var requireAuth = PropertiesService.getScriptProperties().getProperty("REQUIRE_AUTH");
+
+  if (!idToken) {
+    if (requireAuth === "true") {
+      return { valid: false, error: "Authentication token required" };
+    }
+    return { valid: true, email: claimedEmail, verified: false };
+  }
+
+  try {
+    var endpoint = "https://oauth2.googleapis.com/tokeninfo?id_token=" + encodeURIComponent(idToken);
+    var resp = UrlFetchApp.fetch(endpoint, { muteHttpExceptions: true });
+
+    if (resp.getResponseCode() !== 200) {
+      if (requireAuth === "true") {
+        return { valid: false, error: "Invalid or expired authentication token" };
+      }
+      return { valid: true, email: claimedEmail, verified: false };
+    }
+
+    var payload = JSON.parse(resp.getContentText());
+    var verifiedEmail = (payload.email || "").toLowerCase().trim();
+
+    // Check if caller is Super Admin
+    var adminEmail = (PropertiesService.getScriptProperties().getProperty("ADMIN_EMAIL") || "").toLowerCase().trim();
+    var isSuperAdmin = (adminEmail && verifiedEmail === adminEmail);
+
+    if (claimedEmail && !isSuperAdmin && claimedEmail.toLowerCase().trim() !== verifiedEmail) {
+      return { valid: false, error: "Identity mismatch: token does not match claimed email" };
+    }
+
+    return { valid: true, email: verifiedEmail, verified: true, isSuperAdmin: isSuperAdmin };
+  } catch (err) {
+    if (requireAuth === "true") {
+      return { valid: false, error: "Token verification failed: " + err.toString() };
+    }
+    return { valid: true, email: claimedEmail, verified: false };
+  }
 }
 
 function formatApiResponse(data, callback) {
@@ -122,12 +185,14 @@ function apiGetInitialBundle(bookName, chapterFilter) {
   var configRes = apiGetConfig();
   var versesRes = apiGetVerses(bName, chFilter);
   var analyticsRes = apiGetAnalytics(bName);
+  var permissionsRes = apiGetPermissions();
   return {
     success: true,
     books: booksRes.books || [bName],
     team: configRes.team || [],
     verses: versesRes.verses || [],
-    analytics: analyticsRes.success ? analyticsRes : null
+    analytics: analyticsRes.success ? analyticsRes : null,
+    permissions: permissionsRes.permissions || {}
   };
 }
 
@@ -370,14 +435,25 @@ function apiSubmitReview(data) {
       return { success: false, error: "Invalid or unsupported review role: " + role };
   }
 
-  var currentVal = sheet.getRange(row, revCol).getValue() || "";
+  var currentVal = String(sheet.getRange(row, revCol).getValue() || "").trim();
+  var rawComment = comment ? String(comment).trim() : "";
   var formattedComment = "";
+
+  // De-duplication guard: If comment is identical to currentVal, or starts with currentVal
+  // (e.g. Committee Chamber passing existing accumulated cell text back), strip the redundant history
+  if (currentVal && rawComment) {
+    if (rawComment === currentVal) {
+      rawComment = "";
+    } else if (rawComment.indexOf(currentVal) === 0) {
+      rawComment = rawComment.substring(currentVal.length).trim();
+    }
+  }
 
   // Append formatted entry: author byline + approval tag or natural discussion note
   if (confirm === "Y") {
-    formattedComment = (userName ? userName + ": " : "") + "[✓ Approved]" + (comment && String(comment).trim() ? " - " + String(comment).trim() : "");
-  } else if (comment && String(comment).trim().length > 0) {
-    formattedComment = (userName ? userName + ": " : "") + String(comment).trim();
+    formattedComment = (userName ? userName + ": " : "") + "[✓ Approved]" + (rawComment ? " - " + rawComment : "");
+  } else if (rawComment.length > 0) {
+    formattedComment = (userName ? userName + ": " : "") + rawComment;
   }
 
   if (formattedComment) {
@@ -799,4 +875,82 @@ function apiInitBookSheet(data) {
     isNew: isNew,
     message: "Translation sheet '" + bookName + "' initialized and protected with 18 GLBC columns successfully!"
   };
+}
+
+/**
+ * Reads dynamic RBAC permission matrix from Script Properties.
+ * Stored as JSON string under key 'RBAC_PERMISSIONS'.
+ */
+function apiGetPermissions() {
+  try {
+    var props = PropertiesService.getScriptProperties();
+    var raw = props.getProperty("RBAC_PERMISSIONS");
+    var permissions = {};
+    if (raw) {
+      try {
+        permissions = JSON.parse(raw);
+      } catch (parseErr) {
+        permissions = {};
+      }
+    }
+    return {
+      success: true,
+      permissions: permissions,
+      updatedAt: props.getProperty("RBAC_UPDATED_AT") || null,
+      updatedBy: props.getProperty("RBAC_UPDATED_BY") || null
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: "Could not retrieve permissions: " + err.toString(),
+      permissions: {}
+    };
+  }
+}
+
+/**
+ * Saves dynamic RBAC permission matrix to Script Properties.
+ * Caller MUST be verified Super Admin or a delegated Admin with { admin: 'edit' }.
+ */
+function apiSavePermissions(data) {
+  try {
+    var permissions = data.permissions;
+    if (!permissions || typeof permissions !== "object") {
+      return { success: false, error: "Invalid permissions object provided" };
+    }
+
+    var callerEmail = (data._verifiedEmail || data.userEmail || "").toLowerCase().trim();
+    var isSuper = data._isSuperAdmin === true;
+
+    // Check if caller is Super Admin or delegated admin
+    if (!isSuper) {
+      var currentPerms = apiGetPermissions().permissions;
+      var callerPerm = currentPerms && currentPerms[callerEmail];
+      var isDelegatedAdmin = callerPerm && callerPerm.admin === "edit";
+      if (!isDelegatedAdmin) {
+        return {
+          success: false,
+          error: "Unauthorized: Only Super Admin or authorized Admins may modify permissions."
+        };
+      }
+    }
+
+    var nowIso = new Date().toISOString();
+    var props = PropertiesService.getScriptProperties();
+    props.setProperty("RBAC_PERMISSIONS", JSON.stringify(permissions));
+    props.setProperty("RBAC_UPDATED_AT", nowIso);
+    props.setProperty("RBAC_UPDATED_BY", callerEmail);
+
+    return {
+      success: true,
+      message: "Permissions saved and synced across team successfully.",
+      updatedAt: nowIso,
+      updatedBy: callerEmail
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: "Failed to save permissions: " + err.toString()
+    };
+  }
 }

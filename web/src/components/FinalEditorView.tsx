@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { parseDrafterComments } from '../utils/drafterParser';
 import { showToast } from '../utils/toast';
+import { useAuth } from '../contexts/AuthContext';
 
 interface FinalEditorViewProps {
   verses: VerseItem[];
@@ -31,6 +32,8 @@ export const FinalEditorView: React.FC<FinalEditorViewProps> = ({
   currentUser: _currentUser,
   onSubmitFinal
 }) => {
+  const { canEdit } = useAuth();
+  const isFinalEditable = canEdit('final');
   const [filter, setFilter] = useState<FinalFilter>('needs_final');
   const [selectedVerseIndex, setSelectedVerseIndex] = useState<number>(0);
   const [finalReadingText, setFinalReadingText] = useState<string>('');
@@ -108,8 +111,9 @@ export const FinalEditorView: React.FC<FinalEditorViewProps> = ({
   const isFinalized = activeVerse.confirms.final || activeVerse.status === 'Done';
 
   const handleSignOff = async () => {
-    if (!finalReadingText.trim()) {
-      showToast('warning', 'Please enter or verify the Final Kannada Reading before sign-off.');
+    if (!activeVerse || !finalReadingText.trim() || submitting || !isFinalEditable) {
+      if (!isFinalEditable) showToast('warning', 'Read-only access: Final sign-off is restricted.');
+      else if (!finalReadingText.trim()) showToast('warning', 'Please enter or verify the Final Kannada Reading before sign-off.');
       return;
     }
     setSubmitting(true);
@@ -124,6 +128,7 @@ export const FinalEditorView: React.FC<FinalEditorViewProps> = ({
   };
 
   const handleReturnToCommittee = async () => {
+    if (!activeVerse || submitting || !isFinalEditable) return;
     setSubmitting(true);
     await onSubmitFinal(activeVerse.row, finalReadingText.trim(), 'N');
     setSubmitting(false);
@@ -172,6 +177,26 @@ ${finalReadingText || activeVerse.proposed}
             </p>
           </div>
         </div>
+
+        {!isFinalEditable && (
+          <div
+            style={{
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+              borderRadius: '0.5rem',
+              padding: '0.5rem 0.875rem',
+              marginBottom: '0.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontSize: '0.75rem',
+              color: '#60a5fa'
+            }}
+          >
+            <Lock size={14} />
+            <span><b>Read-Only Observation View:</b> You can view translations and deliberations. Final sign-off is restricted for your role.</span>
+          </div>
+        )}
 
         {/* Filter Pills */}
         <div className="chamber-filters">

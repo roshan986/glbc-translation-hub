@@ -38,6 +38,7 @@ import { calculatePacingStats } from '../utils/pacingEngine';
 import { showToast } from '../utils/toast';
 import { DiscussionPopoutModal } from './DiscussionPopoutModal';
 import { ApprovalImpactModal, type ApprovalActionType } from './ApprovalImpactModal';
+import { useAuth } from '../contexts/AuthContext';
 
 interface FocusModeCardProps {
   verse: VerseItem;
@@ -106,6 +107,8 @@ export const FocusModeCard: React.FC<FocusModeCardProps> = ({
   onOpenPicker,
   onInitBook: _onInitBook
 }) => {
+  const { canEdit } = useAuth();
+  const isFocusEditable = canEdit('focus');
   const [fontSize, setFontSize] = useState<number>(16);
   const [showNotes, setShowNotes] = useState<boolean>(true);
   const [commentText, setCommentText] = useState<string>('');
@@ -487,7 +490,7 @@ export const FocusModeCard: React.FC<FocusModeCardProps> = ({
 
   // Actions for Discipline Reviewers - Opens Impact Confirmation Modal
   const handleApproveDiscipline = () => {
-    if (isSubmitting || isFinalized) return;
+    if (isSubmitting || isFinalized || !isFocusEditable) return;
     setImpactConfig({
       actionType: 'reviewer',
       stageTitle: getRoleConfirmInfo(activeRole).label,
@@ -505,7 +508,7 @@ export const FocusModeCard: React.FC<FocusModeCardProps> = ({
   };
 
   const handleSendComment = async () => {
-    if (!commentText.trim() || isSubmitting || isFinalized) return;
+    if (!commentText.trim() || isSubmitting || isFinalized || !isFocusEditable) return;
     setIsSubmitting(true);
     if (onAddComment) {
       await onAddComment(verse.row, reviewerRole, commentText.trim());
@@ -519,7 +522,7 @@ export const FocusModeCard: React.FC<FocusModeCardProps> = ({
   // Send comment to specific discipline
   const handleSendDisciplineComment = async (discKey: 'tech' | 'style' | 'ortho' | 'theo', roleKey: ReviewerRole) => {
     const text = (disciplineCommentDrafts[discKey] || '').trim();
-    if (!text || isSubmitting || isFinalized) return;
+    if (!text || isSubmitting || isFinalized || !isFocusEditable) return;
     setIsSubmitting(true);
     if (onAddComment) {
       await onAddComment(verse.row, roleKey, text);
@@ -532,7 +535,7 @@ export const FocusModeCard: React.FC<FocusModeCardProps> = ({
 
   // Approve specific discipline directly from its card
   const handleApproveDisciplineFromCard = (discKey: 'tech' | 'style' | 'ortho' | 'theo', roleKey: ReviewerRole, roleLabel: string) => {
-    if (isSubmitting || isFinalized) return;
+    if (isSubmitting || isFinalized || !isFocusEditable) return;
     const text = (disciplineCommentDrafts[discKey] || '').trim();
     setImpactConfig({
       actionType: 'reviewer',
@@ -802,8 +805,8 @@ export const FocusModeCard: React.FC<FocusModeCardProps> = ({
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.2rem', fontSize: '0.6875rem' }}>
                             {isMe ? (
                               <>
-                                <span style={{ fontWeight: 700, color: '#4338ca' }}>You</span>
-                                <span style={{ padding: '0.05rem 0.35rem', borderRadius: '0.25rem', backgroundColor: '#e0e7ff', color: '#3730a3', fontWeight: 600 }}>
+                                <span style={{ fontWeight: 700, color: 'var(--theme-accent, #38bdf8)' }}>You</span>
+                                <span style={{ padding: '0.05rem 0.35rem', borderRadius: '0.25rem', backgroundColor: 'var(--theme-box-bg)', color: 'var(--theme-text-muted)', border: '1px solid var(--theme-border)', fontWeight: 600 }}>
                                   {disc.roleName}
                                 </span>
                               </>
@@ -1249,8 +1252,8 @@ export const FocusModeCard: React.FC<FocusModeCardProps> = ({
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.2rem', fontSize: '0.6875rem' }}>
                             {isMe ? (
                               <>
-                                <span style={{ fontWeight: 700, color: '#4338ca' }}>You</span>
-                                <span style={{ padding: '0.05rem 0.35rem', borderRadius: '0.25rem', backgroundColor: '#e0e7ff', color: '#3730a3', fontWeight: 600 }}>
+                                <span style={{ fontWeight: 700, color: 'var(--theme-accent, #38bdf8)' }}>You</span>
+                                <span style={{ padding: '0.05rem 0.35rem', borderRadius: '0.25rem', backgroundColor: 'var(--theme-box-bg)', color: 'var(--theme-text-muted)', border: '1px solid var(--theme-border)', fontWeight: 600 }}>
                                   Committee
                                 </span>
                               </>
@@ -1455,6 +1458,25 @@ export const FocusModeCard: React.FC<FocusModeCardProps> = ({
 
   return (
     <div className="focus-card">
+      {!isFocusEditable && (
+        <div
+          style={{
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '0.5rem',
+            padding: '0.5rem 0.875rem',
+            marginBottom: '0.75rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontSize: '0.75rem',
+            color: '#60a5fa'
+          }}
+        >
+          <Lock size={14} />
+          <span><b>Read-Only Observation View:</b> You can view translations and reviewer findings. Confirmation and commenting actions are restricted for your role.</span>
+        </div>
+      )}
       {/* Top Review Toolbar */}
       <div className="review-toolbar">
         <div className="verse-title">
@@ -2402,13 +2424,13 @@ export const FocusModeCard: React.FC<FocusModeCardProps> = ({
           {/* Inline Smart Guidance Badge for Discipline */}
           <div className="inline-guidance-card discipline">
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Sparkles size={15} color="#4f46e5" />
-              <b style={{ color: '#312e81', fontSize: '0.75rem' }}>TRANSLATION GUIDANCE ({activeRole.toUpperCase()})</b>
+              <Sparkles size={15} color="var(--theme-accent, #38bdf8)" />
+              <b style={{ color: 'var(--theme-accent, #38bdf8)', fontSize: '0.75rem' }}>TRANSLATION GUIDANCE ({activeRole.toUpperCase()})</b>
             </div>
-            <p style={{ margin: '0.2rem 0 0', fontSize: '0.75rem', color: '#3730a3', lineHeight: 1.45 }}>
+            <p style={{ margin: '0.2rem 0 0', fontSize: '0.75rem', color: 'var(--theme-text)', lineHeight: 1.45 }}>
               <b>Your Action:</b> Review the proposed Kannada reading against the Greek and KJV text. Post linguistic observations in your discipline card below, or click <b>Confirm Review (Y)</b> if accurate.
             </p>
-            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem', fontSize: '0.6875rem', color: '#4338ca', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem', fontSize: '0.6875rem', color: 'var(--theme-text-muted)', flexWrap: 'wrap' }}>
               <span><b>Next Stage:</b> Advances to Committee consensus once all 4 disciplines confirm.</span>
               <span>•</span>
               <span><b>Waiting On:</b> {pendingDisciplineSummary}</span>

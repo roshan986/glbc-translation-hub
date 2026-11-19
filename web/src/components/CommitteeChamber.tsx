@@ -10,11 +10,13 @@ import {
   RotateCcw,
   Sparkles,
   BookOpen,
-  Send
+  Send,
+  Lock
 } from 'lucide-react';
 import { generateWhatsAppLink } from '../services/api';
 import { parseDrafterComments } from '../utils/drafterParser';
 import { showToast } from '../utils/toast';
+import { useAuth } from '../contexts/AuthContext';
 
 interface CommitteeChamberProps {
   verses: VerseItem[];
@@ -35,6 +37,8 @@ export const CommitteeChamber: React.FC<CommitteeChamberProps> = ({
   onApproveConsensus,
   onRequestReReview
 }) => {
+  const { canEdit } = useAuth();
+  const isCommitteeEditable = canEdit('committee');
   const [filter, setFilter] = useState<CommitteeFilter>('awaiting');
   const [selectedVerseIndex, setSelectedVerseIndex] = useState<number>(0);
   const [conclusionText, setConclusionText] = useState<string>('');
@@ -104,12 +108,15 @@ export const CommitteeChamber: React.FC<CommitteeChamberProps> = ({
   const finalEditor = team.find((m) => m.role.toLowerCase().includes('final')) || team[0];
 
   const handleApprove = async () => {
-    if (!conclusionText.trim()) {
-      showToast('warning', 'Please enter or verify the Committee Conclusion in Kannada before approving.');
-      return;
-    }
+    if (!activeVerse || submitting || !isCommitteeEditable) return;
     setSubmitting(true);
-    await onApproveConsensus(activeVerse.row, conclusionText.trim());
+    // If the text in the chamber is identical to the accumulated deliberation history,
+    // do not re-send the history to avoid duplicate appending in the cell
+    const textToSend = conclusionText.trim() === (activeVerse.reviews.conclusion || '').trim()
+      ? ''
+      : conclusionText.trim();
+
+    await onApproveConsensus(activeVerse.row, textToSend);
     setSubmitting(false);
     setActionNotice('✅ Committee consensus approved! Verse advanced to "Needs Final".');
 
@@ -120,6 +127,7 @@ export const CommitteeChamber: React.FC<CommitteeChamberProps> = ({
   };
 
   const handleReturnReReview = async () => {
+    if (!isCommitteeEditable) return;
     if (!conclusionText.trim()) {
       showToast('warning', 'Please provide guidance notes explaining what needs re-review.');
       return;
@@ -190,6 +198,26 @@ export const CommitteeChamber: React.FC<CommitteeChamberProps> = ({
             </p>
           </div>
         </div>
+
+        {!isCommitteeEditable && (
+          <div
+            style={{
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+              borderRadius: '0.5rem',
+              padding: '0.5rem 0.875rem',
+              marginBottom: '0.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontSize: '0.75rem',
+              color: '#60a5fa'
+            }}
+          >
+            <Lock size={14} />
+            <span><b>Read-Only Observation View:</b> You can view committee consensus deliberations. Confirmations are restricted for your role.</span>
+          </div>
+        )}
 
         {/* Filter Pills */}
         <div className="chamber-filters">

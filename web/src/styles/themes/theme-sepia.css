@@ -1,107 +1,293 @@
 /**
- * GLBC Translation System — Warm Sepia Theme
- * Archival Linen & Warm Parchment (Apple Books / Kindle Inspired)
+ * GLBC Translation System — Obsidian Wasp Theme
+ * Source: Official Obsidian Community Theme "Wasp" by Santi Younger
+ * https://github.com/santiyounger/Wasp-Obsidian-Theme
+ * https://community.obsidian.md/themes/wasp
+ * 
+ * Aesthetics:
+ * - Canvas: Deep sleek charcoal (#191919)
+ * - Sidebar & Chrome: Obsidian charcoal (#141414 / #1f1f1f)
+ * - Card Surfaces: Elevated charcoal (#242424 / #2a2a2a) with subtle #3d3d3d borders
+ * - Typography: Warm luminous ivory (#faf2d6) — zero harsh pure white glare
+ * - Muted Text: Warm desert stone (#bdae93) & faint (#9a9284)
+ * - Headings & Accents: Signature Wasp Honey Yellow (#f8c537 / #f6be2c)
+ * - Code & Concordance: Soft sage green (#8ec07c) on charcoal (#1f1f1f)
+ * - Chat & Deliberation: Translucent honey amber tint (rgba(248, 197, 55, 0.14))
  */
 
 [data-bg-theme="sepia"] {
-  --color-theme-bar-bg: rgba(60, 40, 20, 0.05);
+  color-scheme: dark;
+  --color-theme-bar-bg: rgba(248, 197, 55, 0.05);
 
-  /* Multi-Theme Gradient System: Warm Sepia */
-  --theme-canvas-bg: linear-gradient(180deg, #faf6ee 0%, #f3eee2 100%);
-  --theme-sidebar-bg: linear-gradient(180deg, #f7f2e7 0%, #ede6d7 100%);
-  --theme-card-bg: #fffdfa;
-  --theme-card-bg-elevated: #fffdfa;
-  --theme-box-bg: #f5efe4;
-  --theme-border: #dfd5c2;
-  --theme-border-subtle: #ede5d5;
-  --theme-text: #1e140a;
-  --theme-text-muted: #68513b;
-  --theme-input-bg: #fffdfa;
-  --theme-card-shadow: 0 1px 3px 0 rgba(40, 25, 10, 0.04), 0 1px 2px -1px rgba(40, 25, 10, 0.04);
+  /* Multi-Theme Gradient System: Obsidian Wasp */
+  --theme-canvas-bg: #191919;
+  --theme-sidebar-bg: #141414;
+  --theme-card-bg: #242424;
+  --theme-card-bg-elevated: #2a2a2a;
+  --theme-box-bg: #1f1f1f;
+  --theme-border: #3d3d3d;
+  --theme-border-subtle: #2d2d2d;
+  --theme-text: #faf2d6;
+  --theme-text-muted: #bdae93;
+  --theme-input-bg: #191919;
+  --theme-card-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.6), 0 2px 6px -1px rgba(0, 0, 0, 0.4);
 
-  --color-surface: #fffdfa;
-  --color-sidebar-bg: #f7f2e7;
-  --color-bg: #faf6ee;
-  --color-border: #dfd5c2;
-  --color-text: #1e140a;
-  --color-text-muted: #68513b;
+  --color-surface: #242424;
+  --color-sidebar-bg: #141414;
+  --color-bg: #191919;
+  --color-border: #3d3d3d;
+  --color-text: #faf2d6;
+  --color-text-muted: #bdae93;
 
-  /* Code / preview block tokens */
-  --theme-code-bg:     #1e140a;
-  --theme-code-text:   #f5efe4;
-  --theme-code-border: #3a2a18;
+  /* Code & Concordance Tokens: Wasp Sage & Charcoal */
+  --theme-code-bg:     #1f1f1f;
+  --theme-code-text:   #8ec07c;
+  --theme-code-border: #3d3d3d;
+
+  /* Interactive Accent: Signature Wasp Yellow */
+  --interactive-accent: #f8c537;
+  --interactive-accent-hover: #fada7a;
+  --theme-accent: #f8c537;
 }
 
-/* Chat Bubbles in Sepia */
+[data-bg-theme="sepia"],
+[data-bg-theme="sepia"] body,
+[data-bg-theme="sepia"] #root {
+  color: #faf2d6;
+  background-color: #191919;
+}
+
+/* Topbar & Subbar in Obsidian Wasp */
+[data-bg-theme="sepia"] .topbar {
+  background-color: #141414 !important;
+  border-bottom: 1px solid #3d3d3d !important;
+}
+
+[data-bg-theme="sepia"] .subbar {
+  background: #141414 !important;
+  border-bottom: 1px solid #3d3d3d !important;
+}
+
+/* Headings in Obsidian Wasp */
+[data-bg-theme="sepia"] h1,
+[data-bg-theme="sepia"] .page-heading h1 {
+  color: #f8c537 !important;
+}
+
+[data-bg-theme="sepia"] h2,
+[data-bg-theme="sepia"] .verse-title h2 {
+  color: #f6be2c !important;
+}
+
+[data-bg-theme="sepia"] h3 {
+  color: #f5b722 !important;
+}
+
+[data-bg-theme="sepia"] h4 {
+  color: #f3af17 !important;
+}
+
+/* Chat & Deliberation Bubbles in Obsidian Wasp */
 [data-bg-theme="sepia"] .chat-bubble-box.me {
-  background: #f5eee3 !important;
-  border-color: #dfd5c2 !important;
-  color: #1e140a !important;
+  background: rgba(248, 197, 55, 0.14) !important;
+  border: 1px solid rgba(248, 197, 55, 0.35) !important;
+  color: #faf2d6 !important;
 }
 
 [data-bg-theme="sepia"] .chat-bubble-box.other {
-  background: #fffdfa !important;
-  border-color: #dfd5c2 !important;
-  color: #1e140a !important;
+  background: #2a2a2a !important;
+  border: 1px solid #3d3d3d !important;
+  color: #faf2d6 !important;
 }
 
-/* Inline Guidance Cards in Sepia */
+[data-bg-theme="sepia"] .comment-byline b {
+  color: #faf2d6 !important;
+}
+
+[data-bg-theme="sepia"] .comment-content p {
+  color: #faf2d6 !important;
+}
+
+/* Inline Guidance Cards in Obsidian Wasp */
 [data-bg-theme="sepia"] .inline-guidance-card {
-  background: #fbf5ea !important;
-  border: 1px solid #ebd9c0 !important;
+  background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%) !important;
+  border: 1px solid #3d3d3d !important;
 }
 
 [data-bg-theme="sepia"] .inline-guidance-card b,
 [data-bg-theme="sepia"] .inline-guidance-card h4 {
-  color: #3b220c !important;
+  color: #f8c537 !important;
 }
 
 [data-bg-theme="sepia"] .inline-guidance-card p,
 [data-bg-theme="sepia"] .inline-guidance-card span {
-  color: #5c3e21 !important;
+  color: #bdae93 !important;
 }
 
 [data-bg-theme="sepia"] .inline-guidance-card svg {
-  color: #8c531b !important;
+  color: #f8c537 !important;
 }
 
-/* Sidebar Nav Items in Sepia */
+/* Sidebar Nav Items in Obsidian Wasp */
 [data-bg-theme="sepia"] .nav-item.selected {
-  background: linear-gradient(135deg, #e7d5be 0%, #dac2a6 100%) !important;
-  color: #3d230d !important;
-  border-left: 3px solid #854d0e;
+  background: rgba(248, 197, 55, 0.14) !important;
+  color: #f8c537 !important;
+  border-left: 3px solid #f8c537;
 }
 
 [data-bg-theme="sepia"] .nav-item {
-  color: #5d4632 !important;
+  color: #bdae93 !important;
 }
 
 [data-bg-theme="sepia"] .nav-item:hover {
-  background: rgba(133, 77, 14, 0.08) !important;
-  color: #281b10 !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #faf2d6 !important;
 }
 
-/* Active Role Tabs in Sepia */
+[data-bg-theme="sepia"] .person-card:hover,
+[data-bg-theme="sepia"] .member-item:hover,
+[data-bg-theme="sepia"] .team-person:hover,
+[data-bg-theme="sepia"] .team-accordion-header:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Active Role Tabs in Obsidian Wasp */
 [data-bg-theme="sepia"] .focus-role-tab.active {
-  background-color: #ede3d3 !important;
-  border-color: #8c531b !important;
-  color: #3b220c !important;
+  background-color: rgba(248, 197, 55, 0.15) !important;
+  border-color: #f8c537 !important;
+  color: #f8c537 !important;
 }
 
-/* Role Badges in Sepia */
+[data-bg-theme="sepia"] .focus-role-tab.active.committee {
+  background-color: rgba(248, 197, 55, 0.15) !important;
+  border-color: #f8c537 !important;
+  color: #f8c537 !important;
+}
+
+[data-bg-theme="sepia"] .focus-role-tab.active.final {
+  background-color: rgba(142, 192, 124, 0.15) !important;
+  border-color: #8ec07c !important;
+  color: #8ec07c !important;
+}
+
+[data-bg-theme="sepia"] .focus-role-tab.active.drafter {
+  background-color: rgba(248, 197, 55, 0.15) !important;
+  border-color: #f8c537 !important;
+  color: #f8c537 !important;
+}
+
+/* Role Badges in Obsidian Wasp */
 [data-bg-theme="sepia"] .role-tab-badge.confirmed {
-  background-color: #e5ede3 !important;
-  color: #274e27 !important;
+  background-color: rgba(142, 192, 124, 0.15) !important;
+  color: #8ec07c !important;
+  border: 1px solid rgba(142, 192, 124, 0.3) !important;
 }
 
 [data-bg-theme="sepia"] .role-tab-badge.pending {
-  background-color: #f5edd7 !important;
-  color: #6d4e16 !important;
+  background-color: rgba(248, 197, 55, 0.15) !important;
+  color: #f8c537 !important;
+  border: 1px solid rgba(248, 197, 55, 0.3) !important;
 }
 
-/* WhatsApp Banner in Sepia */
+/* WhatsApp Banner in Obsidian Wasp */
 [data-bg-theme="sepia"] .whatsapp-link {
-  background: linear-gradient(135deg, #f0f7ef, #e4efe3) !important;
-  border: 1px solid #bed6bd !important;
-  color: #1b381b !important;
+  background: linear-gradient(135deg, #1f2b1f 0%, #172217 100%) !important;
+  border: 1px solid #2e592e !important;
+  color: #4ade80 !important;
+}
+
+[data-bg-theme="sepia"] .whatsapp-link b,
+[data-bg-theme="sepia"] .whatsapp-link span {
+  color: #4ade80 !important;
+}
+
+/* Inputs, Textareas & Dropdowns in Obsidian Wasp */
+[data-bg-theme="sepia"] input,
+[data-bg-theme="sepia"] textarea,
+[data-bg-theme="sepia"] select {
+  background-color: #191919 !important;
+  color: #faf2d6 !important;
+  border-color: #3d3d3d !important;
+}
+
+[data-bg-theme="sepia"] select option {
+  background-color: #242424 !important;
+  color: #faf2d6 !important;
+}
+
+[data-bg-theme="sepia"] input::placeholder,
+[data-bg-theme="sepia"] textarea::placeholder {
+  color: #9a9284 !important;
+  opacity: 0.7;
+}
+
+/* Modals & Popovers in Obsidian Wasp */
+[data-bg-theme="sepia"] .app-modal-card {
+  background: #242424 !important;
+  border: 1px solid #3d3d3d !important;
+  box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.7) !important;
+}
+
+[data-bg-theme="sepia"] .countdown-popover-card {
+  background: #242424 !important;
+  border: 1px solid #3d3d3d !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
+}
+
+[data-bg-theme="sepia"] .chat-popout-card,
+[data-bg-theme="sepia"] .discussion-popout-card {
+  background: #242424 !important;
+  border: 1px solid #3d3d3d !important;
+}
+
+[data-bg-theme="sepia"] .chat-popout-header {
+  background: #1f1f1f !important;
+  border-bottom: 1px solid #3d3d3d !important;
+}
+
+[data-bg-theme="sepia"] .chat-popout-stream {
+  background: #191919 !important;
+}
+
+/* Verse Jump Button in Obsidian Wasp */
+[data-bg-theme="sepia"] .btn-verse-jump {
+  background-color: #2a2a2a !important;
+  border-color: #3d3d3d !important;
+  color: #faf2d6 !important;
+}
+
+[data-bg-theme="sepia"] .btn-verse-jump:hover {
+  background-color: #323232 !important;
+  border-color: #f8c537 !important;
+  color: #f8c537 !important;
+}
+
+/* Tables imported from Word */
+[data-bg-theme="sepia"] .parsed-import-table table,
+[data-bg-theme="sepia"] .parsed-import-table td,
+[data-bg-theme="sepia"] .parsed-import-table th {
+  border-color: #3d3d3d !important;
+  color: #faf2d6 !important;
+}
+
+/* Contrast Remediation for Wasp: Neutralize dark body colors */
+[data-bg-theme="sepia"] span[style*="292f33" i],
+[data-bg-theme="sepia"] span[style*="292F33"],
+[data-bg-theme="sepia"] span[style*="#000000"],
+[data-bg-theme="sepia"] span[style*="#000;"],
+[data-bg-theme="sepia"] span[style*="#000\""],
+[data-bg-theme="sepia"] span[style*="#000'"],
+[data-bg-theme="sepia"] span[style*="#111827"],
+[data-bg-theme="sepia"] span[style*="#1f2937"],
+[data-bg-theme="sepia"] span[style*="#333333"],
+[data-bg-theme="sepia"] span[style*="#434343"],
+[data-bg-theme="sepia"] span[style*="#555555"],
+[data-bg-theme="sepia"] span[style*="rgb(0, 0, 0)"],
+[data-bg-theme="sepia"] span[style*="rgb(0,0,0)"],
+[data-bg-theme="sepia"] span[style*="rgb(41, 47, 51)"],
+[data-bg-theme="sepia"] span[style*="rgb(15, 23, 42)"],
+[data-bg-theme="sepia"] span[style*="rgb(30, 41, 59)"],
+[data-bg-theme="sepia"] span[style*="color: black"],
+[data-bg-theme="sepia"] span[style*="color:black"] {
+  color: var(--theme-text, #faf2d6) !important;
 }

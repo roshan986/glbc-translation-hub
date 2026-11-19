@@ -15,13 +15,15 @@ import {
   Phone,
   Calendar,
   Sliders,
-  Palette
+  Palette,
+  Lock
 } from 'lucide-react';
 import { extractDocxBlocks, groupBlocksIntoVerses, parsePastedText } from '../services/docxParser';
 import { downloadDrafterTemplate } from '../services/templateGenerator';
 import { getBookChaptersCount } from '../services/kjvService';
 import { getSmartInitials, getRoleAvatarColor, getRoleAvatarHex } from '../utils/userUtils';
 import { showToast } from '../utils/toast';
+import { useAuth } from '../contexts/AuthContext';
 
 export type SettingsSubTab = 'team' | 'books' | 'drafter' | 'connection';
 
@@ -89,6 +91,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   isLiveConnected,
   onOpenConnectionModal
 }) => {
+  const { canEdit } = useAuth();
+  const isSettingsEditable = canEdit('settings');
   const [activeSubTab, setActiveSubTab] = useState<SettingsSubTab>(initialSubTab);
 
   useEffect(() => {
@@ -169,6 +173,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   }, [groupedTeam, teamSearch, selectedRoleFilter]);
 
   const handleSyncProtections = async () => {
+    if (!isSettingsEditable) {
+      showToast('warning', 'Read-only access: Column protection sync is restricted.');
+      return;
+    }
     setIsSyncingProtections(true);
     setSyncStatus({ type: 'idle', message: '' });
     try {
@@ -196,6 +204,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
   const handleSaveMemberSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isSettingsEditable) {
+      showToast('warning', 'Read-only access: Modifying team members is restricted.');
+      return;
+    }
     if (!editingMember) return;
     if (!editingMember.name.trim()) {
       setSaveMemberError('Name is required');
@@ -393,62 +405,48 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', paddingBottom: '2.5rem' }}>
-      {/* Header Banner */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '1.25rem 1.5rem',
-        backgroundColor: '#1e293b',
-        borderRadius: '0.75rem',
-        color: '#ffffff',
-        flexWrap: 'wrap',
-        gap: '1rem',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-          <div style={{
-            width: '2.5rem',
-            height: '2.5rem',
-            borderRadius: '0.5rem',
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <Sliders size={22} color="#38bdf8" />
+      {/* ── Page Header (Identical to Coordinator Analytics) ── */}
+      <div className="page-heading">
+        <div>
+          <div className="eyebrow">
+            <span className="eyebrow-dot"></span>
+            SETTINGS &amp; OPERATIONS
           </div>
-          <div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>
-              Translation Settings &amp; Operations Hub
-            </h2>
-            <p style={{ margin: 0, fontSize: '0.8125rem', color: '#94a3b8' }}>
-              Centralized Google Sheets controls, team directory, drafter intake, and project reports
-            </p>
-          </div>
+          <h1>Translation Settings &amp; Operations Hub</h1>
+          <p>Centralized Google Sheets controls, team directory, drafter intake, and project reports</p>
         </div>
 
-        <button
-          type="button"
-          onClick={onNavigateToFocus}
+        <div className="analytics-header-actions">
+          <button
+            type="button"
+            onClick={onNavigateToFocus}
+            className="analytics-btn-secondary"
+            title="Return to active translation focus mode"
+          >
+            <BookOpen size={14} />
+            <span>Return to Focus Mode</span>
+          </button>
+        </div>
+      </div>
+
+      {!isSettingsEditable && (
+        <div
           style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.5rem 0.9rem',
-            backgroundColor: '#0284c7',
-            color: '#ffffff',
-            border: 'none',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
             borderRadius: '0.5rem',
-            fontSize: '0.8125rem',
-            fontWeight: 700,
-            cursor: 'pointer'
+            padding: '0.5rem 0.875rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontSize: '0.75rem',
+            color: '#60a5fa'
           }}
         >
-          <BookOpen size={16} />
-          Return to Focus Mode
-        </button>
-      </div>
+          <Lock size={14} />
+          <span><b>Read-Only Observation View:</b> You can inspect settings and directory data. Modifications and sheet operations are restricted for your role.</span>
+        </div>
+      )}
 
       {/* Top 5 Sub-Tabs Navigation */}
       <div style={{
@@ -611,14 +609,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   borderRadius: '0.375rem',
                   fontSize: '0.8125rem',
                   background: 'var(--theme-input-bg, #ffffff)',
-                  color: 'var(--theme-text, #334155)'
+                  color: 'var(--theme-text, #334155)',
+                  outline: 'none'
                 }}
               >
-                <option value="All">All Roles ({groupedTeam.length})</option>
-                <option value="Reviewer">Reviewers</option>
-                <option value="Committee">Committee</option>
-                <option value="Drafter">Drafters</option>
-                <option value="Final Editor">Final Editors</option>
+                <option value="All" style={{ backgroundColor: 'var(--theme-card-bg-elevated, #ffffff)', color: 'var(--theme-text, #334155)' }}>All Roles ({groupedTeam.length})</option>
+                <option value="Reviewer" style={{ backgroundColor: 'var(--theme-card-bg-elevated, #ffffff)', color: 'var(--theme-text, #334155)' }}>Reviewers</option>
+                <option value="Committee" style={{ backgroundColor: 'var(--theme-card-bg-elevated, #ffffff)', color: 'var(--theme-text, #334155)' }}>Committee</option>
+                <option value="Drafter" style={{ backgroundColor: 'var(--theme-card-bg-elevated, #ffffff)', color: 'var(--theme-text, #334155)' }}>Drafters</option>
+                <option value="Final Editor" style={{ backgroundColor: 'var(--theme-card-bg-elevated, #ffffff)', color: 'var(--theme-text, #334155)' }}>Final Editors</option>
               </select>
             </div>
 
@@ -1259,8 +1258,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 <div
                   onClick={() => fileInputRef.current?.click()}
                   style={{
-                    border: '2px dashed #93c5fd',
-                    backgroundColor: '#eff6ff',
+                    border: '2px dashed var(--theme-border, #93c5fd)',
+                    backgroundColor: 'var(--theme-box-bg, #eff6ff)',
                     borderRadius: '0.5rem',
                     padding: '2rem 1.5rem',
                     textAlign: 'center',
@@ -1268,11 +1267,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <FileUp size={36} color="#3b82f6" style={{ margin: '0 auto 0.75rem auto' }} />
-                  <div style={{ fontWeight: 700, fontSize: '0.875rem', color: '#1e40af' }}>
+                  <FileUp size={36} color="var(--theme-accent, #38bdf8)" style={{ margin: '0 auto 0.75rem auto' }} />
+                  <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--theme-text, #1e40af)' }}>
                     Click or drag Word .docx file here
                   </div>
-                  <small style={{ color: '#60a5fa', fontSize: '0.75rem', display: 'block', marginTop: '0.25rem' }}>
+                  <small style={{ color: 'var(--theme-accent, #60a5fa)', fontSize: '0.75rem', display: 'block', marginTop: '0.25rem' }}>
                     Target: {currentBook} (Chapter {currentChapter})
                   </small>
                 </div>
@@ -1376,17 +1375,45 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   Generate an authentic `.docx` template for drafters pre-filled with KJV text, required section headers, and back-translation tables.
                 </p>
 
-                <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '0.5rem', padding: '1rem' }}>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#166534', marginBottom: '0.35rem' }}>
+                <div style={{
+                  backgroundColor: 'var(--theme-box-bg, #f0fdf4)',
+                  border: '1px solid var(--theme-border, #bbf7d0)',
+                  borderRadius: '0.5rem',
+                  padding: '1rem'
+                }}>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    color: 'var(--theme-text, #166534)',
+                    marginBottom: '0.35rem'
+                  }}>
                     Select Chapter for {currentBook}:
                   </label>
                   <select
                     value={templateChapter}
                     onChange={(e) => setTemplateChapter(Number(e.target.value))}
-                    style={{ width: '100%', padding: '0.5rem', border: '1px solid #86efac', borderRadius: '0.375rem', fontSize: '0.8125rem', backgroundColor: '#ffffff', fontWeight: 600 }}
+                    style={{
+                      width: '100%',
+                      padding: '0.55rem 0.75rem',
+                      border: '1px solid var(--theme-border, #86efac)',
+                      borderRadius: '0.375rem',
+                      fontSize: '0.8125rem',
+                      backgroundColor: 'var(--theme-input-bg, #ffffff)',
+                      color: 'var(--theme-text, #0f172a)',
+                      fontWeight: 600,
+                      outline: 'none'
+                    }}
                   >
                     {Array.from({ length: totalChapters }, (_, i) => i + 1).map((ch) => (
-                      <option key={ch} value={ch}>
+                      <option
+                        key={ch}
+                        value={ch}
+                        style={{
+                          backgroundColor: 'var(--theme-card-bg-elevated, #ffffff)',
+                          color: 'var(--theme-text, #0f172a)'
+                        }}
+                      >
                         {currentBook} Chapter {ch}
                       </option>
                     ))}
@@ -1465,8 +1492,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   <div
                     key={pv.verse}
                     style={{
-                      border: `1px solid ${pv.selectedForImport ? '#93c5fd' : '#e2e8f0'}`,
-                      backgroundColor: pv.selectedForImport ? '#f8fafc' : '#ffffff',
+                      border: `1px solid ${pv.selectedForImport ? 'var(--theme-accent, #93c5fd)' : 'var(--theme-border, #e2e8f0)'}`,
+                      backgroundColor: pv.selectedForImport ? 'var(--theme-box-bg, #f8fafc)' : 'var(--theme-card-bg, #ffffff)',
                       borderRadius: '0.375rem',
                       padding: '0.75rem',
                       display: 'flex',
@@ -1475,7 +1502,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.8125rem', cursor: 'pointer' }}>
+                      <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.8125rem', cursor: 'pointer', color: 'var(--theme-text)' }}>
                         <input
                           type="checkbox"
                           checked={pv.selectedForImport}
@@ -1499,8 +1526,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                       </span>
                     </div>
 
-                    <div style={{ fontSize: '0.8125rem', color: '#1e293b', fontFamily: 'var(--font-kannada, "Noto Sans Kannada", sans-serif)', marginTop: '0.25rem' }}>
-                      <b>Proposed: </b> {pv.proposed || <span style={{ color: '#94a3b8' }}>None</span>}
+                    <div style={{ fontSize: '0.8125rem', color: 'var(--theme-text, #1e293b)', fontFamily: 'var(--font-kannada, "Noto Sans Kannada", sans-serif)', marginTop: '0.25rem' }}>
+                      <b>Proposed: </b> {pv.proposed || <span style={{ color: 'var(--theme-text-muted, #94a3b8)' }}>None</span>}
                     </div>
                   </div>
                 ))}
@@ -1520,18 +1547,23 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               zIndex: 9999,
               padding: '1rem'
             }}>
-              <div style={{
-                backgroundColor: '#ffffff',
-                borderRadius: '0.75rem',
-                maxWidth: '600px',
-                width: '100%',
-                maxHeight: '90vh',
-                overflowY: 'auto',
-                padding: '1.5rem',
-                boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)'
-              }}>
+              <div
+                className="app-modal-card"
+                style={{
+                  backgroundColor: 'var(--theme-card-bg-elevated, #ffffff)',
+                  borderRadius: '0.75rem',
+                  maxWidth: '600px',
+                  width: '100%',
+                  maxHeight: '90vh',
+                  overflowY: 'auto',
+                  padding: '1.5rem',
+                  boxShadow: '0 20px 25px -5px rgba(0,0,0,0.3)',
+                  border: '1px solid var(--theme-border, #e2e8f0)',
+                  color: 'var(--theme-text)'
+                }}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                  <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 700 }}>Official GLBC Translation Color Rules</h3>
+                  <h3 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 700, color: 'var(--theme-text)' }}>Official GLBC Translation Color Rules</h3>
                   <button
                     type="button"
                     onClick={() => setShowColorModal(false)}

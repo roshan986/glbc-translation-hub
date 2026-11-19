@@ -13,12 +13,14 @@ import {
   BookOpen,
   Target,
   Clock,
-  Sliders
+  Sliders,
+  Lock
 } from 'lucide-react';
 import { generateWeeklySummaryText } from '../services/api';
 import { CoordinatorWhatsAppModal } from './CoordinatorWhatsAppModal';
 import { calculatePacingStats } from '../utils/pacingEngine';
 import { showToast } from '../utils/toast';
+import { useAuth } from '../contexts/AuthContext';
 
 interface AnalyticsViewProps {
   analytics: BookAnalytics;
@@ -100,6 +102,8 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
   onNavigateToSettings,
   onRefresh
 }) => {
+  const { canEdit } = useAuth();
+  const isAnalyticsEditable = canEdit('analytics');
   const { total, completed, completionRate, stages, bottlenecks } = analytics;
 
   const [copied, setCopied]                   = useState<boolean>(false);
@@ -295,6 +299,26 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
         </div>
       </div>
 
+      {!isAnalyticsEditable && (
+        <div
+          style={{
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '0.5rem',
+            padding: '0.5rem 0.875rem',
+            marginBottom: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontSize: '0.75rem',
+            color: '#60a5fa'
+          }}
+        >
+          <Lock size={14} />
+          <span><b>Read-Only Observation View:</b> You can monitor funnels and reports. WhatsApp alert dispatch is restricted for your role.</span>
+        </div>
+      )}
+
       {/* ── KPI Metrics Grid ── */}
       <div className="analytics-kpi-grid">
 
@@ -418,18 +442,32 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
       </div>
 
       {/* ── WhatsApp Link Banner (Identical to Focus Mode) ── */}
-      <button
-        type="button"
-        className="whatsapp-link"
-        onClick={() => setShowWhatsAppModal(true)}
-      >
-        <span className="whatsapp-mark" style={{ backgroundColor: '#25D366', color: '#ffffff' }}>↗</span>
-        <span>
-          <b>Send WhatsApp Alert</b>
-          <small>Notify next reviewers and active stage queues on WhatsApp</small>
-        </span>
-        <ArrowUpRight size={18} />
-      </button>
+      {isAnalyticsEditable ? (
+        <button
+          type="button"
+          className="whatsapp-link"
+          onClick={() => setShowWhatsAppModal(true)}
+        >
+          <span className="whatsapp-mark" style={{ backgroundColor: '#25D366', color: '#ffffff' }}>↗</span>
+          <span>
+            <b>Send WhatsApp Alert</b>
+            <small>Notify next reviewers and active stage queues on WhatsApp</small>
+          </span>
+          <ArrowUpRight size={18} />
+        </button>
+      ) : (
+        <div
+          className="whatsapp-link"
+          style={{ opacity: 0.65, cursor: 'not-allowed' }}
+          title="WhatsApp notification dispatch is restricted for your role"
+        >
+          <span className="whatsapp-mark" style={{ backgroundColor: '#64748b', color: '#ffffff' }}>🔒</span>
+          <span>
+            <b>Send WhatsApp Alert (Read-Only)</b>
+            <small>Notification dispatch is restricted by administrator policy</small>
+          </span>
+        </div>
+      )}
 
       {/* ── WhatsApp Alert Modal (Identical to Focus Mode working) ── */}
       {showWhatsAppModal && (

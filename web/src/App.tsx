@@ -23,6 +23,10 @@ import { MobileSettingsView } from './components/mobile/MobileSettingsView';
 import { TabletFocusView } from './components/tablet/TabletFocusView';
 import { TabletAnalyticsView } from './components/tablet/TabletAnalyticsView';
 import { TabletSettingsView } from './components/tablet/TabletSettingsView';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { LoginPage } from './components/LoginPage';
+import { AdminPinModal } from './components/AdminPinModal';
+import { SecurityConsole } from './components/SecurityConsole';
 import type { VerseItem, TeamMember, ReviewerRole, BookAnalytics, ParsedImportVerse, VerseApprovals, VerseConfirms, BgTheme } from './types';
 import {
   fetchVerses,
@@ -45,7 +49,31 @@ import { computeVerseApprovals, formatApprovalSignature } from './utils/approval
 import { getBookTotalVerses } from './services/kjvService';
 import { Eye, BarChart3, Sliders } from 'lucide-react';
 
-export const App: React.FC = () => {
+interface AppContentProps {
+  onTeamSync?: (team: TeamMember[]) => void;
+}
+
+const AppContent: React.FC<AppContentProps> = ({ onTeamSync }) => {
+  const {
+    authUser,
+    currentUser: authCurrentUser,
+    isSuperAdmin,
+    showPinModal,
+    verifyAdminPin,
+    dismissPinModal,
+    signInWithGoogle,
+    signOut,
+    isLoading: authLoading,
+    error: authError,
+    unregisteredEmail,
+    clearError,
+    bypassForDemo,
+    availableRoles,
+    setActiveRole,
+    hasAdminAccess,
+    canView
+  } = useAuth();
+
   // Read deep link params from URL if present
   const initialParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
   const initialBook = initialParams?.get('book') || 'Romans';
@@ -59,9 +87,15 @@ export const App: React.FC = () => {
   const [currentBook, setCurrentBook] = useState<string>(initialBook);
   const [currentChapter, setCurrentChapter] = useState<number>(initialChapter);
   const [team, setTeam] = useState<TeamMember[]>(initialBundle?.team || []);
-  const [currentUser, setCurrentUser] = useState<TeamMember | null>(
-    initialBundle?.team ? (initialBundle.team.find((m) => m.name.includes('Paul')) || initialBundle.team[0]) : null
-  );
+  const [currentUser, setCurrentUser] = useState<TeamMember | null>(() => {
+    return authCurrentUser || (initialBundle?.team ? (initialBundle.team.find((m) => m.name.includes('Paul')) || initialBundle.team[0]) : null);
+  });
+
+  useEffect(() => {
+    if (authCurrentUser) {
+      setCurrentUser(authCurrentUser);
+    }
+  }, [authCurrentUser]);
   const [verses, setVerses] = useState<VerseItem[]>(initialBundle?.verses || []);
   const [currentVerseIndex, setCurrentVerseIndex] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<ActiveTab>('focus');
@@ -106,9 +140,16 @@ export const App: React.FC = () => {
   const isMobile = useMediaQuery('(max-width: 640px)');
   const isTablet = useMediaQuery('(min-width: 641px) and (max-width: 1024px)');
 
-  // Background Theme Screen Changer State (Default, Sepia, Mist, Obsidian)
+  // Background Theme Screen Changer State (Default: Obsidian Tela Dark, Sepia: Obsidian Wasp, Mist: Blue Topaz, Obsidian: Obsidian Nebula)
   const [bgTheme, setBgTheme] = useState<BgTheme>(() => {
     if (typeof window !== 'undefined') {
+      // Auto-activate Obsidian Tela Dark as the active default on update
+      const version = localStorage.getItem('glbc_theme_release');
+      if (version !== 'tela-dark-v2') {
+        localStorage.setItem('glbc_theme_release', 'tela-dark-v2');
+        localStorage.setItem('glbc_bg_theme', 'default');
+        return 'default';
+      }
       return (localStorage.getItem('glbc_bg_theme') as BgTheme) || 'default';
     }
     return 'default';
@@ -130,8 +171,10 @@ export const App: React.FC = () => {
 
     setBooks(bundle.books);
     setTeam(bundle.team);
+    if (onTeamSync) onTeamSync(bundle.team);
     if (bundle.team.length > 0) {
       setCurrentUser((prev) => {
+        if (authCurrentUser) return authCurrentUser;
         if (prev) {
           const matched = bundle.team.find((m) => m.name === prev.name || m.email === prev.email);
           if (matched) return matched;
@@ -156,6 +199,24 @@ export const App: React.FC = () => {
       }
     }
   };
+
+  // RBAC Access Level Dynamic Fallback:
+  // If user is currently on a tab they do not have permission to view, automatically route to permitted tab
+  useEffect(() => {
+    if (activeTab === 'focus' && !canView('focus')) {
+      if (canView('analytics')) setActiveTab('analytics');
+      else if (canView('settings')) setActiveTab('settings');
+      else if (hasAdminAccess) setActiveTab('security');
+    } else if (activeTab === 'analytics' && !canView('analytics')) {
+      if (canView('focus')) setActiveTab('focus');
+      else if (canView('settings')) setActiveTab('settings');
+    } else if (activeTab === 'settings' && !canView('settings')) {
+      if (canView('focus')) setActiveTab('focus');
+      else if (canView('analytics')) setActiveTab('analytics');
+    } else if (activeTab === 'security' && !hasAdminAccess) {
+      setActiveTab('focus');
+    }
+  }, [activeTab, canView, hasAdminAccess]);
 
   // Initial load
   useEffect(() => {
@@ -643,13 +704,26 @@ export const App: React.FC = () => {
     (v) => v.status === 'Needs Final' || (!v.confirms.final && v.confirms.comm)
   ).length;
 
+  if (!authUser) {
+    return (
+      <LoginPage
+        onSignInWithGoogle={signInWithGoogle}
+        isLoading={authLoading}
+        error={authError}
+        unregisteredEmail={unregisteredEmail}
+        onClearError={clearError}
+        onBypassForDemo={bypassForDemo}
+      />
+    );
+  }
+
   if (loading || !currentUser) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '1.25rem', backgroundColor: '#f8fafc' }}>
-        <div style={{ width: '42px', height: '42px', borderRadius: '50%', border: '3px solid #e2e8f0', borderTopColor: '#2563eb', animation: 'spin 0.8s linear infinite' }} />
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '1.25rem', backgroundColor: '#0b1120', color: '#f8fafc' }}>
+        <div style={{ width: '42px', height: '42px', borderRadius: '50%', border: '3px solid #1e293b', borderTopColor: '#3b82f6', animation: 'spin 0.8s linear infinite' }} />
         <div style={{ textAlign: 'center' }}>
-          <b style={{ display: 'block', fontSize: '1.125rem', color: '#0f172a', marginBottom: '0.25rem' }}>GLBC Translation Hub</b>
-          <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>Connecting to translation database…</span>
+          <b style={{ display: 'block', fontSize: '1.125rem', color: '#ffffff', marginBottom: '0.25rem' }}>GLBC Translation Hub</b>
+          <span style={{ fontSize: '0.8125rem', color: '#94a3b8' }}>Connecting to translation database…</span>
         </div>
       </div>
     );
@@ -658,6 +732,13 @@ export const App: React.FC = () => {
   return (
     <div className="app-shell">
       <ToastContainer />
+      <AdminPinModal
+        isOpen={showPinModal}
+        userEmail={authUser.email || ''}
+        userName={authUser.displayName || undefined}
+        onConfirmPin={verifyAdminPin}
+        onContinueAsRegular={dismissPinModal}
+      />
       {/* Topbar */}
       <Topbar
         currentBook={currentBook}
@@ -674,6 +755,13 @@ export const App: React.FC = () => {
         onOpenTeamModal={() => handleNavigateToSettings('team')}
         onOpenSettings={handleNavigateToSettings}
         totalVerses={analytics?.total || getBookTotalVerses(currentBook)}
+        isSuperAdmin={isSuperAdmin}
+        onSignOut={signOut}
+        availableRoles={availableRoles}
+        onChangeRole={(newRole) => {
+          setActiveRole(newRole);
+          setCurrentUser((u) => (u ? { ...u, role: newRole } : null));
+        }}
       />
 
       <div className="workspace">
@@ -700,7 +788,7 @@ export const App: React.FC = () => {
 
         {/* Main Content Area in Full-Width Viewport Aligned to Browser Edge */}
         <div className="main-viewport">
-          <main className="main-content">
+          <main className={`main-content ${activeTab === 'security' ? 'main-content--wide' : ''}`}>
           {/* Mobile responsive tabs */}
           <div className="mobile-tabs">
             <button
@@ -946,6 +1034,14 @@ export const App: React.FC = () => {
               />
             )
           )}
+
+          {activeTab === 'security' && hasAdminAccess && (
+            <SecurityConsole
+              team={team}
+              currentUser={currentUser}
+              onNavigateToTab={setActiveTab}
+            />
+          )}
         </main>
         </div>
       </div>
@@ -1034,6 +1130,19 @@ export const App: React.FC = () => {
         onClose={() => setShowFloatingProgress(false)}
       />
     </div>
+  );
+};
+
+export const App: React.FC = () => {
+  const [syncedTeam, setSyncedTeam] = useState<TeamMember[]>(() => {
+    const bundle = getCachedInitialBundle('Romans', 1);
+    return bundle?.team || [];
+  });
+
+  return (
+    <AuthProvider team={syncedTeam}>
+      <AppContent onTeamSync={setSyncedTeam} />
+    </AuthProvider>
   );
 };
 

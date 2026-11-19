@@ -1,261 +1,326 @@
 /**
- * GLBC Translation System — Night Obsidian Theme
- * Modern Midnight Slate Dark Mode (Inspired by Linear / Tailwind Slate / Deep Midnight Navy)
- * Optimized for extended reading, low eye-strain, and crisp component elevation.
+ * GLBC Translation System — Obsidian Nebula Theme
+ * Source: Official Obsidian Community Theme "Nebula" by DevMandalia
+ * https://github.com/DevMandalia/Nebula
+ * 
+ * Aesthetics:
+ * - Canvas: Deep soothing cosmic blue-black (#0b1018)
+ * - Sidebar & Chrome: Serene deep twilight (#070b12)
+ * - Cards & Surfaces: Gentle elevation (#0a0f17 / #0e141f)
+ * - Typography: Soft luminous silver-slate (#c6cfe0) — zero eye glare / heavy strain
+ * - Accents: Electric Cyan (#38bdf8) & Cosmic Violet (#c084fc / #c4b5fd)
  */
 
 [data-bg-theme="obsidian"] {
   color-scheme: dark;
-  --color-theme-bar-bg: rgba(255, 255, 255, 0.05);
+  --color-theme-bar-bg: rgba(255, 255, 255, 0.04);
 
-  /* Multi-Theme Gradient System: Night Obsidian */
-  /* Deep midnight slate base (#020617) — zero muddy black void gradient */
-  --theme-canvas-bg: #020617;
-  --theme-sidebar-bg: #121b2e;
-  --theme-card-bg: #0f172a;
-  --theme-card-bg-elevated: #142037;
-  --theme-box-bg: #142037;
-  --theme-border: #1e293b;
-  --theme-border-subtle: #172438;
-  --theme-text: #f8fafc;
-  --theme-text-muted: #94a3b8;
-  --theme-input-bg: #0b1220;
-  --theme-card-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.45), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+  /* Multi-Theme Gradient System: Obsidian Nebula */
+  --theme-canvas-bg: #0b1018;
+  --theme-sidebar-bg: #070b12;
+  --theme-card-bg: #0b1018;
+  --theme-card-bg-elevated: #0e141f;
+  --theme-box-bg: #0a0f17;
+  --theme-border: #1b2433;
+  --theme-border-subtle: #141c29;
+  --theme-text: #c6cfe0;
+  --theme-text-muted: #66758c;
+  --theme-input-bg: #070b12;
+  --theme-card-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.4);
 
-  --color-surface: #0f172a;
-  --color-sidebar-bg: #121b2e;
-  --color-bg: #020617;
-  --color-border: #1e293b;
-  --color-text: #f8fafc;
-  --color-text-muted: #94a3b8;
+  --color-surface: #0b1018;
+  --color-sidebar-bg: #070b12;
+  --color-bg: #0b1018;
+  --color-border: #1b2433;
+  --color-text: #c6cfe0;
+  --color-text-muted: #66758c;
 
-  /* Code / preview block tokens — crisp dark slate with readable text */
-  --theme-code-bg:     #0b1220;
-  --theme-code-text:   #cbd5e1;
-  --theme-code-border: #1e293b;
+  /* Code & Concordance Tokens: Nebula Violet & Emerald */
+  --theme-code-bg:     #0a121e;
+  --theme-code-text:   #c4b5fd;
+  --theme-code-border: #1b2433;
+
+  /* Interactive Accent: Nebula Cyan */
+  --interactive-accent: #38bdf8;
+  --interactive-accent-hover: #54c8fb;
+  --theme-accent: #38bdf8;
 }
 
-/* Topbar & Subbar in Obsidian */
+[data-bg-theme="obsidian"],
+[data-bg-theme="obsidian"] body,
+[data-bg-theme="obsidian"] #root {
+  color: #c6cfe0;
+  background-color: #0b1018;
+}
+
+[data-bg-theme="obsidian"] textarea::placeholder,
+[data-bg-theme="obsidian"] input::placeholder {
+  color: #66758c !important;
+  opacity: 0.75;
+}
+
+/* Topbar & Subbar in Obsidian Nebula */
 [data-bg-theme="obsidian"] .topbar {
-  background-color: #121b2e !important;
-  border-bottom: 1px solid #1e293b !important;
+  background-color: #070b12 !important;
+  border-bottom: 1px solid #1b2433 !important;
 }
 
 [data-bg-theme="obsidian"] .subbar {
-  background: #121b2e !important;
-  border-bottom: 1px solid #1e293b !important;
+  background: #070b12 !important;
+  border-bottom: 1px solid #1b2433 !important;
 }
 
-/* Chat Bubbles in Obsidian */
+/* Chat & Deliberation Bubbles in Obsidian Nebula */
 [data-bg-theme="obsidian"] .chat-bubble-box.me {
-  background: #1a2d54 !important;
-  border-color: #2b4578 !important;
-  color: #f8fafc !important;
+  background: rgba(56, 189, 248, 0.12) !important;
+  border-color: rgba(56, 189, 248, 0.3) !important;
+  color: #e0f2fe !important;
 }
 
 [data-bg-theme="obsidian"] .chat-bubble-box.other {
-  background: #142037 !important;
-  border-color: #1e293b !important;
-  color: #f8fafc !important;
+  background: #0e141f !important;
+  border-color: #1b2433 !important;
+  color: #c6cfe0 !important;
 }
 
-/* Inline Guidance Cards in Obsidian */
+/* Inline Guidance Cards in Obsidian Nebula */
 [data-bg-theme="obsidian"] .inline-guidance-card {
-  background: linear-gradient(180deg, #121b2e 0%, #0e1626 100%) !important;
-  border: 1px solid #1e3a5f !important;
+  background: linear-gradient(180deg, #0e141f 0%, #070b12 100%) !important;
+  border: 1px solid #1b2433 !important;
 }
 
 [data-bg-theme="obsidian"] .inline-guidance-card b,
 [data-bg-theme="obsidian"] .inline-guidance-card h4 {
-  color: #93c5fd !important;
+  color: #7dd3fc !important;
 }
 
 [data-bg-theme="obsidian"] .inline-guidance-card p,
 [data-bg-theme="obsidian"] .inline-guidance-card span {
-  color: #cbd5e1 !important;
+  color: #94a3b8 !important;
 }
 
 [data-bg-theme="obsidian"] .inline-guidance-card svg {
-  color: #60a5fa !important;
+  color: #38bdf8 !important;
 }
 
-/* Sidebar Nav Items in Obsidian */
+/* Sidebar Nav Items in Obsidian Nebula */
 [data-bg-theme="obsidian"] .nav-item.selected {
-  background: #1a2842 !important;
+  background: rgba(56, 189, 248, 0.1) !important;
   color: #38bdf8 !important;
   border-left: 3px solid #38bdf8;
 }
 
 [data-bg-theme="obsidian"] .nav-item {
-  color: #94a3b8 !important;
+  color: #66758c !important;
 }
 
 [data-bg-theme="obsidian"] .nav-item:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: #f1f5f9 !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: #c6cfe0 !important;
 }
 
 [data-bg-theme="obsidian"] .person-card,
 [data-bg-theme="obsidian"] .member-item,
 [data-bg-theme="obsidian"] .team-person {
-  color: #cbd5e1 !important;
+  color: #c6cfe0 !important;
 }
 
 [data-bg-theme="obsidian"] .person-card:hover,
 [data-bg-theme="obsidian"] .member-item:hover,
 [data-bg-theme="obsidian"] .team-person:hover,
 [data-bg-theme="obsidian"] .team-accordion-header:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
 }
 
-/* Active Role Tabs in Obsidian */
+/* Active Role Tabs in Obsidian Nebula */
 [data-bg-theme="obsidian"] .focus-role-tab.active {
-  background-color: rgba(59, 130, 246, 0.18) !important;
-  border-color: #3b82f6 !important;
-  color: #93c5fd !important;
+  background-color: rgba(56, 189, 248, 0.12) !important;
+  border-color: #38bdf8 !important;
+  color: #7dd3fc !important;
 }
 
 [data-bg-theme="obsidian"] .focus-role-tab.active.committee {
-  background-color: rgba(168, 85, 247, 0.18) !important;
-  border-color: #a855f7 !important;
-  color: #d8b4fe !important;
+  background-color: rgba(192, 132, 252, 0.12) !important;
+  border-color: #c084fc !important;
+  color: #e9d5ff !important;
 }
 
 [data-bg-theme="obsidian"] .focus-role-tab.active.final {
-  background-color: rgba(244, 63, 94, 0.18) !important;
-  border-color: #f43f5e !important;
-  color: #fda4af !important;
+  background-color: rgba(52, 211, 153, 0.12) !important;
+  border-color: #34d399 !important;
+  color: #a7f3d0 !important;
 }
 
 [data-bg-theme="obsidian"] .focus-role-tab.active.drafter {
-  background-color: rgba(16, 185, 129, 0.18) !important;
-  border-color: #10b981 !important;
-  color: #6ee7b7 !important;
+  background-color: rgba(56, 189, 248, 0.12) !important;
+  border-color: #38bdf8 !important;
+  color: #7dd3fc !important;
 }
 
-/* Role Badges in Obsidian */
+/* Role Badges in Obsidian Nebula */
 [data-bg-theme="obsidian"] .role-tab-badge.confirmed {
-  background-color: rgba(16, 185, 129, 0.16) !important;
+  background-color: rgba(52, 211, 153, 0.14) !important;
   color: #34d399 !important;
-  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  border: 1px solid rgba(52, 211, 153, 0.3) !important;
 }
 
 [data-bg-theme="obsidian"] .role-tab-badge.pending {
-  background-color: rgba(245, 158, 11, 0.16) !important;
+  background-color: rgba(251, 191, 36, 0.14) !important;
   color: #fbbf24 !important;
-  border: 1px solid rgba(245, 158, 11, 0.3) !important;
+  border: 1px solid rgba(251, 191, 36, 0.3) !important;
 }
 
-/* WhatsApp Banner in Obsidian */
+/* WhatsApp Banner in Obsidian Nebula */
 [data-bg-theme="obsidian"] .whatsapp-link {
-  background: linear-gradient(135deg, #091f14 0%, #06150e 100%) !important;
-  border: 1px solid #166534 !important;
-  color: #86efac !important;
+  background: linear-gradient(135deg, #071710 0%, #040e0a 100%) !important;
+  border: 1px solid #14532d !important;
+  color: #4ade80 !important;
 }
 
 [data-bg-theme="obsidian"] .whatsapp-link b,
 [data-bg-theme="obsidian"] .whatsapp-link span {
-  color: #86efac !important;
+  color: #4ade80 !important;
 }
 
-/* Date Picker Calendar Indicator in Obsidian */
+/* Date Picker Calendar Indicator */
 [data-bg-theme="obsidian"] input[type="date"] {
   color-scheme: dark !important;
 }
 
 [data-bg-theme="obsidian"] input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 [data-bg-theme="obsidian"] input[type="date"]::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
 }
 
-/* Modals & Popovers in Obsidian */
+/* Modals & Popovers in Obsidian Nebula */
 [data-bg-theme="obsidian"] .app-modal-card {
-  background: #0f172a !important;
-  border: 1px solid #1e293b !important;
-  box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.6) !important;
+  background: #0b1018 !important;
+  border: 1px solid #1b2433 !important;
+  box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.7) !important;
 }
 
 [data-bg-theme="obsidian"] .countdown-popover-card {
-  background: #0f172a !important;
-  border: 1px solid #1e293b !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+  background: #0b1018 !important;
+  border: 1px solid #1b2433 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
 }
 
-/* Discussion Popout Modal in Obsidian */
+/* Discussion Popout Modal in Obsidian Nebula */
 [data-bg-theme="obsidian"] .chat-popout-card,
 [data-bg-theme="obsidian"] .discussion-popout-card {
-  background: #0f172a !important;
-  border: 1px solid #1e293b !important;
+  background: #0b1018 !important;
+  border: 1px solid #1b2433 !important;
 }
 
 [data-bg-theme="obsidian"] .chat-popout-header {
-  background: #142037 !important;
-  border-bottom: 1px solid #1e293b !important;
+  background: #0e141f !important;
+  border-bottom: 1px solid #1b2433 !important;
 }
 
 [data-bg-theme="obsidian"] .chat-popout-stream {
-  background: #020617 !important;
+  background: #070b12 !important;
 }
 
 /* Impact Cards in ApprovalImpactModal */
 [data-bg-theme="obsidian"] .impact-card-confirm {
-  background-color: rgba(16, 185, 129, 0.1) !important;
-  border-color: rgba(16, 185, 129, 0.3) !important;
+  background-color: rgba(52, 211, 153, 0.1) !important;
+  border-color: rgba(52, 211, 153, 0.3) !important;
 }
 [data-bg-theme="obsidian"] .impact-card-confirm span,
 [data-bg-theme="obsidian"] .impact-card-confirm li {
-  color: #86efac !important;
+  color: #34d399 !important;
 }
 
 [data-bg-theme="obsidian"] .impact-card-decline {
-  background-color: rgba(239, 68, 68, 0.1) !important;
-  border-color: rgba(239, 68, 68, 0.3) !important;
+  background-color: rgba(244, 113, 121, 0.1) !important;
+  border-color: rgba(244, 113, 121, 0.3) !important;
 }
 [data-bg-theme="obsidian"] .impact-card-decline span,
 [data-bg-theme="obsidian"] .impact-card-decline li {
-  color: #fca5a5 !important;
+  color: #f87171 !important;
 }
 
-/* Verse Jump Button in Obsidian */
+/* Verse Jump Button in Obsidian Nebula */
 [data-bg-theme="obsidian"] .btn-verse-jump {
-  background-color: #142037 !important;
-  border-color: #1e293b !important;
-  color: #f8fafc !important;
+  background-color: #0e141f !important;
+  border-color: #1b2433 !important;
+  color: #c6cfe0 !important;
 }
 
 [data-bg-theme="obsidian"] .btn-verse-jump:hover {
-  background-color: #1a2842 !important;
-  border-color: #334155 !important;
+  background-color: #141c29 !important;
+  border-color: #283246 !important;
+  color: #38bdf8 !important;
 }
 
-/* Rich text contrast remediation: neutralize dark body colors on Obsidian midnight slate */
-[data-bg-theme="obsidian"] .investigation-note span[style*="292f33" i],
-[data-bg-theme="obsidian"] .investigation-note span[style*="292F33"],
-[data-bg-theme="obsidian"] .investigation-note span[style*="#000000"],
-[data-bg-theme="obsidian"] .investigation-note span[style*="#000"],
-[data-bg-theme="obsidian"] .investigation-note span[style*="#111827"],
-[data-bg-theme="obsidian"] .investigation-note span[style*="#1f2937"],
-[data-bg-theme="obsidian"] .investigation-note span[style*="#333333"],
-[data-bg-theme="obsidian"] .investigation-note span[style*="#434343"],
-[data-bg-theme="obsidian"] .investigation-note span[style*="#555555"],
-[data-bg-theme="obsidian"] .investigation-note span[style*="rgb(41, 47, 51)"],
-[data-bg-theme="obsidian"] .kannada-reading span[style*="292f33" i],
-[data-bg-theme="obsidian"] .kannada-reading span[style*="292F33"],
-[data-bg-theme="obsidian"] .kannada-reading span[style*="#000000"],
-[data-bg-theme="obsidian"] .kannada-reading span[style*="#000"],
-[data-bg-theme="obsidian"] .kannada-reading span[style*="#111827"],
-[data-bg-theme="obsidian"] .kannada-reading span[style*="#1f2937"],
-[data-bg-theme="obsidian"] .kannada-reading span[style*="#333333"],
-[data-bg-theme="obsidian"] .kannada-reading span[style*="#434343"],
-[data-bg-theme="obsidian"] .word-pair-kannada span[style*="292f33" i],
-[data-bg-theme="obsidian"] .word-pair-kannada span[style*="292F33"],
-[data-bg-theme="obsidian"] .word-pairs span[style*="292f33" i],
-[data-bg-theme="obsidian"] .word-pairs span[style*="292F33"],
-[data-bg-theme="obsidian"] .notes-body span[style*="292f33" i],
-[data-bg-theme="obsidian"] .notes-body span[style*="292F33"] {
-  color: var(--theme-text, #f8fafc) !important;
+/* Rich text contrast remediation: neutralize dark body colors on Obsidian Nebula canvas */
+[data-bg-theme="obsidian"] span[style*="292f33" i],
+[data-bg-theme="obsidian"] span[style*="292F33"],
+[data-bg-theme="obsidian"] span[style*="#000000"],
+[data-bg-theme="obsidian"] span[style*="#000;"],
+[data-bg-theme="obsidian"] span[style*="#000\""],
+[data-bg-theme="obsidian"] span[style*="#000'"],
+[data-bg-theme="obsidian"] span[style*="#111827"],
+[data-bg-theme="obsidian"] span[style*="#1f2937"],
+[data-bg-theme="obsidian"] span[style*="#333333"],
+[data-bg-theme="obsidian"] span[style*="#434343"],
+[data-bg-theme="obsidian"] span[style*="#555555"],
+[data-bg-theme="obsidian"] span[style*="rgb(0, 0, 0)"],
+[data-bg-theme="obsidian"] span[style*="rgb(0,0,0)"],
+[data-bg-theme="obsidian"] span[style*="rgb(41, 47, 51)"],
+[data-bg-theme="obsidian"] span[style*="rgb(15, 23, 42)"],
+[data-bg-theme="obsidian"] span[style*="rgb(30, 41, 59)"],
+[data-bg-theme="obsidian"] span[style*="color: black"],
+[data-bg-theme="obsidian"] span[style*="color:black"] {
+  color: var(--theme-text, #c6cfe0) !important;
+}
+
+/* Ensure tables imported from Word adapt border & text in Obsidian Nebula */
+[data-bg-theme="obsidian"] .parsed-import-table table,
+[data-bg-theme="obsidian"] .parsed-import-table td,
+[data-bg-theme="obsidian"] .parsed-import-table th {
+  border-color: #1b2433 !important;
+  color: #c6cfe0 !important;
+}
+
+/* Ensure discussion comments and bylines are vibrant in Obsidian Nebula */
+[data-bg-theme="obsidian"] .comment-byline b {
+  color: #c6cfe0 !important;
+}
+
+[data-bg-theme="obsidian"] .comment-content p {
+  color: #c6cfe0 !important;
+}
+
+[data-bg-theme="obsidian"] .chat-bubble-box.me .comment-byline b,
+[data-bg-theme="obsidian"] .chat-bubble-box.me .comment-content p {
+  color: #e0f2fe !important;
+}
+
+/* Committee matrix and editorial checklist */
+[data-bg-theme="obsidian"] .role-title,
+[data-bg-theme="obsidian"] .matrix-content p,
+[data-bg-theme="obsidian"] .checklist-label,
+[data-bg-theme="obsidian"] .page-heading h1 {
+  color: #c6cfe0 !important;
+}
+
+/* Select inputs and dropdown options in Obsidian Nebula */
+[data-bg-theme="obsidian"] select {
+  background-color: #070b12 !important;
+  color: #c6cfe0 !important;
+  border-color: #1b2433 !important;
+}
+
+[data-bg-theme="obsidian"] select option {
+  background-color: #0e141f !important;
+  color: #c6cfe0 !important;
+}
+
+[data-bg-theme="obsidian"] select:focus {
+  border-color: #38bdf8 !important;
 }

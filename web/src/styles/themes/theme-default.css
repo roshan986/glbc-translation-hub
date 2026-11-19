@@ -1,60 +1,376 @@
 /**
- * GLBC Translation System — Default Slate Theme
- * Luminous, Clean SaaS Interface (Linear / Stripe inspired slate palette)
+ * GLBC Translation System — Obsidian Tela Theme (Official Dark Edition)
+ * Source: Official Obsidian Community Theme "Tela" by Riccardo Bartoli
+ * https://github.com/rbartoli/obsidian-tela-theme
+ * https://community.obsidian.md/themes/tela
+ * 
+ * Signature Aesthetics (as showcased on community.obsidian.md/themes/tela):
+ * - Canvas Background: Pitch Obsidian Black (#0d0e11) — zero glare, maximum relief for heavy/strained eyes
+ * - Chrome & Sidebar: Deep Charcoal Panel (#16171c) with hairline borders (#23252b)
+ * - Card Surfaces: Elevated Charcoal (#16171c / #1f2026) with crisp hairline borders (#23252b)
+ * - Typography: Luminous Silver-White (#e6e8ef) — WCAG AA certified 4.5:1 contrast across all views
+ * - Muted Text: Soft Steel (#8b90a3) & Faint (#808497)
+ * - Signature Accent: Electric Tela Blue (#0091ff / rgb(0, 145, 255))
+ * - Attention & Callouts: Terracotta Orange (#f76b15) 4px indicator bar (from Frankenstein note in showcase)
+ * - Status Palette: Forest Green (#3fb950), Amber (#d29922), Berry Red (#f85149), Cyan (#70c0b1), Purple (#c397d8)
+ * - Code & Terminal: Tomorrow Night terminal palette (#121317 ground with #70c0b1, #81a2be, #b294bb)
  */
 
 :root,
 [data-bg-theme="default"] {
-  --color-theme-bar-bg: rgba(0, 0, 0, 0.03);
+  color-scheme: dark;
+  --color-theme-bar-bg: rgba(0, 145, 255, 0.06);
 
-  /* Multi-Theme Gradient System: Default Slate */
-  --theme-canvas-bg: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-  --theme-sidebar-bg: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  --theme-card-bg: #ffffff;
-  --theme-card-bg-elevated: #ffffff;
-  --theme-box-bg: #f8fafc;
-  --theme-border: #e2e8f0;
-  --theme-border-subtle: #f1f5f9;
-  --theme-text: #0f172a;
-  --theme-text-muted: #64748b;
-  --theme-input-bg: #ffffff;
-  --theme-card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  /* Multi-Theme System: Obsidian Tela Dark */
+  --theme-canvas-bg: #0d0e11;
+  --theme-sidebar-bg: #16171c;
+  --theme-card-bg: #16171c;
+  --theme-card-bg-elevated: #1f2026;
+  --theme-box-bg: #121317;
+  --theme-border: #23252b;
+  --theme-border-subtle: #1c1d22;
+  --theme-text: #e6e8ef;
+  --theme-text-muted: #8b90a3;
+  --theme-input-bg: #0d0e11;
+  --theme-card-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.6), 0 2px 6px -1px rgba(0, 0, 0, 0.4);
 
-  --color-surface: #ffffff;
-  --color-sidebar-bg: #ffffff;
-  --color-bg: #f8fafc;
-  --color-border: #e2e8f0;
-  --color-text: #0f172a;
-  --color-text-muted: #64748b;
+  --color-surface: #16171c;
+  --color-sidebar-bg: #16171c;
+  --color-bg: #0d0e11;
+  --color-border: #23252b;
+  --color-text: #e6e8ef;
+  --color-text-muted: #8b90a3;
 
-  /* Code / preview block tokens */
-  --theme-code-bg:     #0f172a;
-  --theme-code-text:   #f8fafc;
-  --theme-code-border: #1e293b;
+  /* Code & Concordance Tokens: Tomorrow Night Terminal */
+  --theme-code-bg:     #121317;
+  --theme-code-text:   #70c0b1;
+  --theme-code-border: #23252b;
+
+  /* Interactive Accent: Signature Tela Electric Blue */
+  --interactive-accent: #0091ff;
+  --interactive-accent-hover: #33a7ff;
+  --theme-accent: #0091ff;
 }
 
-/* Nav Item Selected */
+:root,
+[data-bg-theme="default"],
+[data-bg-theme="default"] body,
+[data-bg-theme="default"] #root {
+  color: #e6e8ef;
+  background-color: #0d0e11;
+}
+
+/* Topbar & Subbar in Obsidian Tela Dark */
+[data-bg-theme="default"] .topbar {
+  background-color: #090a0d !important;
+  border-bottom: 1px solid #1c1d22 !important;
+}
+
+[data-bg-theme="default"] .subbar {
+  background: #0d0e11 !important;
+  border-bottom: 1px solid #23252b !important;
+}
+
+/* Headings in Obsidian Tela Dark */
+[data-bg-theme="default"] h1,
+[data-bg-theme="default"] .page-heading h1 {
+  color: #0091ff !important; /* Tela Electric Blue */
+}
+
+[data-bg-theme="default"] h2,
+[data-bg-theme="default"] .verse-title h2 {
+  color: #0091ff !important;
+}
+
+[data-bg-theme="default"] h3 {
+  color: #70c0b1 !important; /* Tela Cyan */
+}
+
+[data-bg-theme="default"] h4 {
+  color: #c397d8 !important; /* Tela Purple */
+}
+
+/* Chat & Deliberation Bubbles in Obsidian Tela Dark */
+[data-bg-theme="default"] .chat-bubble-box.me {
+  background: rgba(0, 145, 255, 0.14) !important;
+  border: 1px solid rgba(0, 145, 255, 0.35) !important;
+  color: #e6e8ef !important;
+}
+
+[data-bg-theme="default"] .chat-bubble-box.other {
+  background: #16171c !important;
+  border: 1px solid #23252b !important;
+  color: #e6e8ef !important;
+}
+
+[data-bg-theme="default"] .comment-byline b {
+  color: #0091ff !important;
+}
+
+[data-bg-theme="default"] .comment-content p {
+  color: #e6e8ef !important;
+}
+
+[data-bg-theme="default"] .chat-bubble-box.me .comment-byline b {
+  color: #33a7ff !important;
+}
+
+[data-bg-theme="default"] .chat-bubble-box.me .comment-content p {
+  color: #ffffff !important;
+}
+
+/* Callouts & Inline Guidance in Obsidian Tela Dark */
+[data-bg-theme="default"] .inline-guidance-card {
+  background: linear-gradient(135deg, #16171c 0%, #121317 100%) !important;
+  border: 1px solid #23252b !important;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-bg-theme="default"] .inline-guidance-card b,
+[data-bg-theme="default"] .inline-guidance-card h4 {
+  color: #0091ff !important;
+}
+
+[data-bg-theme="default"] .inline-guidance-card p,
+[data-bg-theme="default"] .inline-guidance-card span {
+  color: #8b90a3 !important;
+}
+
+[data-bg-theme="default"] .inline-guidance-card svg {
+  color: #0091ff !important;
+}
+
+/* Specific Guidance Variations with Tela Indicator Bars */
+[data-bg-theme="default"] .inline-guidance-card.discipline {
+  border-left: 4px solid #0091ff !important;
+}
+
+[data-bg-theme="default"] .inline-guidance-card.committee {
+  border-left: 4px solid #f76b15 !important; /* Tela Attention Orange */
+}
+
+[data-bg-theme="default"] .inline-guidance-card.committee b,
+[data-bg-theme="default"] .inline-guidance-card.committee svg {
+  color: #f76b15 !important;
+}
+
+[data-bg-theme="default"] .inline-guidance-card.final {
+  border-left: 4px solid #3fb950 !important; /* Tela Ok Green */
+}
+
+[data-bg-theme="default"] .inline-guidance-card.final b,
+[data-bg-theme="default"] .inline-guidance-card.final svg {
+  color: #3fb950 !important;
+}
+
+/* Sidebar Nav Items in Obsidian Tela Dark */
 [data-bg-theme="default"] .nav-item.selected,
 :root:not([data-bg-theme]) .nav-item.selected {
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
-  color: #1d4ed8 !important;
+  background: rgba(0, 145, 255, 0.14) !important;
+  color: #0091ff !important;
+  border-left: 3px solid #0091ff;
 }
 
-/* Inline Guidance Cards */
-[data-bg-theme="default"] .inline-guidance-card.discipline,
-:root:not([data-bg-theme]) .inline-guidance-card.discipline {
-  background: #f5f3ff;
-  border: 1px solid #ddd6fe;
+[data-bg-theme="default"] .nav-item,
+:root:not([data-bg-theme]) .nav-item {
+  color: #8b90a3 !important;
 }
 
-[data-bg-theme="default"] .inline-guidance-card.committee,
-:root:not([data-bg-theme]) .inline-guidance-card.committee {
-  background: #faf5ff;
-  border: 1px solid #f3e8ff;
+[data-bg-theme="default"] .nav-item:hover,
+:root:not([data-bg-theme]) .nav-item:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #e6e8ef !important;
 }
 
-[data-bg-theme="default"] .inline-guidance-card.final,
-:root:not([data-bg-theme]) .inline-guidance-card.final {
-  background: #fff1f2;
-  border: 1px solid #fecdd3;
+[data-bg-theme="default"] .person-card,
+[data-bg-theme="default"] .member-item,
+[data-bg-theme="default"] .team-person {
+  color: #e6e8ef !important;
+}
+
+[data-bg-theme="default"] .person-card:hover,
+[data-bg-theme="default"] .member-item:hover,
+[data-bg-theme="default"] .team-person:hover,
+[data-bg-theme="default"] .team-accordion-header:hover {
+  background: rgba(0, 145, 255, 0.06) !important;
+}
+
+/* Active Role Tabs in Obsidian Tela Dark */
+[data-bg-theme="default"] .focus-role-tab.active {
+  background-color: rgba(0, 145, 255, 0.15) !important;
+  border-color: #0091ff !important;
+  color: #0091ff !important;
+}
+
+[data-bg-theme="default"] .focus-role-tab.active.committee {
+  background-color: rgba(247, 107, 21, 0.15) !important;
+  border-color: #f76b15 !important;
+  color: #f76b15 !important;
+}
+
+[data-bg-theme="default"] .focus-role-tab.active.final {
+  background-color: rgba(63, 185, 80, 0.15) !important;
+  border-color: #3fb950 !important;
+  color: #3fb950 !important;
+}
+
+[data-bg-theme="default"] .focus-role-tab.active.drafter {
+  background-color: rgba(0, 145, 255, 0.15) !important;
+  border-color: #0091ff !important;
+  color: #33a7ff !important;
+}
+
+/* Role Badges in Obsidian Tela Dark */
+[data-bg-theme="default"] .role-tab-badge.confirmed {
+  background-color: rgba(63, 185, 80, 0.15) !important;
+  color: #3fb950 !important;
+  border: 1px solid rgba(63, 185, 80, 0.3) !important;
+}
+
+[data-bg-theme="default"] .role-tab-badge.pending {
+  background-color: rgba(210, 153, 34, 0.15) !important;
+  color: #d29922 !important;
+  border: 1px solid rgba(210, 153, 34, 0.3) !important;
+}
+
+/* WhatsApp Banner in Obsidian Tela Dark */
+[data-bg-theme="default"] .whatsapp-link {
+  background: linear-gradient(135deg, #0e2017 0%, #07150e 100%) !important;
+  border: 1px solid #165b32 !important;
+  color: #4ade80 !important;
+}
+
+[data-bg-theme="default"] .whatsapp-link b,
+[data-bg-theme="default"] .whatsapp-link span {
+  color: #4ade80 !important;
+}
+
+/* Inputs, Textareas & Dropdowns in Obsidian Tela Dark */
+[data-bg-theme="default"] input,
+[data-bg-theme="default"] textarea,
+[data-bg-theme="default"] select {
+  background-color: #0d0e11 !important;
+  color: #e6e8ef !important;
+  border-color: #23252b !important;
+}
+
+[data-bg-theme="default"] select option {
+  background-color: #16171c !important;
+  color: #e6e8ef !important;
+}
+
+[data-bg-theme="default"] input:focus,
+[data-bg-theme="default"] textarea:focus,
+[data-bg-theme="default"] select:focus {
+  border-color: #0091ff !important;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 145, 255, 0.25) !important;
+}
+
+[data-bg-theme="default"] input::placeholder,
+[data-bg-theme="default"] textarea::placeholder {
+  color: #808497 !important;
+  opacity: 0.75;
+}
+
+/* Modals & Popovers in Obsidian Tela Dark */
+[data-bg-theme="default"] .app-modal-card {
+  background: #16171c !important;
+  border: 1px solid #23252b !important;
+  box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.7) !important;
+}
+
+[data-bg-theme="default"] .countdown-popover-card {
+  background: #16171c !important;
+  border: 1px solid #23252b !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6) !important;
+}
+
+[data-bg-theme="default"] .chat-popout-card,
+[data-bg-theme="default"] .discussion-popout-card {
+  background: #16171c !important;
+  border: 1px solid #23252b !important;
+}
+
+[data-bg-theme="default"] .chat-popout-header {
+  background: #1f2026 !important;
+  border-bottom: 1px solid #23252b !important;
+}
+
+[data-bg-theme="default"] .chat-popout-stream {
+  background: #0d0e11 !important;
+}
+
+/* Impact Cards in ApprovalImpactModal */
+[data-bg-theme="default"] .impact-card-confirm {
+  background-color: rgba(63, 185, 80, 0.1) !important;
+  border-color: rgba(63, 185, 80, 0.3) !important;
+}
+[data-bg-theme="default"] .impact-card-confirm span,
+[data-bg-theme="default"] .impact-card-confirm li {
+  color: #3fb950 !important;
+}
+
+[data-bg-theme="default"] .impact-card-decline {
+  background-color: rgba(248, 81, 73, 0.1) !important;
+  border-color: rgba(248, 81, 73, 0.3) !important;
+}
+[data-bg-theme="default"] .impact-card-decline span,
+[data-bg-theme="default"] .impact-card-decline li {
+  color: #f85149 !important;
+}
+
+/* Verse Jump Button in Obsidian Tela Dark */
+[data-bg-theme="default"] .btn-verse-jump {
+  background-color: #16171c !important;
+  border-color: #23252b !important;
+  color: #e6e8ef !important;
+}
+
+[data-bg-theme="default"] .btn-verse-jump:hover {
+  background-color: #1f2026 !important;
+  border-color: #0091ff !important;
+  color: #0091ff !important;
+}
+
+/* Tables imported from Word */
+[data-bg-theme="default"] .parsed-import-table table,
+[data-bg-theme="default"] .parsed-import-table td,
+[data-bg-theme="default"] .parsed-import-table th {
+  border-color: #23252b !important;
+  color: #e6e8ef !important;
+}
+
+/* Committee matrix and editorial checklist */
+[data-bg-theme="default"] .role-title {
+  color: #0091ff !important;
+}
+
+[data-bg-theme="default"] .matrix-content p,
+[data-bg-theme="default"] .checklist-label,
+[data-bg-theme="default"] .page-heading h1 {
+  color: #e6e8ef !important;
+}
+
+/* Contrast Remediation for Obsidian Tela Dark: Neutralize hardcoded dark inline styles */
+[data-bg-theme="default"] span[style*="292f33" i],
+[data-bg-theme="default"] span[style*="292F33"],
+[data-bg-theme="default"] span[style*="#000000"],
+[data-bg-theme="default"] span[style*="#000;"],
+[data-bg-theme="default"] span[style*="#000\""],
+[data-bg-theme="default"] span[style*="#000'"],
+[data-bg-theme="default"] span[style*="#111827"],
+[data-bg-theme="default"] span[style*="#1f2937"],
+[data-bg-theme="default"] span[style*="#333333"],
+[data-bg-theme="default"] span[style*="#434343"],
+[data-bg-theme="default"] span[style*="#555555"],
+[data-bg-theme="default"] span[style*="rgb(0, 0, 0)"],
+[data-bg-theme="default"] span[style*="rgb(0,0,0)"],
+[data-bg-theme="default"] span[style*="rgb(41, 47, 51)"],
+[data-bg-theme="default"] span[style*="rgb(15, 23, 42)"],
+[data-bg-theme="default"] span[style*="rgb(30, 41, 59)"],
+[data-bg-theme="default"] span[style*="color: black"],
+[data-bg-theme="default"] span[style*="color:black"] {
+  color: var(--theme-text, #e6e8ef) !important;
 }

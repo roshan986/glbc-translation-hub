@@ -71,10 +71,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   }, [showMenuSheet]);
 
   const themeOptions: { id: BgTheme; label: string; swatch: string }[] = [
-    { id: 'default', label: 'Default Slate', swatch: '#f8fafc' },
-    { id: 'sepia', label: 'Warm Sepia', swatch: '#f6eee3' },
-    { id: 'mist', label: 'Cool Mist', swatch: '#edf2f7' },
-    { id: 'obsidian', label: 'Night Obsidian', swatch: '#020617' }
+    { id: 'default', label: 'Obsidian Tela', swatch: '#0091ff' },
+    { id: 'sepia', label: 'Obsidian Wasp', swatch: '#f8c537' },
+    { id: 'mist', label: 'Blue Topaz', swatch: '#4da6ff' },
+    { id: 'obsidian', label: 'Obsidian Nebula', swatch: '#0b1018' }
   ];
 
   // Group team members into Reviewers and Committee
@@ -573,7 +573,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         padding: '0.45rem 0.25rem',
                         borderRadius: '0.375rem',
                         backgroundColor: 'var(--theme-box-bg, #f8fafc)',
-                        border: bgTheme === opt.id ? '2px solid #2563eb' : '1px solid var(--theme-border, #e2e8f0)',
+                        border: bgTheme === opt.id ? `2px solid ${opt.id === 'sepia' ? '#f8c537' : opt.id === 'obsidian' ? '#38bdf8' : '#2563eb'}` : '1px solid var(--theme-border, #e2e8f0)',
                         cursor: 'pointer'
                       }}
                     >
@@ -583,7 +583,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                           height: '18px',
                           borderRadius: '50%',
                           backgroundColor: opt.swatch,
-                          border: '1px solid #cbd5e1'
+                          border: opt.id === 'sepia' ? '1.5px solid #b87a1d' : '1px solid #cbd5e1'
                         }}
                       />
                       <span style={{ fontSize: '0.625rem', fontWeight: bgTheme === opt.id ? 700 : 500, color: 'var(--theme-text)' }}>
