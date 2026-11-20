@@ -51,6 +51,15 @@ const ADMIN_EMAILS: string[] = (import.meta.env.VITE_ADMIN_EMAIL || '')
 
 const ADMIN_PIN: string = (import.meta.env.VITE_ADMIN_PIN || '1234').trim();
 
+// =============================================================================
+// LAYMAN EXPLANATION FOR AUTH VERSION MIGRATION:
+// Whenever we make major changes to the authentication system (like adding
+// Google Sign-In or fixing session security), bumping this version stamp tells
+// every device (phone or laptop) to clear old legacy cached users/sessions
+// and force a clean, secure Google login.
+// =============================================================================
+const CURRENT_AUTH_RELEASE_VERSION = 'glbc_auth_v2.2_enforce_login';
+
 const ALL_ROLES = [
   'Drafter',
   'Technical Reviewer',
@@ -79,10 +88,49 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, team }) =>
   const [showPinModal, setShowPinModal] = useState<boolean>(false);
   const [activeRoleOverride, setActiveRoleOverride] = useState<string | null>(null);
 
+  // ===========================================================================
+  // LAYMAN EXPLANATION FOR DEMO USER RESTRICTION:
+  // If Firebase is configured with real church credentials, we strictly DISALLOW
+  // any cached demo user from previous testing. This forces the user to sign in
+  // with their verified Google account. Demo mode is only used if Firebase is
+  // completely unconfigured in .env.
+  // ===========================================================================
   const [demoUser, setDemoUser] = useState<AuthUser | null>(() => {
-    const saved = localStorage.getItem('glbc_demo_user');
-    return saved ? JSON.parse(saved) : null;
+    if (typeof window !== 'undefined') {
+      // If Firebase is active, purge any leftover demo session
+      if (isFirebaseConfigured) {
+        localStorage.removeItem('glbc_demo_user');
+        return null;
+      }
+      const saved = localStorage.getItem('glbc_demo_user');
+      return saved ? JSON.parse(saved) : null;
+    }
+    return null;
   });
+
+  // ===========================================================================
+  // LAYMAN EXPLANATION FOR AUTO-PURGE OF LEGACY APP SESSIONS:
+  // Before authentication was built, anyone who opened the app had legacy
+  // profiles saved. This automated hook runs once when the app mounts. If the
+  // phone has an older version stamp, it wipes out legacy tokens and forces
+  // the user to authenticate through Google.
+  // ===========================================================================
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const storedVersion = localStorage.getItem('glbc_auth_release_version');
+      if (storedVersion !== CURRENT_AUTH_RELEASE_VERSION) {
+        // Purge all legacy user selection data from before auth was introduced
+        localStorage.removeItem('glbc_active_member');
+        localStorage.removeItem('glbc_legacy_user');
+        localStorage.removeItem('glbc_demo_user');
+        sessionStorage.removeItem('glbc_super_admin');
+        localStorage.setItem('glbc_auth_release_version', CURRENT_AUTH_RELEASE_VERSION);
+      }
+    } catch (e) {
+      console.warn('Storage migration notice:', e);
+    }
+  }, []);
 
   const [permissionsMap, setPermissionsMap] = useState<TeamPermissionsMap>(() => {
     try {

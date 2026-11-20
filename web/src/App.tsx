@@ -87,14 +87,16 @@ const AppContent: React.FC<AppContentProps> = ({ onTeamSync }) => {
   const [currentBook, setCurrentBook] = useState<string>(initialBook);
   const [currentChapter, setCurrentChapter] = useState<number>(initialChapter);
   const [team, setTeam] = useState<TeamMember[]>(initialBundle?.team || []);
-  const [currentUser, setCurrentUser] = useState<TeamMember | null>(() => {
-    return authCurrentUser || (initialBundle?.team ? (initialBundle.team.find((m) => m.name.includes('Paul')) || initialBundle.team[0]) : null);
-  });
+  // ===========================================================================
+  // LAYMAN EXPLANATION FOR CURRENT USER BINDING:
+  // The current active user is strictly tied to the verified Google session
+  // (authCurrentUser). If no user is logged in, currentUser is null, which
+  // immediately activates the <LoginPage> gate.
+  // ===========================================================================
+  const [currentUser, setCurrentUser] = useState<TeamMember | null>(() => authCurrentUser);
 
   useEffect(() => {
-    if (authCurrentUser) {
-      setCurrentUser(authCurrentUser);
-    }
+    setCurrentUser(authCurrentUser);
   }, [authCurrentUser]);
   const [verses, setVerses] = useState<VerseItem[]>(initialBundle?.verses || []);
   const [currentVerseIndex, setCurrentVerseIndex] = useState<number>(0);

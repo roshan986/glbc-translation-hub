@@ -287,7 +287,14 @@ export const Topbar: React.FC<TopbarProps> = ({
                 </div>
               </div>
 
-              {/* Role Switcher */}
+              {/* =================================================================== */}
+              {/* LAYMAN EXPLANATION FOR SECURE ROLE SWITCHER:                       */}
+              {/* Previously, anyone could click this dropdown and switch into       */}
+              {/* someone else's identity. In this secure system, the profile is     */}
+              {/* locked to the verified Google account. Users can ONLY switch      */}
+              {/* between the specific roles assigned to them in the ⚙ Config sheet, */}
+              {/* or all 7 roles if verified as Super Admin with the secret PIN.     */}
+              {/* =================================================================== */}
               <div style={{ marginBottom: '0.75rem' }}>
                 <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--theme-text-muted)', marginBottom: '0.375rem', letterSpacing: '0.05em' }}>
                   {isSuperAdmin ? 'SUPER ADMIN: SWITCH ACTIVE ROLE' : 'SWITCH ACTIVE ROLE'}

@@ -37,6 +37,18 @@ export default defineConfig({
         ]
       },
       workbox: {
+        // =========================================================================
+        // LAYMAN EXPLANATION FOR WORKBOX AUTO-UPDATE:
+        // Normally, a PWA (app on phone) waits until all browser tabs are closed
+        // before installing an update. These 3 settings tell the phone / browser:
+        // 1. skipWaiting: Immediately activate the new version without waiting.
+        // 2. clientsClaim: Take control of all open pages immediately.
+        // 3. cleanupOutdatedCaches: Delete old, stale cached files so users never
+        //    run old code or get stuck on yesterday's screens.
+        // =========================================================================
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
         globIgnores: ['**/kjv-strongs/**'],
         runtimeCaching: [
